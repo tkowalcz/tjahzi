@@ -5,7 +5,7 @@
     <parent>
         <groupId>pl.tkowalcz</groupId>
         <artifactId>thjazi</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>thjazi-core</artifactId>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>pl.tkowalcz</groupId>
             <artifactId>loki-protobuf</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
