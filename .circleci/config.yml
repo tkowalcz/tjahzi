@@ -1,5 +1,8 @@
 version: 2.1
 
+# for testcontainers to work
+machine: true
+
 orbs:
   maven: circleci/maven@1.0.2
 
