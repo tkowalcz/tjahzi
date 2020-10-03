@@ -36,3 +36,9 @@ jobs:
       - run:
           name: Verify (Standard)
           command: ./mvnw clean verify
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
