@@ -18,16 +18,16 @@ jobs:
           name: Install module deps
           command: mvn package install -Dmaven.test.skip=true
 
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-
       # Download maven dependencies so that we can cache them
       # ########################
       - run:
           name: Download Dependencies
           command: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
 
       # Standard maven build and test phases
       # ########################
