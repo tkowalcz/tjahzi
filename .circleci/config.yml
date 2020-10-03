@@ -1,13 +1,38 @@
 version: 2.1
 
-# for testcontainers to work
-machine: true
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
 
-orbs:
-  maven: circleci/maven@1.0.2
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-workflows:
-  maven_test:
-    jobs:
-      - maven/test:
-          command: 'clean install'
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - store_test_results:
+          path: test-results
+
+      - run:
+        name: Install module deps
+        command: mvn package install -Dmaven.test.skip=true
+
+      # Download maven dependencies so that we can cache them
+      # ########################
+      - run:
+          name: Download Dependencies
+          command: mvn dependency:go-offline
+
+      # Standard maven build and test phases
+      # ########################
+      - run:
+          name: Verify (Standard)
+          command: ./mvnw clean verify
