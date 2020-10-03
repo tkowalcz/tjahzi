@@ -65,20 +65,6 @@
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
             </plugin>
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-dependency-plugin</artifactId>-->
-<!--                <version>3.1.2</version>-->
-<!--            </plugin>-->
         </plugins>
-
-<!--        <extensions>-->
-<!--            <extension>-->
-<!--                <groupId>kr.motd.maven</groupId>-->
-<!--                <artifactId>os-maven-plugin</artifactId>-->
-<!--                <version>1.6.1</version>-->
-<!--            </extension>-->
-<!--        </extensions>-->
     </build>
 </project>
