@@ -32,7 +32,7 @@ jobs:
       # Standard maven build and test phases
       # ########################
       - run:
-          name: Verify (Standard)
+          name: Verify
           command: mvn clean verify
 
       - store_test_results:
