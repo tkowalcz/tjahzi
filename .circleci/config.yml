@@ -14,17 +14,14 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
+      - run:
+          name: Install module deps
+          command: mvn package install -Dmaven.test.skip=true
+
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-
-      - store_test_results:
-          path: test-results
-
-      - run:
-          name: Install module deps
-          command: mvn package install -Dmaven.test.skip=true
 
       # Download maven dependencies so that we can cache them
       # ########################
@@ -37,6 +34,9 @@ jobs:
       - run:
           name: Verify (Standard)
           command: mvn clean verify
+
+      - store_test_results:
+          path: test-results
 
 workflows:
   version: 2
