@@ -18,7 +18,7 @@ To avoid these effects we strive to adhere to the following principles (and docu
 You can compare this with [design principles of Aeron](https://github.com/real-logic/aeron/wiki/Design-Principles) which are close to our hearts.
 
 ### Architecture
-                                                                          
+```                                                                 
 +-------------+    Log                                                    
 | Application |----------------+                                          
 |  Thread 1   |                |                                          
@@ -36,8 +36,7 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 | Application |----------------------+                                    
 |  Thread N   |                                                           
 +-------------+                                                           
-                                                                          
-                                                                          
+```                                                                                                                                                    
 ### LICENSE
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. Pull and feature requests as welcome.
