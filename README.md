@@ -1,8 +1,14 @@
 # Thjazi
 
-Thiazi is a Java client for Grafana Loki. 
+Thjazi is a Java client for Grafana Loki. 
 
-Logging should be lightweight and not interfere with main business tasks of threads that happen to log a message. Asking the logging subsysytem to log a message should be as CPU efficient as possible. But that is a truism. Apart from computaiton itself there are many other causes of jitter (varying speed of code execution). Thread can be slowed down by excessive allocations, by initialization code running in constructors of unnecesarily allocated objects, by garbage collector activity that is triggered by it. There can by configuration refresh checks on logging path, inter thread signaling etc.
+### Design principles
+
+Logging should be lightweight and not interfere with main business tasks of threads that happen to log a message. 
+Asking the logging subsystem to log a message should be as CPU efficient as possible. 
+That's a truism. Apart from computation itself there are many other causes of jitter (varying speed of code execution). 
+Thread can be slowed down by excessive allocations, by initialization code running in constructors of unnecessarily allocated objects, 
+by garbage collector activity that is triggered by it. There can by configuration refresh checks on logging path, inter thread signaling etc.
 
 To avoid these effects we strive to adhere to the following principles (and document any violations):
 
@@ -11,7 +17,27 @@ To avoid these effects we strive to adhere to the following principles (and docu
 
 You can compare this with [design principles of Aeron](https://github.com/real-logic/aeron/wiki/Design-Principles) which are close to our hearts.
 
-
-LICENSE
+### Architecture
+                                                                          
++-------------+    Log                                                    
+| Application |----------------+                                          
+|  Thread 1   |                |                                          
++-------------+                |                                          
+                               |                                          
+       .                      \|/                                          
+                          +----+---------------+         +---------+      
+       .      Log         |                    |         |  I/O    |      
+          --------------->+     Log buffer     +-->--->--+ thread  |      
+       .                  |                    |         | (Netty) |      
+                          +----------+---------+         +---------+      
+       .                            /|\                                    
+                                     |                                    
++-------------+      Log             |                                    
+| Application |----------------------+                                    
+|  Thread N   |                                                           
++-------------+                                                           
+                                                                          
+                                                                          
+### LICENSE
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. Pull and feature requests as welcome.
