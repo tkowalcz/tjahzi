@@ -1,0 +1,45 @@
+version: 2.1
+
+jobs:
+  build:
+    machine:
+      image: ubuntu-2004:202008-01
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: Install module deps
+          command: mvn package install -Dmaven.test.skip=true
+
+      # Download maven dependencies so that we can cache them
+      # ########################
+      - run:
+          name: Download Dependencies
+          command: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      # Standard maven build and test phases
+      # ########################
+      - run:
+          name: Verify
+          command: mvn clean verify
+
+      - store_test_results:
+          path: test-results
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
