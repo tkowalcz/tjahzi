@@ -5,8 +5,6 @@ import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
@@ -18,7 +16,6 @@ import pl.tkowalcz.thjazi.http.ClientConfiguration;
 import pl.tkowalcz.thjazi.http.HttpClientFactory;
 import pl.tkowalcz.thjazi.http.NettyHttpClient;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -27,7 +24,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @Testcontainers
-class LoggingSystemTest {
+class LoggingSystemSanityCheckTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -69,13 +66,11 @@ class LoggingSystemTest {
         long timestamp = System.currentTimeMillis();
 
         ThjaziLogger logger = loggingSystem.createLogger();
-        for (int i = 0; i < 1000; i++) {
-            logger.log(
-                    timestamp + i,
-                    Map.of("version", "0.43", "server", "127.0.0.1"),
-                    "Test" + i
-            );
-        }
+        logger.log(
+                timestamp,
+                Map.of("version", "0.43", "server", "127.0.0.1"),
+                "Test"
+        );
 
         RestAssured.port = loki.getFirstMappedPort();
         RestAssured.baseURI = "http://" + loki.getHost();
@@ -95,40 +90,11 @@ class LoggingSystemTest {
                             .get("/loki/api/v1/query_range")
                             .then()
                             .statusCode(200)
-                            .log()
-                            .all()
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
-                            .body("data.result[0].values", hasItems(new BaseMatcher<>() {
-
-                                int index = 999;
-
-                                @Override
-                                public void describeTo(Description description) {
-
-                                }
-
-                                @Override
-                                public boolean matches(Object o) {
-                                    List<Object> list = (List<Object>) o;
-                                    if (list.size() != 2) {
-                                        return false;
-                                    }
-
-                                    long actualTimestamp = Long.parseLong(list.get(0).toString());
-                                    long expectedTimestamp = (timestamp + index) * 1000_000;
-
-                                    String actualLogLine = list.get(1).toString();
-                                    Object expectedLogLine = "Test" + index;
-
-                                    index--;
-
-                                    return actualTimestamp == expectedTimestamp
-                                            && actualLogLine.equals(expectedLogLine);
-                                }
-                            }));
+                            .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000), "Test"));
                 });
     }
 }
