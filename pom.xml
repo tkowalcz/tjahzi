@@ -11,8 +11,8 @@
 
     <modules>
         <module>loki-protobuf</module>
+        <module>log4j2-appender</module>
         <module>core</module>
-        <module>slf4j-binding</module>
     </modules>
 
     <scm>
