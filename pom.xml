@@ -11,14 +11,30 @@
 
     <modules>
         <module>loki-protobuf</module>
+        <module>log4j2-appender</module>
         <module>core</module>
-        <module>slf4j-binding</module>
     </modules>
 
     <scm>
         <developerConnection>scm:git:git@github.com:tkowalcz/thjazi.git</developerConnection>
         <url>https://github.com/tkowalcz/thjazi</url>
     </scm>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://github.com/tkowalcz/thjazi/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+            <comments>A short and simple permissive license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>tkowalcz</id>
+            <name>Tomasz Kowalczewski</name>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

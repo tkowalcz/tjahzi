@@ -40,7 +40,7 @@ public class ThjaziLogger {
                     cursor += buffer.putStringAscii(cursor, value);
                 }
 
-                claim += buffer.putStringAscii(cursor, line);
+                buffer.putStringAscii(cursor, line);
                 logBuffer.commit(claim);
             } catch (Throwable t) {
                 logBuffer.abort(claim);

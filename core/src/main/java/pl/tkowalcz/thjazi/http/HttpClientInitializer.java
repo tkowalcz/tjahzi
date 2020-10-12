@@ -1,11 +1,8 @@
 package pl.tkowalcz.thjazi.http;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -26,13 +23,5 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
         p.addLast(new HttpClientCodec());
         p.addLast(new HttpObjectAggregator(1048576));
         p.addLast(new HttpContentDecompressor());
-        p.addLast(new SimpleChannelInboundHandler<FullHttpResponse>() {
-
-            @Override
-            protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) throws Exception {
-                System.out.println(msg);
-            }
-        });
-        p.addLast(new InactiveConnectionsHandler());
     }
 }
