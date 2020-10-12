@@ -1,15 +1,15 @@
-package pl.tkowalcz.thjazi;
+package pl.tkowalcz.tjahzi;
 
 import org.agrona.concurrent.AgentRunner;
 import org.agrona.concurrent.SleepingMillisIdleStrategy;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
-import pl.tkowalcz.thjazi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.nio.ByteBuffer;
 
-public class ThjaziInitializer {
+public class TjahziInitializer {
 
     public LoggingSystem createLoggingSystem(
             NettyHttpClient httpClient,

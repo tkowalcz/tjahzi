@@ -1,21 +1,21 @@
-package pl.tkowalcz.thjazi;
+package pl.tkowalcz.tjahzi;
 
 import org.agrona.concurrent.AtomicBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 
 import java.util.Map;
 
-public class ThjaziLogger {
+public class TjahziLogger {
 
     public static final int LOG_MESSAGE_TYPE_ID = 5;
 
     private final ManyToOneRingBuffer logBuffer;
 
-    public ThjaziLogger(ManyToOneRingBuffer logBuffer) {
+    public TjahziLogger(ManyToOneRingBuffer logBuffer) {
         this.logBuffer = logBuffer;
     }
 
-    public ThjaziLogger log(long timestamp,
+    public TjahziLogger log(long timestamp,
                             Map<String, String> labels,
                             String line) {
         int requiredSize = calculateRequiredSizeAscii(labels, line);

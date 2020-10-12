@@ -1,4 +1,4 @@
-package pl.tkowalcz.thjazi.http;
+package pl.tkowalcz.tjahzi.http;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -27,8 +27,8 @@ public class NettyHttpClient implements AutoCloseable {
         host = clientConfiguration.getHost();
         logEndpoint = clientConfiguration.getLogEndpoint();
 
-        ThreadGroup threadGroup = new ThreadGroup("Thjazi Loki client");
-        ThreadFactory threadFactory = r -> new Thread(threadGroup, r, "thjazi-worker");
+        ThreadGroup threadGroup = new ThreadGroup("Tjahzi Loki client");
+        ThreadFactory threadFactory = r -> new Thread(threadGroup, r, "tjahzi-worker");
         group = new NioEventLoopGroup(1, threadFactory);
 
         Bootstrap bootstrap = new Bootstrap();

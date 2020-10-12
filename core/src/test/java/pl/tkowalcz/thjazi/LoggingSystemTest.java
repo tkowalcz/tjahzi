@@ -1,4 +1,4 @@
-package pl.tkowalcz.thjazi;
+package pl.tkowalcz.tjahzi;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -14,9 +14,9 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import pl.tkowalcz.thjazi.http.ClientConfiguration;
-import pl.tkowalcz.thjazi.http.HttpClientFactory;
-import pl.tkowalcz.thjazi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.http.ClientConfiguration;
+import pl.tkowalcz.tjahzi.http.HttpClientFactory;
+import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ class LoggingSystemTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(clientConfiguration);
 
-        ThjaziInitializer initializer = new ThjaziInitializer();
+        TjahziInitializer initializer = new TjahziInitializer();
         LoggingSystem loggingSystem = initializer.createLoggingSystem(
                 httpClient,
                 1024 * 1024,
@@ -68,7 +68,7 @@ class LoggingSystemTest {
 
         long timestamp = System.currentTimeMillis();
 
-        ThjaziLogger logger = loggingSystem.createLogger();
+        TjahziLogger logger = loggingSystem.createLogger();
         for (int i = 0; i < 1000; i++) {
             logger.log(
                     timestamp + i,

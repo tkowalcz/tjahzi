@@ -1,4 +1,4 @@
-package pl.tkowalcz.thjazi.http;
+package pl.tkowalcz.tjahzi.http;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

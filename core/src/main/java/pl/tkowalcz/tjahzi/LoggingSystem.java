@@ -1,4 +1,4 @@
-package pl.tkowalcz.thjazi;
+package pl.tkowalcz.tjahzi;
 
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 
@@ -10,7 +10,7 @@ public class LoggingSystem {
         this.logBuffer = logBuffer;
     }
 
-    public ThjaziLogger createLogger() {
-        return new ThjaziLogger(logBuffer);
+    public TjahziLogger createLogger() {
+        return new TjahziLogger(logBuffer);
     }
 }

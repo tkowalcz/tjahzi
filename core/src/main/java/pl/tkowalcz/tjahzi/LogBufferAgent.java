@@ -1,4 +1,4 @@
-package pl.tkowalcz.thjazi;
+package pl.tkowalcz.tjahzi;
 
 import com.google.protobuf.Timestamp;
 import io.netty.buffer.ByteBuf;
@@ -10,8 +10,8 @@ import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.Agent;
 import org.agrona.concurrent.MessageHandler;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
-import pl.tkowalcz.thjazi.http.NettyHttpClient;
-import pl.tkowalcz.thjazi.http.TextBuilders;
+import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.http.TextBuilders;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class LogBufferAgent implements Agent, MessageHandler {
 
     @Override
     public void onMessage(int msgTypeId, MutableDirectBuffer buffer, int index, int length) {
-        if (msgTypeId == ThjaziLogger.LOG_MESSAGE_TYPE_ID) {
+        if (msgTypeId == TjahziLogger.LOG_MESSAGE_TYPE_ID) {
             processMessage(buffer, index);
         } else {
             // Ignore
