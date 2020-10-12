@@ -1,6 +1,6 @@
 # Thjazi
 
-Thjazi is a Java client for Grafana Loki. 
+[Thjazi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for Grafana Loki. 
 
 ### Design principles
 
