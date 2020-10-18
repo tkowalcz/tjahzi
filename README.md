@@ -1,8 +1,7 @@
+# Tjahzi
 [![CircleCI](https://circleci.com/gh/tkowalcz/tjahzi.svg?style=shield)](https://app.circleci.com/pipelines/github/tkowalcz/tjahzi?branch=master)
 
-# Tjahzi
-
-[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for Grafana Loki. 
+[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for [Grafana Loki](https://grafana.com/oss/loki/). 
 
 ### Design principles
 
