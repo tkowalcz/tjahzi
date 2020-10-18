@@ -38,7 +38,8 @@ public class TjahziInitializer {
         AgentRunner.startOnThread(runner);
 
         return new LoggingSystem(
-                logBuffer
+                logBuffer,
+                runner
         );
     }
 
