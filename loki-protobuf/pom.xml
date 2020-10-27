@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.13.0</version>
+            <version>3.12.0</version>
         </dependency>
 
         <dependency>
@@ -54,9 +54,6 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <!--                            <protocArtifact>com.google.protobuf:protoc:3.13.0</protocArtifact>-->
-                            <!--                            <type>java-shaded</type>-->
-
                             <addProtoSources>all</addProtoSources>
                             <includeMavenTypes>direct</includeMavenTypes>
                             <includeDirectories>
