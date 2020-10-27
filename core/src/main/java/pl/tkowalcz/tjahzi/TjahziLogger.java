@@ -3,6 +3,7 @@ package pl.tkowalcz.tjahzi;
 import org.agrona.concurrent.AtomicBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 public class TjahziLogger {
@@ -52,7 +53,7 @@ public class TjahziLogger {
 
     public TjahziLogger log(long timestamp,
                             Map<String, String> labels,
-                            byte[] line) {
+                            ByteBuffer line) {
         int requiredSize = calculateRequiredSizeAscii(labels, line);
         int claim = logBuffer.tryClaim(LOG_MESSAGE_TYPE_ID, requiredSize);
 
@@ -75,9 +76,13 @@ public class TjahziLogger {
                     cursor += buffer.putStringAscii(cursor, value);
                 }
 
-                buffer.putInt(cursor, line.length);
+                buffer.putInt(cursor, line.remaining());
                 cursor += Integer.BYTES;
-                buffer.putBytes(cursor, line);
+                buffer.putBytes(
+                        cursor,
+                        line,
+                        line.remaining()
+                );
                 logBuffer.commit(claim);
             } catch (Throwable t) {
                 logBuffer.abort(claim);
@@ -108,9 +113,9 @@ public class TjahziLogger {
 
     private int calculateRequiredSizeAscii(
             Map<String, String> labels,
-            byte[] line
+            ByteBuffer line
     ) {
         return calculateRequiredSizeAscii(labels) +
-                line.length + Integer.BYTES;
+                line.remaining() + Integer.BYTES;
     }
 }

@@ -199,8 +199,7 @@ public class LokiAppender extends AbstractAppender {
         return new LokiAppender.Builder<B>().asBuilder();
     }
 
-    private final Map<String, String> lokiLabels;
-    private final LoggingSystem loggingSystem;
+    private final AppenderLogic appenderLogic;
 
     private LokiAppender(
             String name,
@@ -217,10 +216,9 @@ public class LokiAppender extends AbstractAppender {
                 ignoreExceptions,
                 properties
         );
-        Objects.requireNonNull(layout, "layout");
 
-        this.lokiLabels = lokiLabels;
-        this.loggingSystem = loggingSystem;
+        Objects.requireNonNull(layout, "layout");
+        this.appenderLogic = new AppenderLogic(loggingSystem, lokiLabels);
     }
 
     @Override
@@ -230,16 +228,14 @@ public class LokiAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent event) {
-        byte[] bytes = getLayout().toByteArray(event);
-        loggingSystem.createLogger().log(
-                event.getTimeMillis(),
-                lokiLabels,
-                bytes
-        );
+        appenderLogic.append(getLayout(), event);
     }
 
     @Override
-    public boolean stop(long timeout, TimeUnit timeUnit) {
+    public boolean stop(
+            long timeout,
+            TimeUnit timeUnit
+    ) {
         setStopping();
 
         boolean stopped = super.stop(
@@ -248,11 +244,9 @@ public class LokiAppender extends AbstractAppender {
                 false
         );
 
-        loggingSystem.close(
-                (int) timeUnit.toMillis(timeout),
-                thread -> {
-                    error("");
-                }
+        appenderLogic.close(
+                timeout,
+                timeUnit
         );
 
         setStopped();
