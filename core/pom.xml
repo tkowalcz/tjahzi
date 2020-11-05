@@ -47,7 +47,6 @@
             <scope>test</scope>
         </dependency>
 
-
         <!-- Testcontainers -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
