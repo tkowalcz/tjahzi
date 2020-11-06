@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.15
+
 jobs:
   build:
     machine:
@@ -38,8 +41,20 @@ jobs:
       - store_test_results:
           path: test-results
 
+  release:
+    machine:
+      image: ubuntu-2004:202008-01
+    steps:
+      - checkout
+      - circleci-maven-release-orb/run-maven-release:
+          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true -s my-settings.xml'
+          ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
+
 workflows:
   version: 2
   workflow:
     jobs:
       - build
+  release:
+    jobs:
+      - release
