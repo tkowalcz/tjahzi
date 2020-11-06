@@ -38,10 +38,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
 
         <compiler.source.level>9</compiler.source.level>
         <compiler.target.level>9</compiler.target.level>
+
+        <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
     </properties>
 
     <build>
