@@ -45,9 +45,8 @@ jobs:
     machine:
       image: ubuntu-2004:202008-01
     steps:
-      - checkout
       - circleci-maven-release-orb/run-maven-release:
-          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true -s my-settings.xml'
+          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true'
           ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
 
 workflows:
@@ -57,4 +56,7 @@ workflows:
       - build
   release:
     jobs:
-      - release
+      - build
+      - release:
+          requires:
+            - build
