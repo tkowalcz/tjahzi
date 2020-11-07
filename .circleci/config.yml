@@ -56,7 +56,6 @@ workflows:
       - build
   release:
     jobs:
-      - build
-      - release:
-          requires:
-            - build
+      - circleci-maven-release-orb/run-maven-release:
+          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true'
+          ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
