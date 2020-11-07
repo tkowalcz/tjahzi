@@ -41,14 +41,6 @@ jobs:
       - store_test_results:
           path: test-results
 
-  release:
-    machine:
-      image: ubuntu-2004:202008-01
-    steps:
-      - circleci-maven-release-orb/run-maven-release:
-          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true'
-          ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
-
 workflows:
   version: 2
   workflow:
@@ -57,5 +49,8 @@ workflows:
   release:
     jobs:
       - circleci-maven-release-orb/run-maven-release:
+          executor:
+            machine:
+              image: ubuntu-2004:202008-01
           mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true'
           ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
