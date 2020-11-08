@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <description>Tjahzi is a low overhead logging client for Loki</description>
-    <version>1.2</version>
+    <version>1.3-SNAPSHOT</version>
 
     <modules>
         <module>loki-protobuf</module>
@@ -18,7 +18,7 @@
     <scm>
         <developerConnection>scm:git:git@github.com:tkowalcz/tjahzi.git</developerConnection>
         <url>https://github.com/tkowalcz/tjahzi</url>
-        <tag>tjahzi-1.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
