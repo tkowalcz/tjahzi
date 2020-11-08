@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <description>Tjahzi is a low overhead logging client for Loki</description>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
 
     <modules>
         <module>loki-protobuf</module>
