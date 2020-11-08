@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <description>Tjahzi is a low overhead logging client for Loki</description>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <modules>
         <module>loki-protobuf</module>
@@ -18,7 +18,8 @@
     <scm>
         <developerConnection>scm:git:git@github.com:tkowalcz/tjahzi.git</developerConnection>
         <url>https://github.com/tkowalcz/tjahzi</url>
-    </scm>
+      <tag>tjahzi-1.0</tag>
+  </scm>
 
     <licenses>
         <license>
