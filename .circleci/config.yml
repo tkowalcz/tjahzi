@@ -55,5 +55,3 @@ workflows:
     jobs:
       - circleci-maven-release-orb/run-maven-release:
           executor: new-java-maven-executor
-          mvn-release-perform-command: 'mvn --batch-mode release:perform -DdryRun=true'
-          ssh-fingerprints: 'my:ss:hf:in:ge:rp:ri:nt...'
