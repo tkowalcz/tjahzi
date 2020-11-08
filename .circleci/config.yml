@@ -4,7 +4,7 @@ orbs:
   circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.15
 
 jobs:
-  build:
+  build-and-test:
     machine:
       image: ubuntu-2004:202008-01
     steps:
@@ -48,9 +48,9 @@ executors:
 
 workflows:
   version: 2
-  workflow:
+  main:
     jobs:
-      - build
+      - build-and-test
   release:
     jobs:
       - circleci-maven-release-orb/run-maven-release:
