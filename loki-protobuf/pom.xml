@@ -8,6 +8,7 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
+    <name>tjahzi-loki-protobuf</name>
     <artifactId>loki-protobuf</artifactId>
     <packaging>jar</packaging>
 

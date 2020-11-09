@@ -8,6 +8,7 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
+    <name>tjahzi-core</name>
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
 

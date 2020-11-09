@@ -8,6 +8,7 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
 
+    <name>tjahzi-log4j2-appender</name>
     <artifactId>log4j2-appender</artifactId>
     <packaging>jar</packaging>
 
