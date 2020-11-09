@@ -179,7 +179,7 @@
                 </plugins>
             </build>
             <properties>
-                <gpg.passphrase>${gpg.passphrase}</gpg.passphrase>
+                <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
             </properties>
         </profile>
     </profiles>
