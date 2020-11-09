@@ -12,9 +12,9 @@
     <url>https://github.com/tkowalcz/tjahzi</url>
 
     <modules>
-        <module>loki-protobuf</module>
-        <module>log4j2-appender</module>
-        <module>core</module>
+        <module>tjahzi-protobuf</module>
+        <module>loki-log4j2-appender</module>
+        <module>tjahzi-core</module>
     </modules>
 
     <scm>
