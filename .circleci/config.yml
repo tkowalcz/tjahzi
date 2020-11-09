@@ -62,3 +62,4 @@ workflows:
           requires:
               - hold
           executor: new-java-maven-executor
+
