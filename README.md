@@ -1,5 +1,7 @@
 # Tjahzi
 [![CircleCI](https://circleci.com/gh/tkowalcz/tjahzi.svg?style=shield)](https://app.circleci.com/pipelines/github/tkowalcz/tjahzi?branch=master)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core)](https://search.maven.org/search?q=g:pl.tkowalcz.core)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender)](https://search.maven.org/search?q=g:pl.tkowalcz.log4j2-appender)
 
 [Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for [Grafana Loki](https://grafana.com/oss/loki/). 
 
