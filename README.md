@@ -10,7 +10,7 @@ Latest releases:
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
 
-### Design principles
+# Design principles
 
 Logging should be lightweight and not interfere with main business tasks of threads that happen to log a message. 
 Asking the logging subsystem to log a message should be as CPU efficient as possible. 
@@ -44,7 +44,43 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 | Application |----------------------+                                    
 |  Thread N   |                                                           
 +-------------+                                                           
-```                                                                                                                                                    
-### LICENSE
+```
+
+# Log4j Appender
+
+On top of a `Core` component  with rather simplistic API we intend to build several layers that make it truly useful. Log4j2 
+appender seemed like a good first.
+
+## Example Log4j2 configuration
+
+This example sets up a root logger with a Loki appender.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF" shutdownHook="disable" packages="pl.tkowalcz.tjahzi.log4j2">
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Loki"/>
+        </Root>
+    </Loggers>
+
+    <appenders>
+        <Loki name="Loki">
+            <host>${sys:loki.host}</host>
+            <port>${sys:loki.port}</port>
+
+            <ThresholdFilter level="ALL"/>
+            <PatternLayout>
+                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
+            </PatternLayout>
+
+            <Header name="server" value="127.0.0.1"/>
+            <Label name="server" value="127.0.0.1"/>
+        </Loki>
+    </appenders>
+</configuration>
+``` 
+                                                                                                                                                    
+# LICENSE
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. Pull and feature requests as welcome.
