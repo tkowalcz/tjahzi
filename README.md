@@ -1,9 +1,14 @@
-# Tjahzi
-[![CircleCI](https://circleci.com/gh/tkowalcz/tjahzi.svg?style=shield)](https://app.circleci.com/pipelines/github/tkowalcz/tjahzi?branch=master)
-[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core)](https://search.maven.org/search?q=g:pl.tkowalcz)
-[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender)](https://search.maven.org/search?q=g:pl.tkowalcz)
+# About
+[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for [Grafana Loki](https://grafana.com/oss/loki/).
 
-[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Java client for [Grafana Loki](https://grafana.com/oss/loki/). 
+[![License: MIT](https://img.shields.io/github/license/tkowalcz/tjahzi?style=for-the-badge)](https://github.com/tkowalcz/tjahzi/blob/master/LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/tkowalcz/tjahzi?style=for-the-badge)](https://github.com/tkowalcz/tjahzi/commits/master)
+[![CircleCI](https://img.shields.io/circleci/build/github/tkowalcz/tjahzi?style=for-the-badge)](https://app.circleci.com/pipelines/github/tkowalcz/tjahzi?branch=master)
+
+Latest releases:
+
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
 
 ### Design principles
 
