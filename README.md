@@ -80,7 +80,22 @@ This example sets up a root logger with a Loki appender.
     </appenders>
 </configuration>
 ``` 
+                 
+##Details
+
+Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
+
+Tag | Required | Comment
+----|----------|---------
+| host | :white_check_mark: | Network host address of Loki instance. Either IP address os host name. It will by passed to Netty and end up binge resolved by call to `InetSocketAddress.createUnresolved` |
+| port | :white_check_mark: |
+| header | :negative_squared_cross_mark:	 |
+| label | :negative_squared_cross_mark:	 |
+
+
+**Note: Contents of the properties are automatically interpolated by Log4j2 runtime (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).**
                                                                                                                                                     
 # LICENSE
 
-This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. Pull and feature requests as welcome.
+This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 
+Pull and feature requests are welcome.
