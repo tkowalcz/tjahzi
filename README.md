@@ -85,30 +85,29 @@ This example sets up a root logger with a Loki appender.
 
 Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
 
+**Note: Contents of the properties are automatically interpolated by Log4j2 runtime (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).**
+
 #### Host (required)
 
 Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being resolved
  by call to `InetSocketAddress.createUnresolved`. 
  
- TODO: #3 - Check what happens when IP address of a host changes (e.g. if it's a load balancer).
+```
+TODO: [#3](https://github.com/tkowalcz/tjahzi/issues/3) - Check what happens when IP address of a host changes (e.g. if it's a load balancer).
+```
 
 #### Port (required)
 
-![Nothing to see here](https://gfycat.com/pl/obviousblandjoey)
+Self explanatory.
 
 #### Header (optional)
 
-This tag can be used multiple times to specify additional headers that are passed to Loki instance.
+This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass
+a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).
 
-Tag | Required | Comment
-----|----------|---------
-| host | :white_check_mark: |  |
-| port | :white_check_mark: |
-| header | :negative_squared_cross_mark:	 |
-| label | :negative_squared_cross_mark:	 |
+#### Label (optional)
 
-
-**Note: Contents of the properties are automatically interpolated by Log4j2 runtime (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).**
+Specify additional labels attached to each log line sent via this appender instance.
                                                                                                                                                     
 # LICENSE
 
