@@ -80,12 +80,17 @@ This example sets up a root logger with a Loki appender.
     </appenders>
 </configuration>
 ``` 
-                 
+           
+### Lookups / variable substitution 
+
+Contents of the properties are automatically interpolated by Log4j2 (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).
+All environment, system etc. variable references will be replaced by their values during initialization of the appender. 
+Alternatively this process could have been executed for every log message. The latter approach was deemed too expensive. If you need a mechanism
+to replace a variable after logging system initialization I would lvie to hear your use case - please file an issue. 
+      
 ## Details
 
 Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
-
-**Note: Contents of the properties are automatically interpolated by Log4j2 runtime (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).**
 
 #### Host (required)
 
@@ -104,6 +109,10 @@ Self explanatory.
 
 This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass
 a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).
+
+```
+TODO: Implement [#4](https://github.com/tkowalcz/tjahzi/issues/4)
+```
 
 #### Label (optional)
 
