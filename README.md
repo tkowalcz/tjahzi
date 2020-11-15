@@ -46,7 +46,7 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 +-------------+                                                           
 ```
 
-# Log4j Appender
+# Log4j2 Appender
 
 On top of a `Core` component  with rather simplistic API we intend to build several layers that make it truly useful. Log4j2 
 appender seemed like a good first.
@@ -74,20 +74,35 @@ This example sets up a root logger with a Loki appender.
                 <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
             </PatternLayout>
 
-            <Header name="server" value="127.0.0.1"/>
+            <Header name="X-Scope-OrgID" value="Circus"/>
             <Label name="server" value="127.0.0.1"/>
         </Loki>
     </appenders>
 </configuration>
 ``` 
                  
-##Details
+## Details
 
 Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
 
+#### Host (required)
+
+Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being resolved
+ by call to `InetSocketAddress.createUnresolved`. 
+ 
+ TODO: #3 - Check what happens when IP address of a host changes (e.g. if it's a load balancer).
+
+#### Port (required)
+
+![Nothing to see here](https://gfycat.com/pl/obviousblandjoey)
+
+#### Header (optional)
+
+This tag can be used multiple times to specify additional headers that are passed to Loki instance.
+
 Tag | Required | Comment
 ----|----------|---------
-| host | :white_check_mark: | Network host address of Loki instance. Either IP address os host name. It will by passed to Netty and end up binge resolved by call to `InetSocketAddress.createUnresolved` |
+| host | :white_check_mark: |  |
 | port | :white_check_mark: |
 | header | :negative_squared_cross_mark:	 |
 | label | :negative_squared_cross_mark:	 |
