@@ -110,10 +110,6 @@ Self explanatory.
 This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass
 a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).
 
-```
-TODO: Implement [#4](https://github.com/tkowalcz/tjahzi/issues/4)
-```
-
 #### Label (optional)
 
 Specify additional labels attached to each log line sent via this appender instance.
