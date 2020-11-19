@@ -4,8 +4,13 @@ public class HttpClientFactory {
 
     private static final HttpClientFactory INSTANCE = new HttpClientFactory();
 
-    public NettyHttpClient getHttpClient(ClientConfiguration clientConfiguration) {
-        return new NettyHttpClient(clientConfiguration);
+    public NettyHttpClient getHttpClient(
+            ClientConfiguration clientConfiguration,
+            String[] additionalHeaders) {
+        return new NettyHttpClient(
+                clientConfiguration,
+                additionalHeaders
+        );
     }
 
     public static HttpClientFactory defaultFactory() {

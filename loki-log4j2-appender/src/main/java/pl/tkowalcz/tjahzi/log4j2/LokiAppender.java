@@ -20,11 +20,13 @@ import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import static java.util.Arrays.stream;
 
 /**
  * Loki Appender.
@@ -81,9 +83,16 @@ public class LokiAppender extends AbstractAppender {
                     .withRequestTimeoutMillis(readTimeoutMillis)
                     .build();
 
+            String[] additionalHeaders = stream(headers)
+                    .flatMap(header -> Stream.of(header.getName(), header.getValue()))
+                    .toArray(String[]::new);
+
             NettyHttpClient httpClient = HttpClientFactory
                     .defaultFactory()
-                    .getHttpClient(configurationBuilder);
+                    .getHttpClient(
+                            configurationBuilder,
+                            additionalHeaders
+                    );
 
             LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                     httpClient,
@@ -92,17 +101,7 @@ public class LokiAppender extends AbstractAppender {
             );
 
             HashMap<String, String> lokiLabels = Maps.newHashMap();
-            Arrays.stream(labels).forEach(property -> {
-                        String value = getConfiguration()
-                                .getStrSubstitutor()
-                                .replace(property.getValue());
-
-                        lokiLabels.put(
-                                property.getName(),
-                                value
-                        );
-                    }
-            );
+            stream(labels).forEach(__ -> lokiLabels.put(__.getName(), __.getValue()));
 
             return new LokiAppender(
                     getName(),
@@ -218,7 +217,10 @@ public class LokiAppender extends AbstractAppender {
         );
 
         Objects.requireNonNull(layout, "layout");
-        this.appenderLogic = new AppenderLogic(loggingSystem, lokiLabels);
+        this.appenderLogic = new AppenderLogic(
+                loggingSystem,
+                lokiLabels
+        );
     }
 
     @Override

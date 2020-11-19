@@ -54,7 +54,10 @@ class LoggingSystemSanityCheckTest {
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(clientConfiguration);
+                .getHttpClient(
+                        clientConfiguration,
+                        new String[0]
+                );
 
         TjahziInitializer initializer = new TjahziInitializer();
         LoggingSystem loggingSystem = initializer.createLoggingSystem(

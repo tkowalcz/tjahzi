@@ -15,15 +15,20 @@ import java.util.concurrent.ThreadFactory;
 
 public class NettyHttpClient implements AutoCloseable {
 
+    public static final String PROTOBUF_MIME_TYPE = "application/x-protobuf";
+
     private final EventLoopGroup group;
     private final String logEndpoint;
 
     private final Channel channel;
     private final String host;
+    private final HttpHeaders headers;
 
     private final Snappy snappy = new Snappy();
 
-    public NettyHttpClient(ClientConfiguration clientConfiguration) {
+    public NettyHttpClient(
+            ClientConfiguration clientConfiguration,
+            String[] additionalHeaders) {
         host = clientConfiguration.getHost();
         logEndpoint = clientConfiguration.getLogEndpoint();
 
@@ -46,6 +51,11 @@ public class NettyHttpClient implements AutoCloseable {
                 .connect()
                 .syncUninterruptibly()
                 .channel();
+
+        headers = new ReadOnlyHttpHeaders(
+                true,
+                additionalHeaders
+        );
     }
 
     public void log(ByteBuf dataBuffer) {
@@ -59,9 +69,11 @@ public class NettyHttpClient implements AutoCloseable {
                 output
         );
 
-        request.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/x-protobuf");
-        request.headers().set(HttpHeaderNames.CONTENT_LENGTH, output.readableBytes());
-        request.headers().set(HttpHeaderNames.HOST, host);
+        request.headers()
+                .add(headers)
+                .set(HttpHeaderNames.CONTENT_TYPE, PROTOBUF_MIME_TYPE)
+                .set(HttpHeaderNames.CONTENT_LENGTH, output.readableBytes())
+                .set(HttpHeaderNames.HOST, host);
 
         channel.writeAndFlush(request);
     }
