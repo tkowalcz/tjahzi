@@ -46,7 +46,7 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 +-------------+                                                           
 ```
 
-# Log4j Appender
+# Log4j2 Appender
 
 On top of a `Core` component  with rather simplistic API we intend to build several layers that make it truly useful. Log4j2 
 appender seemed like a good first.
@@ -74,13 +74,51 @@ This example sets up a root logger with a Loki appender.
                 <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
             </PatternLayout>
 
-            <Header name="server" value="127.0.0.1"/>
+            <Header name="X-Scope-OrgID" value="Circus"/>
             <Label name="server" value="127.0.0.1"/>
         </Loki>
     </appenders>
 </configuration>
 ``` 
+           
+### Lookups / variable substitution 
+
+Contents of the properties are automatically interpolated by Log4j2 (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).
+All environment, system etc. variable references will be replaced by their values during initialization of the appender. 
+Alternatively this process could have been executed for every log message. The latter approach was deemed too expensive. If you need a mechanism
+to replace a variable after logging system initialization I would lvie to hear your use case - please file an issue. 
+      
+## Details
+
+Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
+
+#### Host (required)
+
+Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being resolved
+ by call to `InetSocketAddress.createUnresolved`. 
+ 
+```
+TODO: [#3](https://github.com/tkowalcz/tjahzi/issues/3) - Check what happens when IP address of a host changes (e.g. if it's a load balancer).
+```
+
+#### Port (required)
+
+Self explanatory.
+
+#### Header (optional)
+
+This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass
+a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).
+
+```
+TODO: Implement [#4](https://github.com/tkowalcz/tjahzi/issues/4)
+```
+
+#### Label (optional)
+
+Specify additional labels attached to each log line sent via this appender instance.
                                                                                                                                                     
 # LICENSE
 
-This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. Pull and feature requests as welcome.
+This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 
+Pull and feature requests are welcome.
