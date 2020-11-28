@@ -75,7 +75,7 @@ class HeadersTest {
                         }
                 );
 
-        LoggingSystem loggingSystem = initializer.createLoggingSystem(
+        loggingSystem = initializer.createLoggingSystem(
                 httpClient,
                 1024 * 1024,
                 false
@@ -121,7 +121,7 @@ class HeadersTest {
                         new String[0]
                 );
 
-        LoggingSystem loggingSystem = initializer.createLoggingSystem(
+        loggingSystem = initializer.createLoggingSystem(
                 httpClient,
                 1024 * 1024,
                 false
@@ -170,7 +170,7 @@ class HeadersTest {
                         }
                 );
 
-        LoggingSystem loggingSystem = initializer.createLoggingSystem(
+        loggingSystem = initializer.createLoggingSystem(
                 httpClient,
                 1024 * 1024,
                 false

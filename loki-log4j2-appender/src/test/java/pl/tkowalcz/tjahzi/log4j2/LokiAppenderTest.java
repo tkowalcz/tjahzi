@@ -16,6 +16,8 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -39,17 +41,27 @@ class LokiAppenderTest {
             .withExposedPorts(3100);
 
     @Test
-    void sendData() {
+    void shouldSendData() throws URISyntaxException {
+        // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false)).reconfigure();
+
+        URI uri = getClass()
+                .getClassLoader()
+                .getResource("basic-appender-test-log4j2-configuration.xml")
+                .toURI();
+
+        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
+                .setConfigLocation(uri);
 
         String expectedLogLine = "Test";
         long expectedTimestamp = System.currentTimeMillis();
 
+        // When
         Logger logger = LogManager.getLogger(LokiAppenderTest.class);
         logger.info(expectedLogLine);
 
+        // Then
         RestAssured.port = loki.getFirstMappedPort();
         RestAssured.baseURI = "http://" + loki.getHost();
         RestAssured.registerParser("text/plain", Parser.JSON);

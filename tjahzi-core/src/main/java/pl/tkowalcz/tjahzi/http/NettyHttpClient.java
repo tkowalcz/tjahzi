@@ -11,9 +11,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.compression.Snappy;
 import io.netty.handler.codec.http.*;
 
+import java.io.Closeable;
 import java.util.concurrent.ThreadFactory;
 
-public class NettyHttpClient implements AutoCloseable {
+public class NettyHttpClient implements Closeable {
 
     public static final String PROTOBUF_MIME_TYPE = "application/x-protobuf";
 

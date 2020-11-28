@@ -7,10 +7,11 @@ import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -20,7 +21,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,16 +40,12 @@ class LoggingSystemTest {
                     Wait.forHttp("/ready")
                             .forPort(3100)
             )
-            .withExposedPorts(3100)
-            .withLogConsumer((Consumer<OutputFrame>) outputFrame -> {
-                        if (outputFrame.getBytes() != null) {
-                            System.out.print(new String(outputFrame.getBytes()));
-                        }
-                    }
-            );
+            .withExposedPorts(3100);
 
-    @Test
-    void sendData() {
+    private LoggingSystem loggingSystem;
+
+    @BeforeEach
+    void setUp() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .withConnectionTimeoutMillis(10_000)
                 .withHost(loki.getHost())
@@ -63,14 +60,29 @@ class LoggingSystemTest {
                 );
 
         TjahziInitializer initializer = new TjahziInitializer();
-        LoggingSystem loggingSystem = initializer.createLoggingSystem(
+        loggingSystem = initializer.createLoggingSystem(
                 httpClient,
                 1024 * 1024,
                 false
         );
+    }
 
+    @AfterEach
+    void tearDown() {
+        if (loggingSystem != null) {
+            loggingSystem.close(
+                    (int) TimeUnit.SECONDS.toMillis(10),
+                    System.out::println
+            );
+        }
+    }
+
+    @Test
+    void sendData() {
+        // Given
         long timestamp = System.currentTimeMillis();
 
+        // When
         TjahziLogger logger = loggingSystem.createLogger();
         for (int i = 0; i < 1000; i++) {
             logger.log(
@@ -80,6 +92,7 @@ class LoggingSystemTest {
             );
         }
 
+        // Then
         RestAssured.port = loki.getFirstMappedPort();
         RestAssured.baseURI = "http://" + loki.getHost();
         RestAssured.registerParser("text/plain", Parser.JSON);

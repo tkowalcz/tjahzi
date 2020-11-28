@@ -39,7 +39,8 @@ public class TjahziInitializer {
 
         return new LoggingSystem(
                 logBuffer,
-                runner
+                runner,
+                httpClient
         );
     }
 
