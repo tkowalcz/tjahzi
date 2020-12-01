@@ -10,9 +10,13 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
 
+    private static final int BYTES_IN_MEGABYTE = 1024 * 1024;
+
+    private final ResponseHandler responseHandler;
     private final int requestTimeoutMillis;
 
-    HttpClientInitializer(int requestTimeoutMillis) {
+    HttpClientInitializer(ResponseHandler responseHandler, int requestTimeoutMillis) {
+        this.responseHandler = responseHandler;
         this.requestTimeoutMillis = requestTimeoutMillis;
     }
 
@@ -21,7 +25,8 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline p = ch.pipeline();
         p.addLast(new IdleStateHandler(requestTimeoutMillis, 0, 60));
         p.addLast(new HttpClientCodec());
-        p.addLast(new HttpObjectAggregator(1048576));
+        p.addLast(new HttpObjectAggregator(BYTES_IN_MEGABYTE));
         p.addLast(new HttpContentDecompressor());
+        p.addLast(responseHandler);
     }
 }

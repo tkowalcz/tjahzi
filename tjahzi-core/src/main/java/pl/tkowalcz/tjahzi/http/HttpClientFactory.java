@@ -6,7 +6,7 @@ public class HttpClientFactory {
 
     public NettyHttpClient getHttpClient(
             ClientConfiguration clientConfiguration,
-            String[] additionalHeaders) {
+            String... additionalHeaders) {
         return new NettyHttpClient(
                 clientConfiguration,
                 additionalHeaders

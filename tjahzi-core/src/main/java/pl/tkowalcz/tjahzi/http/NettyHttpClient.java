@@ -1,82 +1,99 @@
 package pl.tkowalcz.tjahzi.http;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.compression.Snappy;
 import io.netty.handler.codec.http.*;
 
 import java.io.Closeable;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class NettyHttpClient implements Closeable {
 
     public static final String PROTOBUF_MIME_TYPE = "application/x-protobuf";
 
-    private final EventLoopGroup group;
-    private final String logEndpoint;
-
-    private final Channel channel;
-    private final String host;
+    private final ClientConfiguration clientConfiguration;
     private final HttpHeaders headers;
 
     private final Snappy snappy = new Snappy();
 
+    private final EventLoopGroup group;
+        private volatile ChannelFuture lokiConnection;
+//    private HttpConnection lokiConnection;
+
     public NettyHttpClient(
             ClientConfiguration clientConfiguration,
             String[] additionalHeaders) {
-        host = clientConfiguration.getHost();
-        logEndpoint = clientConfiguration.getLogEndpoint();
-
-        ThreadGroup threadGroup = new ThreadGroup("Tjahzi Loki client");
-        ThreadFactory threadFactory = r -> new Thread(threadGroup, r, "tjahzi-worker");
-        group = new NioEventLoopGroup(1, threadFactory);
-
-        Bootstrap bootstrap = new Bootstrap();
-        channel = bootstrap.group(group)
-                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.TCP_NODELAY, false)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, clientConfiguration.getConnectionTimeoutMillis())
-                .channel(NioSocketChannel.class)
-                .handler(new HttpClientInitializer(clientConfiguration.getRequestTimeoutMillis()))
-                .remoteAddress(
-                        clientConfiguration.getHost(),
-                        clientConfiguration.getPort()
-                )
-                .connect()
-                .syncUninterruptibly()
-                .channel();
-
-        headers = new ReadOnlyHttpHeaders(
+        this.clientConfiguration = clientConfiguration;
+        this.headers = new ReadOnlyHttpHeaders(
                 true,
                 additionalHeaders
         );
+
+        ThreadGroup threadGroup = new ThreadGroup("Tjahzi Loki client");
+        ThreadFactory threadFactory = r -> new Thread(threadGroup, r, "tjahzi-worker");
+        NioEventLoopGroup group = new NioEventLoopGroup(1, threadFactory);
+        this.group = group;
+
+        foobar(clientConfiguration);
+    }
+
+    private void foobar(ClientConfiguration clientConfiguration) {
+        lokiConnection = BootstrapUtil.initConnection(
+                group,
+                clientConfiguration
+        );
+
+        lokiConnection.addListener(future -> {
+            System.out.println("NettyHttpClient.foobar");
+            if (!future.isSuccess()) {
+                group.schedule(() -> {
+                            foobar(clientConfiguration);
+                        },
+                        1000, TimeUnit.MILLISECONDS);
+                // TODO: increase error counters
+
+            }
+        });
     }
 
     public void log(ByteBuf dataBuffer) {
-        ByteBuf output = PooledByteBufAllocator.DEFAULT.buffer();
-        snappy.encode(dataBuffer, output, dataBuffer.readableBytes());
+        log(dataBuffer, clientConfiguration.getMaxRetries());
+    }
 
-        FullHttpRequest request = new DefaultFullHttpRequest(
-                HttpVersion.HTTP_1_1,
-                HttpMethod.POST,
-                logEndpoint,
-                output
-        );
+    public void log(ByteBuf dataBuffer, int retries) {
+        lokiConnection.awaitUninterruptibly();
+        if (lokiConnection.isSuccess()) {
+            ByteBuf output = PooledByteBufAllocator.DEFAULT.buffer();
+            snappy.encode(dataBuffer, output, dataBuffer.readableBytes());
 
-        request.headers()
-                .add(headers)
-                .set(HttpHeaderNames.CONTENT_TYPE, PROTOBUF_MIME_TYPE)
-                .set(HttpHeaderNames.CONTENT_LENGTH, output.readableBytes())
-                .set(HttpHeaderNames.HOST, host);
+            FullHttpRequest request = new DefaultFullHttpRequest(
+                    HttpVersion.HTTP_1_1,
+                    HttpMethod.POST,
+                    clientConfiguration.getLogEndpoint(),
+                    output
+            );
 
-        channel.writeAndFlush(request);
+            request.headers()
+                    .add(headers)
+                    .set(HttpHeaderNames.CONTENT_TYPE, PROTOBUF_MIME_TYPE)
+                    .set(HttpHeaderNames.CONTENT_LENGTH, output.readableBytes())
+                    .set(HttpHeaderNames.HOST, clientConfiguration.getHost());
+
+            lokiConnection.channel().writeAndFlush(request);
+        } else {
+            // TODO: increase error counters
+
+            if (retries > 0) {
+                log(dataBuffer, retries - 1);
+            }
+
+            // Dropping message on the floor
+        }
     }
 
     @Override
