@@ -27,11 +27,14 @@ public class ReconnectTest {
     void setUp() {
         wireMockServer = new WireMockServer(
                 wireMockConfig()
-                        .dynamicPort()
-                        .dynamicHttpsPort()
+                        .port(12322)
         );
 
-//        wireMockServer.start();
+        wireMockServer.stubFor(
+                get(urlEqualTo("/loki/api/v1/push"))
+                        .willReturn(
+                                aResponse().withStatus(200)
+                        ));
 
         initializer = new TjahziInitializer();
     }
@@ -53,17 +56,11 @@ public class ReconnectTest {
     @Test
     void shouldIncludeAdditionalHeaders() {
         // Given
-//        wireMockServer.stubFor(
-//                get(urlEqualTo("/loki/api/v1/push"))
-//                        .willReturn(
-//                                aResponse().withStatus(200)
-//                        ));
-
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .withConnectionTimeoutMillis(10_000)
                 .withHost("localhost")
                 .withPort(12322)
-                .withMaxRetries(1)
+                .withMaxRetries(10)
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
@@ -83,13 +80,15 @@ public class ReconnectTest {
                 "Test"
         );
 
+        wireMockServer.start();
+
         // Then
         await()
                 .atMost(Durations.TEN_MINUTES)
                 .untilAsserted(() ->
                         wireMockServer.verify(
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
-                                        .withHeader("X-Scope-OrgID", equalTo("Circus"))
-                        ));
+                        )
+                );
     }
 }

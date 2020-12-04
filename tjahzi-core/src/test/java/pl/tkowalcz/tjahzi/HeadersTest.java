@@ -69,10 +69,8 @@ class HeadersTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
-                        new String[]{
-                                "X-Scope-OrgID", "Circus",
-                                "C", "Control"
-                        }
+                        "X-Scope-OrgID", "Circus",
+                        "C", "Control"
                 );
 
         loggingSystem = initializer.createLoggingSystem(
@@ -117,8 +115,7 @@ class HeadersTest {
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
-                        clientConfiguration,
-                        new String[0]
+                        clientConfiguration
                 );
 
         loggingSystem = initializer.createLoggingSystem(
@@ -163,11 +160,9 @@ class HeadersTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
-                        new String[]{
-                                "content-type", "text/plain",
-                                "content-length", "5232423423",
-                                "host", "remote"
-                        }
+                        "content-type", "text/plain",
+                        "content-length", "5232423423",
+                        "host", "remote"
                 );
 
         loggingSystem = initializer.createLoggingSystem(

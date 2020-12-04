@@ -54,10 +54,8 @@ class ResourcesCleanupOnCloseTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
-                        new String[]{
-                                "X-Scope-OrgID", "Circus",
-                                "C", "Control"
-                        }
+                        "X-Scope-OrgID", "Circus",
+                        "C", "Control"
                 );
 
         LoggingSystem loggingSystem = initializer.createLoggingSystem(

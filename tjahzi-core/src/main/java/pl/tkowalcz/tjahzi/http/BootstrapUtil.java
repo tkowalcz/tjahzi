@@ -16,7 +16,7 @@ public class BootstrapUtil {
         Bootstrap bootstrap = new Bootstrap();
         ResponseHandler responseHandler = new ResponseHandler();
 
-        ChannelFuture channelFuture = bootstrap.group(group)
+        return bootstrap.group(group)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, false)
@@ -32,7 +32,5 @@ public class BootstrapUtil {
                         clientConfiguration.getHost(),
                         clientConfiguration.getPort()
                 ).connect();
-
-        return channelFuture;
     }
 }
