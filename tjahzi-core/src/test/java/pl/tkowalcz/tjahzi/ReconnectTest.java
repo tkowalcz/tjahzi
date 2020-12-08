@@ -16,7 +16,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.awaitility.Awaitility.await;
 
-class HeadersTest {
+public class ReconnectTest {
 
     private WireMockServer wireMockServer;
 
@@ -27,11 +27,14 @@ class HeadersTest {
     void setUp() {
         wireMockServer = new WireMockServer(
                 wireMockConfig()
-                        .dynamicPort()
-                        .dynamicHttpsPort()
+                        .port(12322)
         );
 
-        wireMockServer.start();
+        wireMockServer.stubFor(
+                post(urlEqualTo("/loki/api/v1/push"))
+                        .willReturn(
+                                aResponse().withStatus(200)
+                        ));
 
         initializer = new TjahziInitializer();
     }
@@ -51,119 +54,17 @@ class HeadersTest {
     }
 
     @Test
-    void shouldIncludeAdditionalHeaders() {
+    void shouldEventuallyReconnectIfLokiWasDownWhenStarting() {
         // Given
-        wireMockServer.stubFor(
-                post(urlEqualTo("/loki/api/v1/push"))
-                        .willReturn(
-                                aResponse().withStatus(200)
-                        ));
-
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .withConnectionTimeoutMillis(10_000)
                 .withHost("localhost")
-                .withPort(wireMockServer.port())
-                .withMaxRetries(1)
+                .withPort(12322)
+                .withMaxRetries(10)
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(
-                        clientConfiguration,
-                        "X-Scope-OrgID", "Circus",
-                        "C", "Control"
-                );
-
-        loggingSystem = initializer.createLoggingSystem(
-                httpClient,
-                1024 * 1024,
-                false
-        );
-
-        // WHen
-        TjahziLogger logger = loggingSystem.createLogger();
-        logger.log(
-                System.currentTimeMillis(),
-                Map.of(),
-                "Test"
-        );
-
-        // Then
-        await()
-                .atMost(Durations.FIVE_SECONDS)
-                .untilAsserted(() ->
-                        wireMockServer.verify(
-                                postRequestedFor(urlMatching("/loki/api/v1/push"))
-                                        .withHeader("X-Scope-OrgID", equalTo("Circus"))
-                        ));
-    }
-
-    @Test
-    void shouldHandleCaseWithNoAdditionalHeaders() {
-        // Given
-        wireMockServer.stubFor(
-                post(urlEqualTo("/loki/api/v1/push"))
-                        .willReturn(
-                                aResponse().withStatus(200)
-                        ));
-
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .withConnectionTimeoutMillis(10_000)
-                .withHost("localhost")
-                .withPort(wireMockServer.port())
-                .withMaxRetries(1)
-                .build();
-
-        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(
-                        clientConfiguration
-                );
-
-        loggingSystem = initializer.createLoggingSystem(
-                httpClient,
-                1024 * 1024,
-                false
-        );
-
-        // WHen
-        TjahziLogger logger = loggingSystem.createLogger();
-        logger.log(
-                System.currentTimeMillis(),
-                Map.of(),
-                "Test"
-        );
-
-        // Then
-        await()
-                .atMost(Durations.FIVE_SECONDS)
-                .untilAsserted(() ->
-                        wireMockServer.verify(
-                                postRequestedFor(urlMatching("/loki/api/v1/push"))
-                        ));
-    }
-
-    @Test
-    void shouldNotOverrideCrucialHeaders() {
-        // Given
-        wireMockServer.stubFor(
-                get(urlEqualTo("/loki/api/v1/push"))
-                        .willReturn(
-                                aResponse().withStatus(200)
-                        ));
-
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
-                .withConnectionTimeoutMillis(10_000)
-                .withHost("localhost")
-                .withPort(wireMockServer.port())
-                .withMaxRetries(1)
-                .build();
-
-        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(
-                        clientConfiguration,
-                        "content-type", "text/plain",
-                        "content-length", "5232423423",
-                        "host", "remote"
-                );
+                .getHttpClient(clientConfiguration);
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
@@ -179,15 +80,75 @@ class HeadersTest {
                 "Test"
         );
 
+        wireMockServer.start();
+
         // Then
+        await()
+                .atMost(Durations.TEN_MINUTES)
+                .untilAsserted(() ->
+                        wireMockServer.verify(
+                                postRequestedFor(urlMatching("/loki/api/v1/push"))
+                        )
+                );
+    }
+
+    @Test
+    void shouldReconnectIfLokiFailed() {
+        // Given
+        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+                .withConnectionTimeoutMillis(10_000)
+                .withHost("localhost")
+                .withPort(12322)
+                .withMaxRetries(10)
+                .build();
+
+        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
+                .getHttpClient(clientConfiguration);
+
+        wireMockServer.start();
+
+        loggingSystem = initializer.createLoggingSystem(
+                httpClient,
+                1024 * 1024,
+                false
+        );
+
+        TjahziLogger logger = loggingSystem.createLogger();
+        logger.log(
+                System.currentTimeMillis(),
+                Map.of(),
+                "Test"
+        );
+
         await()
                 .atMost(Durations.FIVE_SECONDS)
                 .untilAsserted(() ->
                         wireMockServer.verify(
+                                1,
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
-                                        .withHeader("content-type", matching("application/x-protobuf"))
-                                        .withHeader("content-length", matching("29|30"))
-                                        .withHeader("host", matching("localhost"))
-                        ));
+                        )
+                );
+
+        wireMockServer.stop();
+        await().until(() -> !wireMockServer.isRunning());
+
+        // When
+        logger.log(
+                System.currentTimeMillis(),
+                Map.of(),
+                "Test"
+        );
+
+        wireMockServer.start();
+
+        // Then
+        await()
+                .atMost(Durations.TEN_MINUTES)
+                .untilAsserted(() ->
+                        wireMockServer.verify(
+                                1,
+                                postRequestedFor(urlMatching("/loki/api/v1/push"))
+                        )
+                );
     }
 }
