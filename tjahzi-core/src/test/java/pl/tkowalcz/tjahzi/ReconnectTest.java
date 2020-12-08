@@ -31,7 +31,7 @@ public class ReconnectTest {
         );
 
         wireMockServer.stubFor(
-                get(urlEqualTo("/loki/api/v1/push"))
+                post(urlEqualTo("/loki/api/v1/push"))
                         .willReturn(
                                 aResponse().withStatus(200)
                         ));
@@ -54,7 +54,7 @@ public class ReconnectTest {
     }
 
     @Test
-    void shouldIncludeAdditionalHeaders() {
+    void shouldEventuallyReconnectIfLokiWasDownWhenStarting() {
         // Given
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .withConnectionTimeoutMillis(10_000)
@@ -87,6 +87,66 @@ public class ReconnectTest {
                 .atMost(Durations.TEN_MINUTES)
                 .untilAsserted(() ->
                         wireMockServer.verify(
+                                postRequestedFor(urlMatching("/loki/api/v1/push"))
+                        )
+                );
+    }
+
+    @Test
+    void shouldReconnectIfLokiFailed() {
+        // Given
+        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+                .withConnectionTimeoutMillis(10_000)
+                .withHost("localhost")
+                .withPort(12322)
+                .withMaxRetries(10)
+                .build();
+
+        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
+                .getHttpClient(clientConfiguration);
+
+        wireMockServer.start();
+
+        loggingSystem = initializer.createLoggingSystem(
+                httpClient,
+                1024 * 1024,
+                false
+        );
+
+        TjahziLogger logger = loggingSystem.createLogger();
+        logger.log(
+                System.currentTimeMillis(),
+                Map.of(),
+                "Test"
+        );
+
+        await()
+                .atMost(Durations.FIVE_SECONDS)
+                .untilAsserted(() ->
+                        wireMockServer.verify(
+                                1,
+                                postRequestedFor(urlMatching("/loki/api/v1/push"))
+                        )
+                );
+
+        wireMockServer.stop();
+        await().until(() -> !wireMockServer.isRunning());
+
+        // When
+        logger.log(
+                System.currentTimeMillis(),
+                Map.of(),
+                "Test"
+        );
+
+        wireMockServer.start();
+
+        // Then
+        await()
+                .atMost(Durations.TEN_MINUTES)
+                .untilAsserted(() ->
+                        wireMockServer.verify(
+                                1,
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
                         )
                 );

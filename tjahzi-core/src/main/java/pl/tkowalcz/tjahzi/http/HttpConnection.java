@@ -54,9 +54,11 @@ public class HttpConnection implements Closeable {
     }
 
     private void execute(FullHttpRequest request, Retry retry) {
-        lokiConnection.awaitUninterruptibly();
-        if (lokiConnection.isSuccess()) {
-            lokiConnection.channel().writeAndFlush(request);
+        ChannelFuture stableReference = this.lokiConnection;
+
+        stableReference.awaitUninterruptibly();
+        if (stableReference.isSuccess() && stableReference.channel().isActive()) {
+            stableReference.channel().writeAndFlush(request);
         } else {
             // TODO: increase error counters
             retry.retry();

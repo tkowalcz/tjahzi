@@ -15,9 +15,7 @@ public class NettyHttpClient implements Closeable {
     private final HttpHeaders headers;
 
     private final Snappy snappy = new Snappy();
-
-    //        private volatile ChannelFuture lokiConnection;
-    private HttpConnection lokiConnection;
+    private final HttpConnection lokiConnection;
 
     public NettyHttpClient(
             ClientConfiguration clientConfiguration,

@@ -4,14 +4,27 @@ import java.util.function.Consumer;
 
 class BlockingRetry implements Retry {
 
-    private final ExponentialBackoffStrategy strategy = ExponentialBackoffStrategy.withDefault();
+    private final ExponentialBackoffStrategy strategy;
     private final Consumer<BlockingRetry> operation;
 
     private int retries;
 
-    BlockingRetry(Consumer<BlockingRetry> operation, int retries) {
+    // VisibleForTesting
+    BlockingRetry(
+            Consumer<BlockingRetry> operation,
+            ExponentialBackoffStrategy strategy,
+            int retries) {
         this.operation = operation;
+        this.strategy = strategy;
         this.retries = retries;
+    }
+
+    BlockingRetry(Consumer<BlockingRetry> operation, int retries) {
+        this(
+                operation,
+                ExponentialBackoffStrategy.withDefault(),
+                retries
+        );
     }
 
     @Override

@@ -1,19 +1,31 @@
 package pl.tkowalcz.tjahzi.http;
 
-import io.netty.channel.nio.NioEventLoopGroup;
-
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 class EventLoopGroupRetry implements Retry, Runnable {
 
-    private final NioEventLoopGroup group;
+    private final ScheduledExecutorService group;
     private final Consumer<EventLoopGroupRetry> operation;
-    private final ExponentialBackoffStrategy strategy = ExponentialBackoffStrategy.withDefault();
+    private final ExponentialBackoffStrategy strategy;
 
-    public EventLoopGroupRetry(NioEventLoopGroup group, Consumer<EventLoopGroupRetry> operation) {
+    // VisibleForTesting
+    public EventLoopGroupRetry(
+            ScheduledExecutorService group,
+            Consumer<EventLoopGroupRetry> operation,
+            ExponentialBackoffStrategy strategy) {
         this.group = group;
         this.operation = operation;
+        this.strategy = strategy;
+    }
+
+    public EventLoopGroupRetry(ScheduledExecutorService group, Consumer<EventLoopGroupRetry> operation) {
+        this(
+                group,
+                operation,
+                ExponentialBackoffStrategy.withDefault()
+        );
     }
 
     @Override

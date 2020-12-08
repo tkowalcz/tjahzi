@@ -55,8 +55,7 @@ class LoggingSystemTest {
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
-                        clientConfiguration,
-                        new String[0]
+                        clientConfiguration
                 );
 
         TjahziInitializer initializer = new TjahziInitializer();

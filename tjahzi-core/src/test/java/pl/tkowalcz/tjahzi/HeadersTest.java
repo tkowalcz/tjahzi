@@ -54,7 +54,7 @@ class HeadersTest {
     void shouldIncludeAdditionalHeaders() {
         // Given
         wireMockServer.stubFor(
-                get(urlEqualTo("/loki/api/v1/push"))
+                post(urlEqualTo("/loki/api/v1/push"))
                         .willReturn(
                                 aResponse().withStatus(200)
                         ));
@@ -101,7 +101,7 @@ class HeadersTest {
     void shouldHandleCaseWithNoAdditionalHeaders() {
         // Given
         wireMockServer.stubFor(
-                get(urlEqualTo("/loki/api/v1/push"))
+                post(urlEqualTo("/loki/api/v1/push"))
                         .willReturn(
                                 aResponse().withStatus(200)
                         ));
