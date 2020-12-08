@@ -26,23 +26,26 @@ To avoid these effects we strive to adhere to the following principles (and docu
 You can compare this with [design principles of Aeron](https://github.com/real-logic/aeron/wiki/Design-Principles) which are close to our hearts.
 
 ### Architecture
-```                                                                 
-+-------------+    Log                                                    
-| Application |----------------+                                          
-|  Thread 1   |                |                                          
-+-------------+                |                                          
-                               |                                          
-       .                      \|/                                          
-                          +----+---------------+         +---------+      
-       .      Log         |                    |         |  I/O    |      
-          --------------->+     Log buffer     +-->--->--+ thread  |      
-       .                  |                    |         | (Netty) |      
-                          +----------+---------+         +---------+      
-       .                            /|\                                    
-                                     |                                    
-+-------------+      Log             |                                    
-| Application |----------------------+                                    
-|  Thread N   |                                                           
+
+```
+                [via 10kB thread local buffer]
+                           │                                          
++-------------+    Log  <──┘                                                
+│ Application │----------------+                                          
+│  Thread 1   │                │                                          
++-------------+                │                                          
+                               │                                          
+       .                      \│/                                          
+                          +----+---------------+         +---------+         +---------+
+       .      Log         │                    │         │ Reading │         │  I/O    │
+          --------------->┤     Log buffer     ├-->--->--┤ agent   ├-->--->--┤ thread  │      
+       .                  │                    │         │ thread  │         │ (Netty) │    
+                          +----------+---------+         +---------+         +---------+    
+       .                            /│\                                    
+                                     │                                    
++-------------+      Log             │                                    
+│ Application │----------------------+                                    
+│  Thread N   │                                                           
 +-------------+                                                           
 ```
 
@@ -96,14 +99,10 @@ Let's go through the example config above and analyze configuration options (**N
 
 Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being resolved
  by call to `InetSocketAddress.createUnresolved`. 
- 
-```
-TODO: [#3](https://github.com/tkowalcz/tjahzi/issues/3) - Check what happens when IP address of a host changes (e.g. if it's a load balancer).
-```
 
 #### Port (required)
 
-Self explanatory.
+Self-explanatory.
 
 #### Header (optional)
 
