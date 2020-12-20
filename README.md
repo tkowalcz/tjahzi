@@ -68,7 +68,7 @@ This example sets up a root logger with a Loki appender.
     </Loggers>
 
     <appenders>
-        <Loki name="Loki">
+        <Loki name="Loki" bufferSizeMegabytes="64">
             <host>${sys:loki.host}</host>
             <port>${sys:loki.port}</port>
 
@@ -112,7 +112,32 @@ a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafan
 #### Label (optional)
 
 Specify additional labels attached to each log line sent via this appender instance.
-                                                                                                                                                    
+
+#### bufferSizeMegabytes (optional, default = 1MB)
+
+Size of the `log buffer`. Must be power of two between 1MB and 1GB. See https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing for more explanations.
+
+#### maxRetries (optional, default = 3)
+
+Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after
+the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then
+next batches will probably fail too).
+
+#### connectTimeoutMillis (optional, default = 5s)
+
+This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue to retry indefinitely
+employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3).
+
+#### readTimeoutMillis (optional, default = 60s)
+
+Sets socket read timeout on Loki connection.
+
+#### useOffHeapBuffer (optional, default = true)
+
+Whether Tjahzi should allocate native buffer for `Log buffer` component. We can go into a rabbit hole of divagations what are the
+implications of this. Most important in our view is that having 10s or 100s of MB of space taken out of heap is not very 
+friendly to garbage collector which might have to occasionally copy it around.
+
 # LICENSE
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 

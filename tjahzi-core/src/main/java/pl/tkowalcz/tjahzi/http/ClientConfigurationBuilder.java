@@ -4,7 +4,7 @@ public class ClientConfigurationBuilder {
 
     public static final String DEFAULT_LOG_ENDPOINT = "/loki/api/v1/push";
 
-    public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 60_000;
+    public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 5_000;
     public static final int DEFAULT_REQUEST_TIMEOUT_MILLIS = 60_000;
 
     public static final int DEFAULT_MAX_RETRIES = 0;

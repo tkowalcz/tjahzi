@@ -54,13 +54,13 @@ public class LokiAppender extends AbstractAppender {
         private int port;
 
         @PluginBuilderAttribute
-        private int connectTimeoutMillis = 0;
+        private int connectTimeoutMillis = 5000;
 
         @PluginBuilderAttribute
-        private int readTimeoutMillis = 0;
+        private int readTimeoutMillis = 60_000;
 
         @PluginBuilderAttribute
-        private int maxRetries = 0;
+        private int maxRetries = 3;
 
         @PluginBuilderAttribute
         private int bufferSizeMegabytes = 32;
