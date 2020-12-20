@@ -51,15 +51,12 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - hold:
-          type: approval
-          requires:
-            - build-and-test
       - circleci-maven-release-orb/run-maven-release:
           filters:
             branches:
-              only: master
+              ignore: /.*/
+            tags:
+              only: /.*/
           requires:
-              - hold
+              - build-and-test
           executor: new-java-maven-executor
-
