@@ -11,12 +11,13 @@ import java.nio.ByteBuffer;
 
 public class TjahziInitializer {
 
+    public static final int MIN_BUFFER_SIZE_BYTES = 1024 * 1024;
+
     public LoggingSystem createLoggingSystem(
             NettyHttpClient httpClient,
             int bufferSizeBytes,
             boolean offHeap) {
-
-        verifyIsPowerOfTwo(bufferSizeBytes);
+        bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
         ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
 
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
@@ -44,10 +45,26 @@ public class TjahziInitializer {
         );
     }
 
-    private void verifyIsPowerOfTwo(int bufferSize) {
-        if (bufferSize < 0 || Integer.bitCount(bufferSize) != 1) {
-            throw new IllegalArgumentException("Invalid buffer size (should be power of two: " + bufferSize);
+    public static boolean isCorrectSize(int bufferSize) {
+        return bufferSize >= MIN_BUFFER_SIZE_BYTES && Integer.bitCount(bufferSize) == 1;
+    }
+
+    // VisibleForTesting
+    static int findNearestPowerOfTwo(int bufferSize) {
+        if (!isCorrectSize(bufferSize)) {
+            if (bufferSize < MIN_BUFFER_SIZE_BYTES) {
+                return MIN_BUFFER_SIZE_BYTES;
+            }
+
+            long candidatePowerOfTwo = Long.highestOneBit(bufferSize) << 1;
+            if (candidatePowerOfTwo + RingBufferDescriptor.TRAILER_LENGTH > Integer.MAX_VALUE) {
+                return (int) (candidatePowerOfTwo >> 1);
+            }
+
+            return (int) candidatePowerOfTwo;
         }
+
+        return bufferSize;
     }
 
     private ByteBuffer allocateJavaBuffer(

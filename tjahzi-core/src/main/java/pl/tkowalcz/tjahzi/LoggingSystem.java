@@ -41,4 +41,8 @@ public class LoggingSystem {
             }
         }
     }
+
+    public int getLogBufferSize() {
+        return logBuffer.capacity();
+    }
 }
