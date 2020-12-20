@@ -68,6 +68,13 @@
             <version>2.13.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.catch-exception</groupId>
+            <artifactId>catch-exception</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- Testcontainers -->
         <dependency>

@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziInitializer;
+import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
@@ -94,9 +95,17 @@ public class LokiAppender extends AbstractAppender {
                             additionalHeaders
                     );
 
+            int bufferSizeBytes = getBufferSizeMegabytes() * BYTES_IN_MEGABYTE;
+            if (TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
+                LOGGER.warn("Invalid log buffer size {} - using nearest power of two greater than provided value, no less than 1MB. {}",
+                        bufferSizeBytes,
+                        GitHubDocs.LOG_BUFFER_SIZING.getLogMessage()
+                );
+            }
+
             LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                     httpClient,
-                    getBufferSizeMegabytes() * BYTES_IN_MEGABYTE,
+                    bufferSizeBytes,
                     isUseOffHeapBuffer()
             );
 
@@ -198,6 +207,7 @@ public class LokiAppender extends AbstractAppender {
         return new LokiAppender.Builder<B>().asBuilder();
     }
 
+    private final LoggingSystem loggingSystem;
     private final AppenderLogic appenderLogic;
 
     private LokiAppender(
@@ -215,12 +225,17 @@ public class LokiAppender extends AbstractAppender {
                 ignoreExceptions,
                 properties
         );
-
         Objects.requireNonNull(layout, "layout");
+
+        this.loggingSystem = loggingSystem;
         this.appenderLogic = new AppenderLogic(
                 loggingSystem,
                 lokiLabels
         );
+    }
+
+    public LoggingSystem getLoggingSystem() {
+        return loggingSystem;
     }
 
     @Override
