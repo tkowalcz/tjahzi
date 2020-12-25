@@ -19,6 +19,7 @@ import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +88,9 @@ class LoggingSystemTest {
             logger.log(
                     timestamp + i,
                     Map.of("version", "0.43", "server", "127.0.0.1"),
-                    "Test" + i
+                    "level",
+                    "warn",
+                    ByteBuffer.wrap(("Test" + i).getBytes())
             );
         }
 

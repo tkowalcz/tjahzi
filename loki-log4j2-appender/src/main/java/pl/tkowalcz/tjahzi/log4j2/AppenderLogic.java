@@ -8,6 +8,7 @@ import pl.tkowalcz.tjahzi.TjahziLogger;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -17,18 +18,23 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
     protected static final org.apache.logging.log4j.Logger LOGGER = StatusLogger.getLogger();
 
     private final LoggingSystem loggingSystem;
-    private final TjahziLogger logger;
 
+    private final String logLevelLabel;
     private final Map<String, String> lokiLabels;
+
+    private final TjahziLogger logger;
 
     public AppenderLogic(
             LoggingSystem loggingSystem,
+            String logLevelLabel,
             Map<String, String> lokiLabels
     ) {
         this.loggingSystem = loggingSystem;
-        logger = loggingSystem.createLogger();
 
-        this.lokiLabels = lokiLabels;
+        this.lokiLabels = Collections.unmodifiableMap(lokiLabels);
+        this.logLevelLabel = logLevelLabel;
+
+        logger = loggingSystem.createLogger();
     }
 
     public void append(
@@ -51,9 +57,13 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
     @Override
     public void accept(LogEvent event, ByteBuffer byteBuffer) {
+        String logLevel = event.getLevel().toString();
+
         logger.log(
                 event.getTimeMillis(),
                 lokiLabels,
+                logLevelLabel,
+                logLevel,
                 byteBuffer
         );
     }

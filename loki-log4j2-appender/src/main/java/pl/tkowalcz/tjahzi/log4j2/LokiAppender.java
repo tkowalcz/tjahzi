@@ -68,6 +68,9 @@ public class LokiAppender extends AbstractAppender {
         @PluginBuilderAttribute
         private boolean useOffHeapBuffer = true;
 
+        @PluginBuilderAttribute
+        private String logLevelLabel;
+
         @PluginElement("Headers")
         private Header[] headers;
 
@@ -118,6 +121,7 @@ public class LokiAppender extends AbstractAppender {
                     getFilter(),
                     isIgnoreExceptions(),
                     getPropertyArray(),
+                    logLevelLabel,
                     lokiLabels,
                     loggingSystem
             );
@@ -186,6 +190,14 @@ public class LokiAppender extends AbstractAppender {
             this.useOffHeapBuffer = useOffHeapBuffer;
         }
 
+        public String getLogLevelLabel() {
+            return logLevelLabel;
+        }
+
+        public void setLogLevelLabel(String logLevelLabel) {
+            this.logLevelLabel = logLevelLabel;
+        }
+
         public void setHeaders(Header[] headers) {
             this.headers = headers;
         }
@@ -216,6 +228,7 @@ public class LokiAppender extends AbstractAppender {
             Filter filter,
             boolean ignoreExceptions,
             Property[] properties,
+            String logLevelLabel,
             Map<String, String> lokiLabels,
             LoggingSystem loggingSystem) {
         super(
@@ -230,6 +243,7 @@ public class LokiAppender extends AbstractAppender {
         this.loggingSystem = loggingSystem;
         this.appenderLogic = new AppenderLogic(
                 loggingSystem,
+                logLevelLabel,
                 lokiLabels
         );
     }
