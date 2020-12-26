@@ -3,14 +3,12 @@ package pl.tkowalcz.tjahzi.log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
 class BufferSizeConfigurationTest {
 
     @Test

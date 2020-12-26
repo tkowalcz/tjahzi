@@ -9,6 +9,7 @@ import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +78,9 @@ public class ReconnectTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         wireMockServer.start();
@@ -117,7 +120,9 @@ public class ReconnectTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         await()
@@ -136,7 +141,9 @@ public class ReconnectTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         wireMockServer.start();

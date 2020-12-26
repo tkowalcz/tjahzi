@@ -17,6 +17,7 @@ import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -51,10 +52,7 @@ class LoggingSystemSanityCheckTest {
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(
-                        clientConfiguration,
-                        new String[0]
-                );
+                .getHttpClient(clientConfiguration);
 
         TjahziInitializer initializer = new TjahziInitializer();
         loggingSystem = initializer.createLoggingSystem(
@@ -84,7 +82,9 @@ class LoggingSystemSanityCheckTest {
         logger.log(
                 timestamp,
                 Map.of("version", "0.43", "server", "127.0.0.1"),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         // Then
@@ -110,6 +110,7 @@ class LoggingSystemSanityCheckTest {
                             .body("data.result.size()", equalTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
+                            .body("data.result[0].stream.level", equalTo("warn"))
                             .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000), "Test"));
                 });
     }

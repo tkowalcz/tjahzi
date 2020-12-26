@@ -14,16 +14,15 @@ class ResponseHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) {
-        System.out.println("msg = " + msg);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         System.out.println("cause = " + cause);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         System.out.println("ResponseHandler.channelInactive");
     }
 }

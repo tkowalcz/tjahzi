@@ -9,6 +9,7 @@ import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +85,9 @@ class HeadersTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         // Then
@@ -129,7 +132,9 @@ class HeadersTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         // Then
@@ -145,7 +150,7 @@ class HeadersTest {
     void shouldNotOverrideCrucialHeaders() {
         // Given
         wireMockServer.stubFor(
-                get(urlEqualTo("/loki/api/v1/push"))
+                post(urlEqualTo("/loki/api/v1/push"))
                         .willReturn(
                                 aResponse().withStatus(200)
                         ));
@@ -176,7 +181,9 @@ class HeadersTest {
         logger.log(
                 System.currentTimeMillis(),
                 Map.of(),
-                "Test"
+                "level",
+                "warn",
+                ByteBuffer.wrap("Test".getBytes())
         );
 
         // Then
@@ -186,7 +193,7 @@ class HeadersTest {
                         wireMockServer.verify(
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
                                         .withHeader("content-type", matching("application/x-protobuf"))
-                                        .withHeader("content-length", matching("29|30"))
+                                        .withHeader("content-length", matching("42|43"))
                                         .withHeader("host", matching("localhost"))
                         ));
     }
