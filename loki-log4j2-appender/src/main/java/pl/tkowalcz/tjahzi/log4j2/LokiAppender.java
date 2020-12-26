@@ -22,7 +22,6 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -106,14 +105,15 @@ public class LokiAppender extends AbstractAppender {
                 );
             }
 
+            HashMap<String, String> lokiLabels = Maps.newHashMap();
+            stream(labels).forEach(__ -> lokiLabels.put(__.getName(), __.getValue()));
+
             LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                     httpClient,
+                    lokiLabels,
                     bufferSizeBytes,
                     isUseOffHeapBuffer()
             );
-
-            HashMap<String, String> lokiLabels = Maps.newHashMap();
-            stream(labels).forEach(__ -> lokiLabels.put(__.getName(), __.getValue()));
 
             return new LokiAppender(
                     getName(),
@@ -122,7 +122,6 @@ public class LokiAppender extends AbstractAppender {
                     isIgnoreExceptions(),
                     getPropertyArray(),
                     logLevelLabel,
-                    lokiLabels,
                     loggingSystem
             );
         }
@@ -229,7 +228,6 @@ public class LokiAppender extends AbstractAppender {
             boolean ignoreExceptions,
             Property[] properties,
             String logLevelLabel,
-            Map<String, String> lokiLabels,
             LoggingSystem loggingSystem) {
         super(
                 name,
@@ -243,8 +241,7 @@ public class LokiAppender extends AbstractAppender {
         this.loggingSystem = loggingSystem;
         this.appenderLogic = new AppenderLogic(
                 loggingSystem,
-                logLevelLabel,
-                lokiLabels
+                logLevelLabel
         );
     }
 
@@ -254,6 +251,7 @@ public class LokiAppender extends AbstractAppender {
 
     @Override
     public void start() {
+        loggingSystem.start();
         super.start();
     }
 

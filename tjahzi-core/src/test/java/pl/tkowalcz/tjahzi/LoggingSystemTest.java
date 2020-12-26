@@ -62,9 +62,12 @@ class LoggingSystemTest {
         TjahziInitializer initializer = new TjahziInitializer();
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of("version", "0.43", "server", "127.0.0.1"),
                 1024 * 1024,
                 false
         );
+
+        loggingSystem.start();
     }
 
     @AfterEach
@@ -87,7 +90,7 @@ class LoggingSystemTest {
         for (int i = 0; i < 1000; i++) {
             logger.log(
                     timestamp + i,
-                    Map.of("version", "0.43", "server", "127.0.0.1"),
+                    Map.of(),
                     "level",
                     "warn",
                     ByteBuffer.wrap(("Test" + i).getBytes())
@@ -119,6 +122,7 @@ class LoggingSystemTest {
                             .body("data.result.size()", equalTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
+                            .body("data.result[0].stream.level", equalTo("warn"))
                             .body("data.result[0].values", hasItems(new BaseMatcher<>() {
 
                                 int index = 999;

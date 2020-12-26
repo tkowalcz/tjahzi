@@ -8,6 +8,7 @@ import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 public class TjahziInitializer {
 
@@ -15,6 +16,7 @@ public class TjahziInitializer {
 
     public LoggingSystem createLoggingSystem(
             NettyHttpClient httpClient,
+            Map<String, String> staticLabels,
             int bufferSizeBytes,
             boolean offHeap) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
@@ -26,7 +28,8 @@ public class TjahziInitializer {
 
         LogBufferAgent agent = new LogBufferAgent(
                 logBuffer,
-                httpClient
+                httpClient,
+                staticLabels
         );
 
         AgentRunner runner = new AgentRunner(
@@ -35,8 +38,6 @@ public class TjahziInitializer {
                 null,
                 agent
         );
-
-        AgentRunner.startOnThread(runner);
 
         return new LoggingSystem(
                 logBuffer,

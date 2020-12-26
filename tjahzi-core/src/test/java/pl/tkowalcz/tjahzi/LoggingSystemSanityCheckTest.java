@@ -57,9 +57,12 @@ class LoggingSystemSanityCheckTest {
         TjahziInitializer initializer = new TjahziInitializer();
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of("version", "0.43", "server", "127.0.0.1"),
                 1024 * 1024,
                 false
         );
+
+        loggingSystem.start();
     }
 
     @AfterEach
@@ -81,7 +84,7 @@ class LoggingSystemSanityCheckTest {
         // When
         logger.log(
                 timestamp,
-                Map.of("version", "0.43", "server", "127.0.0.1"),
+                Map.of(),
                 "level",
                 "warn",
                 ByteBuffer.wrap("Test".getBytes())
