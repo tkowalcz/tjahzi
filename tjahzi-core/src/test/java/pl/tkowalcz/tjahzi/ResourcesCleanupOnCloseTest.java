@@ -13,6 +13,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -60,9 +61,11 @@ class ResourcesCleanupOnCloseTest {
 
         LoggingSystem loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         // Verify our assumptions that we can find threads started by Tjahzi
         Awaitility.await().untilAsserted(() -> {

@@ -76,9 +76,11 @@ class HeadersTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         // WHen
         TjahziLogger logger = loggingSystem.createLogger();
@@ -123,9 +125,11 @@ class HeadersTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         // WHen
         TjahziLogger logger = loggingSystem.createLogger();
@@ -172,9 +176,11 @@ class HeadersTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         // When
         TjahziLogger logger = loggingSystem.createLogger();

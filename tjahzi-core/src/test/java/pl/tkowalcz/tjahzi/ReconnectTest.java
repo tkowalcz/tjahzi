@@ -69,9 +69,11 @@ public class ReconnectTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         // When
         TjahziLogger logger = loggingSystem.createLogger();
@@ -112,9 +114,11 @@ public class ReconnectTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                Map.of(),
                 1024 * 1024,
                 false
         );
+        loggingSystem.start();
 
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(

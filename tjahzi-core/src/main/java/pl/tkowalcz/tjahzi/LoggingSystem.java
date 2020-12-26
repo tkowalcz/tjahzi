@@ -26,6 +26,10 @@ public class LoggingSystem {
         return new TjahziLogger(logBuffer);
     }
 
+    public void start() {
+        AgentRunner.startOnThread(runner);
+    }
+
     public void close(
             int retryCloseTimeoutMs,
             Consumer<Thread> closeFailAction) {
