@@ -30,6 +30,30 @@ public class TjahziLogger {
         );
 
         int claim = logBuffer.tryClaim(LOG_MESSAGE_TYPE_ID, requiredSize);
+        if (claim > 0) {
+            putMessageOnRing(
+                    timestamp,
+                    labels,
+                    logLevelLabel,
+                    logLevel,
+                    line,
+                    claim
+            );
+        } else {
+            // TODO: increment dropped lines metric
+        }
+
+        return this;
+    }
+
+    private void putMessageOnRing(
+            long timestamp,
+            Map<String, String> labels,
+            String logLevelLabel,
+            String logLevel,
+            ByteBuffer line,
+            int claim
+    ) {
         try {
             serializer
                     .writeTo(
@@ -45,7 +69,5 @@ public class TjahziLogger {
         } catch (Throwable t) {
             logBuffer.abort(claim);
         }
-
-        return this;
     }
 }
