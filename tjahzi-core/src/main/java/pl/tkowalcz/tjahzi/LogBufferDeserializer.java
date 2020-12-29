@@ -88,11 +88,15 @@ public class LogBufferDeserializer {
         TextBuilder textBuilder = TextBuilders.threadLocal();
 
         textBuilder.append("{ ");
-        staticLabels.forEach((key, value) -> textBuilder.append(key)
-                .append("=")
-                .append("\"")
-                .append(value)
-                .append("\","));
+        staticLabels.forEach((key, value) -> {
+            if (!labels.containsKey(key)) {
+                textBuilder.append(key)
+                        .append("=")
+                        .append("\"")
+                        .append(value)
+                        .append("\",");
+            }
+        });
 
         labels.forEach((key, value) -> textBuilder.append(key)
                 .append("=")

@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import com.google.protobuf.Timestamp;
 import logproto.Logproto;
 import org.agrona.concurrent.UnsafeBuffer;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -27,7 +28,6 @@ class LogBufferDeserializerTest {
             String logLine,
             int expectedSize) {
         // Given
-
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[expectedSize]);
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
         serializer.writeTo(
@@ -72,6 +72,55 @@ class LogBufferDeserializerTest {
                         logLevelStream,
                         staticLabelsStream
                 )
+                        .collect(joining(",", "{", "}"))
+        );
+    }
+
+    @Test
+    void shouldOverrideStaticLabelsWithIncoming() {
+        // Given
+        Map<String, String> staticLabels = Map.of(
+                "ip", "10.0.0.42",
+                "hostname", "razor-crest",
+                "region", "outer-rim"
+        );
+
+        Map<String, String> incomingLabels = Map.of(
+                "hostname", "¯\\_(ツ)_/¯",
+                "region", "busted"
+        );
+
+        UnsafeBuffer buffer = new UnsafeBuffer(new byte[256]);
+        LogBufferSerializer serializer = new LogBufferSerializer(buffer);
+        serializer.writeTo(
+                0,
+                32042L,
+                incomingLabels,
+                "log_level",
+                "WARN",
+                ByteBuffer.wrap("[Mando] You have something I want.".getBytes())
+        );
+
+        // When
+        LogBufferDeserializer deserializer = new LogBufferDeserializer();
+        Logproto.StreamAdapter stream = deserializer.deserialize(
+                buffer,
+                0,
+                staticLabels
+        );
+
+        // Then
+        Stream<String> incomingLabelsStream = toPropertyStream(
+                Map.of(
+                        "log_level", "WARN",
+                        "hostname", "¯\\_(ツ)_/¯",
+                        "ip", "10.0.0.42",
+                        "region", "busted"
+                )
+        );
+
+        assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(
+                incomingLabelsStream
                         .collect(joining(",", "{", "}"))
         );
     }

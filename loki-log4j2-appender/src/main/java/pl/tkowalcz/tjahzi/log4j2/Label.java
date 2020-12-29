@@ -8,10 +8,15 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.config.plugins.PluginValue;
 import org.apache.logging.log4j.status.StatusLogger;
 
+import java.util.Map;
+import java.util.regex.Pattern;
+
 @Plugin(name = "label", category = Node.CATEGORY, printObject = true)
 public class Label extends Property {
 
     private static final Logger LOGGER = StatusLogger.getLogger();
+
+    private static final Pattern LABEL_NAME_PATTER = Pattern.compile("[a-zA-Z_:][a-zA-Z0-9_:]*");
 
     private Label(String name, String value) {
         super(name, value);
@@ -26,5 +31,18 @@ public class Label extends Property {
         }
 
         return new Label(name, value);
+    }
+
+    public boolean hasValidName() {
+        return hasValidName(getName());
+    }
+
+    // @VisibleForTests
+    public Map.Entry<String, String> asEntry() {
+        return Map.entry(getName(), getValue());
+    }
+
+    public static boolean hasValidName(String label) {
+        return LABEL_NAME_PATTER.matcher(label).matches();
     }
 }
