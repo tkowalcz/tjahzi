@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -79,16 +80,14 @@ class LogBufferDeserializerTest {
     @Test
     void shouldOverrideStaticLabelsWithIncoming() {
         // Given
-        Map<String, String> staticLabels = Map.of(
-                "ip", "10.0.0.42",
-                "hostname", "razor-crest",
-                "region", "outer-rim"
-        );
+        Map<String, String> staticLabels = new LinkedHashMap<>();
+        staticLabels.put("ip", "10.0.0.42");
+        staticLabels.put("hostname", "razor-crest");
+        staticLabels.put("region", "outer-rim");
 
-        Map<String, String> incomingLabels = Map.of(
-                "hostname", "¯\\_(ツ)_/¯",
-                "region", "busted"
-        );
+        Map<String, String> incomingLabels = new LinkedHashMap<>();
+        incomingLabels.put("hostname", "-\\_(?)_/-");
+        incomingLabels.put("region", "busted");
 
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[256]);
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
@@ -111,12 +110,10 @@ class LogBufferDeserializerTest {
 
         // Then
         Stream<String> incomingLabelsStream = toPropertyStream(
-                Map.of(
-                        "log_level", "WARN",
-                        "hostname", "¯\\_(ツ)_/¯",
-                        "ip", "10.0.0.42",
-                        "region", "busted"
-                )
+                Map.entry("ip", "10.0.0.42"),
+                Map.entry("hostname", "-\\_(?)_/-"),
+                Map.entry("region", "busted"),
+                Map.entry("log_level", "WARN")
         );
 
         assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(

@@ -68,7 +68,7 @@ public class LogBufferDeserializer {
 
         return Logproto.StreamAdapter.newBuilder()
                 .setLabels(
-                        buildLabelsStringIncludingStatic(labels, staticLabels)
+                        buildLabelsStringIncludingStatic(staticLabels, labels)
                 )
                 .addEntries(
                         Logproto.EntryAdapter.newBuilder()

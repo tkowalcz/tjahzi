@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -115,6 +116,12 @@ class LogBufferSerializerDeserializerTest {
     public static Stream<String> toPropertyStream(Map<String, String> labels) {
         return labels.entrySet()
                 .stream()
+                .map(entry -> entry.getKey() + "=\"" + entry.getValue() + "\"");
+    }
+
+    @SafeVarargs
+    public static Stream<String> toPropertyStream(Map.Entry<String, String>... labels) {
+        return Arrays.stream(labels)
                 .map(entry -> entry.getKey() + "=\"" + entry.getValue() + "\"");
     }
 }
