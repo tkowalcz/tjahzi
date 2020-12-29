@@ -40,10 +40,9 @@ class LogBufferDeserializerTest {
                 ByteBuffer.wrap(logLine.getBytes())
         );
 
-        Map<String, String> staticLabels = Map.of(
-                "foo", "bar",
-                "bazz", "buzz"
-        );
+        Map<String, String> staticLabels = new LinkedHashMap<>();
+        staticLabels.put("foo", "bar");
+        staticLabels.put("bazz", "buzz");
 
         // When
         LogBufferDeserializer deserializer = new LogBufferDeserializer();
@@ -63,15 +62,15 @@ class LogBufferDeserializerTest {
         );
         assertThat(stream.getEntriesList().get(0).getLine()).isEqualTo(logLine);
 
-        Stream<String> logLevelStream = logLevelLabel == null ? Stream.of() : toPropertyStream(Map.of(logLevelLabel, logLevel));
+        Stream<String> logLevelStream = logLevelLabel == null ? Stream.of() : toPropertyStream(Map.entry(logLevelLabel, logLevel));
         Stream<String> incomingLabelsStream = toPropertyStream(labels);
         Stream<String> staticLabelsStream = toPropertyStream(staticLabels);
 
         assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(
                 Streams.concat(
+                        staticLabelsStream,
                         incomingLabelsStream,
-                        logLevelStream,
-                        staticLabelsStream
+                        logLevelStream
                 )
                         .collect(joining(",", "{", "}"))
         );
