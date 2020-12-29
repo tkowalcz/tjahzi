@@ -16,7 +16,7 @@ public class Label extends Property {
 
     private static final Logger LOGGER = StatusLogger.getLogger();
 
-    private static final Pattern LABEL_NAME_PATTER = Pattern.compile("[a-zA-Z_:][a-zA-Z0-9_:]*");
+    private static final Pattern LABEL_NAME_PATTER = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
 
     private Label(String name, String value) {
         super(name, value);
