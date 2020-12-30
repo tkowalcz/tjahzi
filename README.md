@@ -121,7 +121,7 @@ If defined then log level label of configured name will be added to each line se
 
 #### bufferSizeMegabytes (optional, default = 1MB)
 
-Size of the `log buffer`. Must be power of two between 1MB and 1GB. See https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing for more explanations.
+Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations.
 
 #### maxRetries (optional, default = 3)
 
