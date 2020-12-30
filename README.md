@@ -79,6 +79,8 @@ This example sets up a root logger with a Loki appender.
 
             <Header name="X-Scope-OrgID" value="Circus"/>
             <Label name="server" value="127.0.0.1"/>
+          
+            <LogLevelLabel>log_level</LogLevelLabel>
         </Loki>
     </appenders>
 </configuration>
@@ -111,7 +113,11 @@ a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafan
 
 #### Label (optional)
 
-Specify additional labels attached to each log line sent via this appender instance.
+Specify additional labels attached to each log line sent via this appender instance. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
+
+#### LogLevelLabel (optional)
+
+If defined then log level label of configured name will be added to each line sent to Loki. It will contain Log4j log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
 
 #### bufferSizeMegabytes (optional, default = 1MB)
 
