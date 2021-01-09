@@ -9,6 +9,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -18,12 +19,14 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @Testcontainers
 class ResourcesCleanupOnCloseTest {
 
     private WireMockServer wireMockServer;
     private TjahziInitializer initializer;
+    private StandardMonitoringModule monitoringModule;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +38,7 @@ class ResourcesCleanupOnCloseTest {
 
         wireMockServer.start();
         initializer = new TjahziInitializer();
+        monitoringModule = mock(StandardMonitoringModule.class);
     }
 
     @AfterEach
@@ -55,12 +59,14 @@ class ResourcesCleanupOnCloseTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
+                        monitoringModule,
                         "X-Scope-OrgID", "Circus",
                         "C", "Control"
                 );
 
         LoggingSystem loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false

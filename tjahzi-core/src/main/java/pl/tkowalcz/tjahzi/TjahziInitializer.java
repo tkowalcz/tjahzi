@@ -6,6 +6,7 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class TjahziInitializer {
 
     public LoggingSystem createLoggingSystem(
             NettyHttpClient httpClient,
+            MonitoringModule monitoringModule,
             Map<String, String> staticLabels,
             int bufferSizeBytes,
             boolean offHeap) {
@@ -34,7 +36,7 @@ public class TjahziInitializer {
 
         AgentRunner runner = new AgentRunner(
                 new SleepingMillisIdleStrategy(),
-                Throwable::printStackTrace,
+                monitoringModule::addAgentError,
                 null,
                 agent
         );
@@ -42,6 +44,7 @@ public class TjahziInitializer {
         return new LoggingSystem(
                 logBuffer,
                 runner,
+                monitoringModule,
                 httpClient
         );
     }
@@ -58,7 +61,7 @@ public class TjahziInitializer {
             }
 
             long candidatePowerOfTwo = Long.highestOneBit(bufferSize) << 1;
-            if (candidatePowerOfTwo + RingBufferDescriptor.TRAILER_LENGTH > Integer.MAX_VALUE) {
+            if (candidatePowerOfTwo + RingBufferDescriptor.TRAILER_LENGTH >= Integer.MAX_VALUE) {
                 return (int) (candidatePowerOfTwo >> 1);
             }
 

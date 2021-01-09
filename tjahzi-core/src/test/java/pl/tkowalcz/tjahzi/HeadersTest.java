@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.mock;
 
 class HeadersTest {
 
@@ -23,6 +25,7 @@ class HeadersTest {
 
     private TjahziInitializer initializer;
     private LoggingSystem loggingSystem;
+    private StandardMonitoringModule monitoringModule;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +38,7 @@ class HeadersTest {
         wireMockServer.start();
 
         initializer = new TjahziInitializer();
+        monitoringModule = mock(StandardMonitoringModule.class);
     }
 
     @AfterEach
@@ -70,12 +74,14 @@ class HeadersTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
+                        monitoringModule,
                         "X-Scope-OrgID", "Circus",
                         "C", "Control"
                 );
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false
@@ -120,11 +126,13 @@ class HeadersTest {
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
-                        clientConfiguration
+                        clientConfiguration,
+                        monitoringModule
                 );
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false
@@ -169,6 +177,7 @@ class HeadersTest {
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
                         clientConfiguration,
+                        monitoringModule,
                         "content-type", "text/plain",
                         "content-length", "5232423423",
                         "host", "remote"
@@ -176,6 +185,7 @@ class HeadersTest {
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false

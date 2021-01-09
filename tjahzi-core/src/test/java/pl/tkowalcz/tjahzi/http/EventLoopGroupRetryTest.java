@@ -5,14 +5,18 @@ import org.awaitility.Durations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.mock;
 
 class EventLoopGroupRetryTest {
+
+    private final StandardMonitoringModule monitoringModule = mock(StandardMonitoringModule.class);
 
     private NioEventLoopGroup eventLoopGroup;
 
@@ -37,7 +41,8 @@ class EventLoopGroupRetryTest {
                     retryCounter.incrementAndGet();
                     __.retry();
                 },
-                new ExponentialBackoffStrategy(250, 1000, 2)
+                new ExponentialBackoffStrategy(250, 1000, 2),
+                monitoringModule
         );
 
         // When
@@ -59,7 +64,8 @@ class EventLoopGroupRetryTest {
                 __ -> {
                     retryCounter.incrementAndGet();
                 },
-                new ExponentialBackoffStrategy(1, 1, 1)
+                new ExponentialBackoffStrategy(1, 1, 1),
+                monitoringModule
         );
 
         // When

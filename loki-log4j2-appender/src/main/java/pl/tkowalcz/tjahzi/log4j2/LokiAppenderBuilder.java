@@ -12,6 +12,7 @@ import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.HashMap;
 import java.util.stream.Stream;
@@ -76,10 +77,13 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
 
+        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
+
         NettyHttpClient httpClient = HttpClientFactory
                 .defaultFactory()
                 .getHttpClient(
                         configurationBuilder,
+                        monitoringModule,
                         additionalHeaders
                 );
 
@@ -97,6 +101,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
         LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 lokiLabels,
                 bufferSizeBytes,
                 isUseOffHeapBuffer()

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.compression.Snappy;
 import io.netty.handler.codec.http.*;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.io.Closeable;
 
@@ -19,6 +20,7 @@ public class NettyHttpClient implements Closeable {
 
     public NettyHttpClient(
             ClientConfiguration clientConfiguration,
+            MonitoringModule monitoringModule,
             String[] additionalHeaders) {
         this.clientConfiguration = clientConfiguration;
         this.headers = new ReadOnlyHttpHeaders(
@@ -26,7 +28,7 @@ public class NettyHttpClient implements Closeable {
                 additionalHeaders
         );
 
-        lokiConnection = new HttpConnection(clientConfiguration);
+        lokiConnection = new HttpConnection(clientConfiguration, monitoringModule);
     }
 
     public void log(ByteBuf dataBuffer) {

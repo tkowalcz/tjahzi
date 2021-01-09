@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.Mockito.mock;
 
 public class ReconnectTest {
 
@@ -23,6 +25,7 @@ public class ReconnectTest {
 
     private TjahziInitializer initializer;
     private LoggingSystem loggingSystem;
+    private StandardMonitoringModule monitoringModule;
 
     @BeforeEach
     void setUp() {
@@ -38,6 +41,7 @@ public class ReconnectTest {
                         ));
 
         initializer = new TjahziInitializer();
+        monitoringModule = mock(StandardMonitoringModule.class);
     }
 
     @AfterEach
@@ -65,10 +69,14 @@ public class ReconnectTest {
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(clientConfiguration);
+                .getHttpClient(
+                        clientConfiguration,
+                        monitoringModule
+                );
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false
@@ -108,12 +116,16 @@ public class ReconnectTest {
                 .build();
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
-                .getHttpClient(clientConfiguration);
+                .getHttpClient(
+                        clientConfiguration,
+                        monitoringModule
+                );
 
         wireMockServer.start();
 
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of(),
                 1024 * 1024,
                 false
