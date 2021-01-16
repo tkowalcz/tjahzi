@@ -58,7 +58,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private String logLevelLabel;
 
     @PluginBuilderAttribute
-    private int maxRequestsInFlight;
+    private int maxRequestsInFlight = 100;
 
     @PluginElement("Headers")
     private Header[] headers;

@@ -7,7 +7,7 @@ public class ClientConfigurationBuilder {
     public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 5_000;
     public static final int DEFAULT_REQUEST_TIMEOUT_MILLIS = 60_000;
 
-    public static final int DEFAULT_MAX_REQUESTS_IN_FLIGHT = 10;
+    public static final int DEFAULT_MAX_REQUESTS_IN_FLIGHT = 100;
 
     public static final int DEFAULT_MAX_RETRIES = 0;
 
@@ -57,6 +57,10 @@ public class ClientConfigurationBuilder {
     }
 
     public ClientConfiguration build() {
+        if (maxRequestsInFlight <= 0) {
+            throw new IllegalArgumentException("Property maxRequestsInFlight must be greater than 0");
+        }
+
         return new ClientConfiguration(
                 logEndpoint,
                 host,
