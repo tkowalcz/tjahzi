@@ -27,7 +27,7 @@ public class BootstrapUtil {
                         new HttpClientInitializer(
                                 monitoringModule,
                                 clientConfiguration.getRequestTimeoutMillis(),
-                                clientConfiguration.getMaxInFlightRequests()
+                                clientConfiguration.getMaxRequestsInFlight()
                         )
                 )
                 .remoteAddress(

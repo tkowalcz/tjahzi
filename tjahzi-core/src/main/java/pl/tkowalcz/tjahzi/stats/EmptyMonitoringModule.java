@@ -21,7 +21,7 @@ public class EmptyMonitoringModule implements MonitoringModule {
     }
 
     @Override
-    public void incrementSentHttpRequests() {
+    public void incrementSentHttpRequests(int sizeBytes) {
     }
 
     @Override

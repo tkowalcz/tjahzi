@@ -1,8 +1,10 @@
-package pl.tkowalcz.tjahzi.stats;
+package pl.tkowalcz.tjahzi.http;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
+import pl.tkowalcz.tjahzi.stats.TimingRingBuffer;
 
 public class PipelinedHttpRequestTimer extends ChannelDuplexHandler {
 
@@ -11,10 +13,10 @@ public class PipelinedHttpRequestTimer extends ChannelDuplexHandler {
 
     public PipelinedHttpRequestTimer(
             MonitoringModule monitoringModule,
-            int maxNumberOfRequests
+            int maxRequestsInFlight
     ) {
         this.monitoringModule = monitoringModule;
-        this.timer = new TimingRingBuffer(monitoringModule.getClock(), maxNumberOfRequests);
+        this.timer = new TimingRingBuffer(monitoringModule.getClock(), maxRequestsInFlight);
     }
 
     @Override

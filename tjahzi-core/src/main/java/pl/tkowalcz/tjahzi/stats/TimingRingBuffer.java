@@ -10,9 +10,9 @@ public class TimingRingBuffer {
     private int readPosition;
     private int writePosition;
 
-    public TimingRingBuffer(Clock clock, int maxNumberOfRequests) {
+    public TimingRingBuffer(Clock clock, int maxRequestsInFlight) {
         this.clock = clock;
-        times = new long[maxNumberOfRequests];
+        times = new long[maxRequestsInFlight];
     }
 
     public void record() {

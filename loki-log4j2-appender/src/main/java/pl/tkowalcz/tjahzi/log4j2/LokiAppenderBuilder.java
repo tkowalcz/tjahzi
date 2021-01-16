@@ -57,6 +57,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginBuilderAttribute
     private String logLevelLabel;
 
+    @PluginBuilderAttribute
+    private int maxRequestsInFlight;
+
     @PluginElement("Headers")
     private Header[] headers;
 
@@ -71,6 +74,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .withPort(port)
                 .withMaxRetries(maxRetries)
                 .withRequestTimeoutMillis(readTimeoutMillis)
+                .withMaxRequestsInFlight(maxRequestsInFlight)
                 .build();
 
         String[] additionalHeaders = stream(headers)
@@ -187,6 +191,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setLogLevelLabel(String logLevelLabel) {
         this.logLevelLabel = logLevelLabel;
+    }
+
+    public void setMaxRequestsInFlight(int maxRequestsInFlight) {
+        this.maxRequestsInFlight = maxRequestsInFlight;
+    }
+
+    public int getMaxRequestsInFlight() {
+        return maxRequestsInFlight;
     }
 
     public void setHeaders(Header[] headers) {

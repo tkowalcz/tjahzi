@@ -68,7 +68,7 @@ public class HttpConnection implements Closeable {
         stableReference.awaitUninterruptibly();
         if (stableReference.isSuccess() && stableReference.channel().isActive()) {
             stableReference.channel().writeAndFlush(request);
-            monitoringModule.incrementSentHttpRequests();
+            monitoringModule.incrementSentHttpRequests(request.content().readableBytes());
         } else {
             retry.retry();
         }

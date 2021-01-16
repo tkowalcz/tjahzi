@@ -13,37 +13,21 @@ public interface MonitoringModule {
 
     void incrementDroppedPuts(Throwable throwable);
 
-//    long getDroppedPuts();
-
-    void incrementSentHttpRequests();
-
-//    long getSentHttpRequests();
+    void incrementSentHttpRequests(int sizeBytes);
 
     void incrementFailedHttpRequests();
 
-//    long getFailedHttpRequests();
-
     void incrementRetriedHttpRequests();
-
-//    long getRetriedHttpRequests();
 
     void addAgentError(Throwable throwable);
 
-//    long getAgentErrors();
-
     void incrementHttpConnectAttempts();
-
-//    long getHttpConnectAttempts();
 
     void addPipelineError(Throwable cause);
 
     void incrementChannelInactive();
 
-//    long getChannelInactive();
-
     void incrementHttpResponses();
-
-//    long getHttpResponses();
 
     void incrementHttpErrors(HttpResponseStatus status, ByteBuf content);
 

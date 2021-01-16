@@ -8,7 +8,6 @@ import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.timeout.IdleStateHandler;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
-import pl.tkowalcz.tjahzi.stats.PipelinedHttpRequestTimer;
 
 class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -19,18 +18,18 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
     private final ResponseHandler responseHandler;
 
     private final int requestTimeoutMillis;
-    private final int maxNumberOfRequests;
+    private final int maxRequestsInFlight;
 
     HttpClientInitializer(
             MonitoringModule monitoringModule,
             int requestTimeoutMillis,
-            int maxNumberOfRequests
+            int maxRequestsInFlight
     ) {
         this.monitoringModule = monitoringModule;
         this.responseHandler = new ResponseHandler(monitoringModule);
 
         this.requestTimeoutMillis = requestTimeoutMillis;
-        this.maxNumberOfRequests = maxNumberOfRequests;
+        this.maxRequestsInFlight = maxRequestsInFlight;
     }
 
     @Override
@@ -49,8 +48,9 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
         p.addLast(
                 new PipelinedHttpRequestTimer(
                         monitoringModule,
-                        maxNumberOfRequests
+                        maxRequestsInFlight
                 )
         );
+        p.addLast(new InFlightRequestsTracker());
     }
 }
