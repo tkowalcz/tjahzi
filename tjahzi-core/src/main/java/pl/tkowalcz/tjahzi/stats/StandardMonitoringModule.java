@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi.stats;
 
-import com.google.common.util.concurrent.Uninterruptibles;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.agrona.concurrent.SystemEpochClock;
@@ -9,10 +8,9 @@ import org.agrona.concurrent.errors.DistinctErrorLog;
 
 import java.nio.charset.Charset;
 import java.time.Clock;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class StandardMonitoringModule implements MonitoringModule, Runnable {
+public class StandardMonitoringModule implements MonitoringModule {
 
     private static final int ERROR_LOG_CAPACITY = 1024;
 
@@ -54,10 +52,6 @@ public class StandardMonitoringModule implements MonitoringModule, Runnable {
         droppedPuts.incrementAndGet();
     }
 
-    public long getDroppedPuts() {
-        return droppedPuts.get();
-    }
-
     @Override
     public void incrementDroppedPuts(Throwable throwable) {
         incrementDroppedPuts();
@@ -70,26 +64,14 @@ public class StandardMonitoringModule implements MonitoringModule, Runnable {
         sentBytes.addAndGet(sizeBytes);
     }
 
-    public long getSentHttpRequests() {
-        return sentHttpRequests.get();
-    }
-
     @Override
     public void incrementFailedHttpRequests() {
         failedHttpRequests.incrementAndGet();
     }
 
-    public long getFailedHttpRequests() {
-        return failedHttpRequests.get();
-    }
-
     @Override
     public void incrementRetriedHttpRequests() {
         retriedHttpRequests.incrementAndGet();
-    }
-
-    public long getRetriedHttpRequests() {
-        return retriedHttpRequests.get();
     }
 
     @Override
@@ -98,17 +80,9 @@ public class StandardMonitoringModule implements MonitoringModule, Runnable {
         distinctErrorLog.record(throwable);
     }
 
-    public long getAgentErrors() {
-        return agentErrors.get();
-    }
-
     @Override
     public void incrementHttpConnectAttempts() {
         httpConnectAttempts.incrementAndGet();
-    }
-
-    public long getHttpConnectAttempts() {
-        return httpConnectAttempts.get();
     }
 
     @Override
@@ -116,17 +90,9 @@ public class StandardMonitoringModule implements MonitoringModule, Runnable {
         channelInactive.incrementAndGet();
     }
 
-    public long getChannelInactive() {
-        return channelInactive.get();
-    }
-
     @Override
     public void incrementHttpResponses() {
         httpResponses.incrementAndGet();
-    }
-
-    public long getHttpResponses() {
-        return httpResponses.get();
     }
 
     @Override
@@ -145,14 +111,6 @@ public class StandardMonitoringModule implements MonitoringModule, Runnable {
 
     @Override
     public void recordResponseTime(long time) {
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            System.out.println(toString());
-            Uninterruptibles.sleepUninterruptibly(10, TimeUnit.SECONDS);
-        }
     }
 
     @Override
