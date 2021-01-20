@@ -7,7 +7,6 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.errors.DistinctErrorLog;
 
 import java.nio.charset.Charset;
-import java.time.Clock;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StandardMonitoringModule implements MonitoringModule {
@@ -40,11 +39,6 @@ public class StandardMonitoringModule implements MonitoringModule {
         );
 
         distinctErrorLog.record(new NullPointerException());
-    }
-
-    @Override
-    public Clock getClock() {
-        return Clock.systemUTC();
     }
 
     @Override

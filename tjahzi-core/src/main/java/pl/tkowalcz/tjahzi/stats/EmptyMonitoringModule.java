@@ -3,14 +3,7 @@ package pl.tkowalcz.tjahzi.stats;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-import java.time.Clock;
-
 public class EmptyMonitoringModule implements MonitoringModule {
-
-    @Override
-    public Clock getClock() {
-        return Clock.systemUTC();
-    }
 
     @Override
     public void incrementDroppedPuts() {
