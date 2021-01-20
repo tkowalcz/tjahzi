@@ -44,7 +44,6 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
         p.addLast(new HttpClientCodec());
         p.addLast(new HttpObjectAggregator(MAX_CONTENT_LENGTH));
         p.addLast(new HttpContentDecompressor());
-        p.addLast(responseHandler);
         p.addLast(
                 new PipelinedHttpRequestTimer(
                         monitoringModule,
@@ -52,5 +51,6 @@ class HttpClientInitializer extends ChannelInitializer<SocketChannel> {
                 )
         );
         p.addLast(new InFlightRequestsTracker());
+        p.addLast(responseHandler);
     }
 }
