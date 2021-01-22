@@ -68,6 +68,10 @@ public class LokiAppender extends AbstractAppender {
         return loggingSystem;
     }
 
+    /**
+     * This is an entry point to set monitoring (statistics) hooks for this appender. This
+     * API is in beta and is subject to change (and probably will).
+     */
     public void setMonitoringModule(MonitoringModule monitoringModule) {
         monitoringModuleWrapper.setMonitoringModule(monitoringModule);
     }

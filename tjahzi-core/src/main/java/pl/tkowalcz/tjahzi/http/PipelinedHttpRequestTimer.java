@@ -31,3 +31,4 @@ public class PipelinedHttpRequestTimer extends ChannelDuplexHandler {
         monitoringModule.recordResponseTime(timer.measure());
     }
 }
+ 

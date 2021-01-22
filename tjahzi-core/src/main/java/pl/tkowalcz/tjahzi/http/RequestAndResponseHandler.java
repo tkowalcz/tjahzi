@@ -1,27 +1,45 @@
 package pl.tkowalcz.tjahzi.http;
 
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpStatusClass;
+import io.netty.handler.codec.http.HttpUtil;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 @ChannelHandler.Sharable
-class ResponseHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
+class RequestAndResponseHandler extends ChannelDuplexHandler {
 
     private final MonitoringModule monitoringModule;
 
-    ResponseHandler(MonitoringModule monitoringModule) {
-        super(false);
+    RequestAndResponseHandler(MonitoringModule monitoringModule) {
         this.monitoringModule = monitoringModule;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse msg) {
+    public void write(ChannelHandlerContext ctx, Object object, ChannelPromise promise) throws Exception {
+        if (object instanceof FullHttpRequest) {
+            int payloadSize = ((FullHttpRequest) object).content().readableBytes();
+            monitoringModule.incrementSentHttpRequests(payloadSize);
+        }
+
+        super.write(ctx, object, promise);
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object object) {
+        FullHttpResponse msg = (FullHttpResponse) object;
+
         monitoringModule.incrementHttpResponses();
         if (msg.status().codeClass() != HttpStatusClass.SUCCESS) {
             monitoringModule.incrementHttpErrors(msg.status(), msg.content());
+        }
+
+        if (!HttpUtil.isKeepAlive(msg)) {
+            ctx.close();
         }
     }
 

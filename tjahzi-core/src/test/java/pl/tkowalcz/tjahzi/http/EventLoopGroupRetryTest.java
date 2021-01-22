@@ -12,17 +12,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.mock;
 
 class EventLoopGroupRetryTest {
 
-    private final StandardMonitoringModule monitoringModule = mock(StandardMonitoringModule.class);
-
     private NioEventLoopGroup eventLoopGroup;
+    private StandardMonitoringModule monitoringModule;
 
     @BeforeEach
     void setUp() {
         eventLoopGroup = new NioEventLoopGroup(Executors.defaultThreadFactory());
+        monitoringModule = new StandardMonitoringModule();
     }
 
     @AfterEach
@@ -34,6 +33,7 @@ class EventLoopGroupRetryTest {
     void shouldRetryAndInvokeOperation() {
         // Given
         AtomicInteger retryCounter = new AtomicInteger();
+        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
 
         EventLoopGroupRetry retry = new EventLoopGroupRetry(
                 eventLoopGroup,
@@ -52,6 +52,8 @@ class EventLoopGroupRetryTest {
         await().atMost(Durations.TEN_SECONDS).untilAsserted(() -> {
             assertThat(retryCounter).hasValueGreaterThan(3);
         });
+
+        assertThat(monitoringModule.getHttpConnectAttempts()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
@@ -75,5 +77,7 @@ class EventLoopGroupRetryTest {
         await().atMost(Durations.TEN_SECONDS).untilAsserted(() -> {
             assertThat(retryCounter).hasValue(1);
         });
+
+        assertThat(monitoringModule.getHttpConnectAttempts()).isEqualTo(1);
     }
 }

@@ -58,14 +58,30 @@ public class StandardMonitoringModule implements MonitoringModule {
         sentBytes.addAndGet(sizeBytes);
     }
 
+    public long getSentHttpRequests() {
+        return sentHttpRequests.get();
+    }
+
+    public long getSentBytes() {
+        return sentBytes.get();
+    }
+
     @Override
     public void incrementFailedHttpRequests() {
         failedHttpRequests.incrementAndGet();
     }
 
+    public long getFailedHttpRequests() {
+        return failedHttpRequests.get();
+    }
+
     @Override
     public void incrementRetriedHttpRequests() {
         retriedHttpRequests.incrementAndGet();
+    }
+
+    public long getRetriedHttpRequests() {
+        return retriedHttpRequests.get();
     }
 
     @Override
@@ -79,6 +95,10 @@ public class StandardMonitoringModule implements MonitoringModule {
         httpConnectAttempts.incrementAndGet();
     }
 
+    public long getHttpConnectAttempts() {
+        return httpConnectAttempts.get();
+    }
+
     @Override
     public void incrementChannelInactive() {
         channelInactive.incrementAndGet();
@@ -89,6 +109,10 @@ public class StandardMonitoringModule implements MonitoringModule {
         httpResponses.incrementAndGet();
     }
 
+    public long getHttpResponses() {
+        return httpResponses.get();
+    }
+
     @Override
     public void addPipelineError(Throwable cause) {
         distinctErrorLog.record(cause);
@@ -96,6 +120,7 @@ public class StandardMonitoringModule implements MonitoringModule {
 
     @Override
     public void incrementHttpErrors(HttpResponseStatus status, ByteBuf content) {
+        failedHttpRequests.incrementAndGet();
         distinctErrorLog.record(
                 new RuntimeException(
                         content.toString(Charset.defaultCharset())
