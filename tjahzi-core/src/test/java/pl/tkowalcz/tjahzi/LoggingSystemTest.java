@@ -18,6 +18,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.mockito.Mockito.mock;
 
 @Testcontainers
 class LoggingSystemTest {
@@ -43,6 +45,7 @@ class LoggingSystemTest {
             )
             .withExposedPorts(3100);
 
+    private final StandardMonitoringModule monitoringModule = mock(StandardMonitoringModule.class);
     private LoggingSystem loggingSystem;
 
     @BeforeEach
@@ -56,12 +59,14 @@ class LoggingSystemTest {
 
         NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
                 .getHttpClient(
-                        clientConfiguration
+                        clientConfiguration,
+                        monitoringModule
                 );
 
         TjahziInitializer initializer = new TjahziInitializer();
         loggingSystem = initializer.createLoggingSystem(
                 httpClient,
+                monitoringModule,
                 Map.of("version", "0.43", "server", "127.0.0.1"),
                 1024 * 1024,
                 false

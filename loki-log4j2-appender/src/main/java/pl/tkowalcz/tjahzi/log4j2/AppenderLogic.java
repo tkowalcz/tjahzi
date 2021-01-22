@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi.log4j2;
 
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.status.StatusLogger;
@@ -14,7 +15,7 @@ import java.util.function.BiConsumer;
 
 public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
-    protected static final org.apache.logging.log4j.Logger LOGGER = StatusLogger.getLogger();
+    protected static final Logger LOGGER = StatusLogger.getLogger();
 
     private final LoggingSystem loggingSystem;
 

@@ -10,6 +10,8 @@ import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import pl.tkowalcz.tjahzi.LoggingSystem;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
+import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -29,7 +31,10 @@ public class LokiAppender extends AbstractAppender {
         return new LokiAppenderBuilder<B>().asBuilder();
     }
 
+
     private final LoggingSystem loggingSystem;
+    private final MutableMonitoringModuleWrapper monitoringModuleWrapper;
+
     private final AppenderLogic appenderLogic;
 
     LokiAppender(
@@ -39,7 +44,9 @@ public class LokiAppender extends AbstractAppender {
             boolean ignoreExceptions,
             Property[] properties,
             String logLevelLabel,
-            LoggingSystem loggingSystem) {
+            LoggingSystem loggingSystem,
+            MutableMonitoringModuleWrapper monitoringModuleWrapper
+    ) {
         super(
                 name,
                 filter,
@@ -47,6 +54,7 @@ public class LokiAppender extends AbstractAppender {
                 ignoreExceptions,
                 properties
         );
+        this.monitoringModuleWrapper = monitoringModuleWrapper;
         Objects.requireNonNull(layout, "layout");
 
         this.loggingSystem = loggingSystem;
@@ -58,6 +66,14 @@ public class LokiAppender extends AbstractAppender {
 
     public LoggingSystem getLoggingSystem() {
         return loggingSystem;
+    }
+
+    /**
+     * This is an entry point to set monitoring (statistics) hooks for this appender. This
+     * API is in beta and is subject to change (and probably will).
+     */
+    public void setMonitoringModule(MonitoringModule monitoringModule) {
+        monitoringModuleWrapper.setMonitoringModule(monitoringModule);
     }
 
     @Override

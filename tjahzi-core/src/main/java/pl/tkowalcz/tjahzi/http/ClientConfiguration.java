@@ -8,6 +8,7 @@ public class ClientConfiguration {
 
     private final int connectionTimeoutMillis;
     private final int requestTimeoutMillis;
+    private final int maxRequestsInFlight;
 
     private final int maxRetries;
 
@@ -17,12 +18,14 @@ public class ClientConfiguration {
             int port,
             int connectionTimeoutMillis,
             int requestTimeoutMillis,
+            int maxRequestsInFlight,
             int maxRetries) {
         this.logEndpoint = logEndpoint;
         this.host = host;
         this.port = port;
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.requestTimeoutMillis = requestTimeoutMillis;
+        this.maxRequestsInFlight = maxRequestsInFlight;
 
         this.maxRetries = maxRetries;
     }
@@ -45,6 +48,10 @@ public class ClientConfiguration {
 
     public int getRequestTimeoutMillis() {
         return requestTimeoutMillis;
+    }
+
+    public int getMaxRequestsInFlight() {
+        return maxRequestsInFlight;
     }
 
     public int getMaxRetries() {

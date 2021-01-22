@@ -6,15 +6,16 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 public class BootstrapUtil {
 
     public static ChannelFuture initConnection(
             EventLoopGroup group,
-            ClientConfiguration clientConfiguration
+            ClientConfiguration clientConfiguration,
+            MonitoringModule monitoringModule
     ) {
         Bootstrap bootstrap = new Bootstrap();
-        ResponseHandler responseHandler = new ResponseHandler();
 
         return bootstrap.group(group)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
@@ -24,8 +25,9 @@ public class BootstrapUtil {
                 .channel(NioSocketChannel.class)
                 .handler(
                         new HttpClientInitializer(
-                                responseHandler,
-                                clientConfiguration.getRequestTimeoutMillis()
+                                monitoringModule,
+                                clientConfiguration.getRequestTimeoutMillis(),
+                                clientConfiguration.getMaxRequestsInFlight()
                         )
                 )
                 .remoteAddress(

@@ -7,6 +7,8 @@ public class ClientConfigurationBuilder {
     public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 5_000;
     public static final int DEFAULT_REQUEST_TIMEOUT_MILLIS = 60_000;
 
+    public static final int DEFAULT_MAX_REQUESTS_IN_FLIGHT = 100;
+
     public static final int DEFAULT_MAX_RETRIES = 0;
 
     private String logEndpoint = DEFAULT_LOG_ENDPOINT;
@@ -15,6 +17,7 @@ public class ClientConfigurationBuilder {
 
     private int connectionTimeoutMillis = DEFAULT_CONNECT_TIMEOUT_MILLIS;
     private int requestTimeoutMillis = DEFAULT_REQUEST_TIMEOUT_MILLIS;
+    private int maxRequestsInFlight = DEFAULT_MAX_REQUESTS_IN_FLIGHT;
 
     private int maxRetries = DEFAULT_MAX_RETRIES;
 
@@ -43,18 +46,28 @@ public class ClientConfigurationBuilder {
         return this;
     }
 
+    public ClientConfigurationBuilder withMaxRequestsInFlight(int maxRequestsInFlight) {
+        this.maxRequestsInFlight = maxRequestsInFlight;
+        return this;
+    }
+
     public ClientConfigurationBuilder withMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
         return this;
     }
 
     public ClientConfiguration build() {
+        if (maxRequestsInFlight <= 0) {
+            throw new IllegalArgumentException("Property maxRequestsInFlight must be greater than 0");
+        }
+
         return new ClientConfiguration(
                 logEndpoint,
                 host,
                 port,
                 connectionTimeoutMillis,
                 requestTimeoutMillis,
+                maxRequestsInFlight,
                 maxRetries
         );
     }

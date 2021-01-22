@@ -12,6 +12,8 @@ import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
+import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.HashMap;
 import java.util.stream.Stream;
@@ -56,6 +58,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginBuilderAttribute
     private String logLevelLabel;
 
+    @PluginBuilderAttribute
+    private int maxRequestsInFlight = 100;
+
     @PluginElement("Headers")
     private Header[] headers;
 
@@ -70,16 +75,21 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .withPort(port)
                 .withMaxRetries(maxRetries)
                 .withRequestTimeoutMillis(readTimeoutMillis)
+                .withMaxRequestsInFlight(maxRequestsInFlight)
                 .build();
 
         String[] additionalHeaders = stream(headers)
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
 
+        MutableMonitoringModuleWrapper monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
+        monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+
         NettyHttpClient httpClient = HttpClientFactory
                 .defaultFactory()
                 .getHttpClient(
                         configurationBuilder,
+                        monitoringModuleWrapper,
                         additionalHeaders
                 );
 
@@ -97,6 +107,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
         LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                 httpClient,
+                monitoringModuleWrapper,
                 lokiLabels,
                 bufferSizeBytes,
                 isUseOffHeapBuffer()
@@ -109,7 +120,8 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 isIgnoreExceptions(),
                 getPropertyArray(),
                 logLevelLabel,
-                loggingSystem
+                loggingSystem,
+                monitoringModuleWrapper
         );
     }
 
@@ -182,6 +194,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setLogLevelLabel(String logLevelLabel) {
         this.logLevelLabel = logLevelLabel;
+    }
+
+    public void setMaxRequestsInFlight(int maxRequestsInFlight) {
+        this.maxRequestsInFlight = maxRequestsInFlight;
+    }
+
+    public int getMaxRequestsInFlight() {
+        return maxRequestsInFlight;
     }
 
     public void setHeaders(Header[] headers) {

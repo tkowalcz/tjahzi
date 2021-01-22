@@ -1,6 +1,7 @@
 package pl.tkowalcz.tjahzi;
 
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -10,10 +11,14 @@ public class TjahziLogger {
     public static final int LOG_MESSAGE_TYPE_ID = 5;
 
     private final ManyToOneRingBuffer logBuffer;
+    private final MonitoringModule monitoringModule;
+
     private final LogBufferSerializer serializer;
 
-    public TjahziLogger(ManyToOneRingBuffer logBuffer) {
+    public TjahziLogger(ManyToOneRingBuffer logBuffer, MonitoringModule monitoringModule) {
         this.logBuffer = logBuffer;
+        this.monitoringModule = monitoringModule;
+
         this.serializer = new LogBufferSerializer(logBuffer.buffer());
     }
 
@@ -40,7 +45,7 @@ public class TjahziLogger {
                     claim
             );
         } else {
-            // TODO: increment dropped lines metric
+            monitoringModule.incrementDroppedPuts();
         }
 
         return this;
@@ -68,6 +73,7 @@ public class TjahziLogger {
             logBuffer.commit(claim);
         } catch (Throwable t) {
             logBuffer.abort(claim);
+            monitoringModule.incrementDroppedPuts(t);
         }
     }
 }
