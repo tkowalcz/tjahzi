@@ -16,6 +16,7 @@ import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.stream;
@@ -57,6 +58,12 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     @PluginBuilderAttribute
     private String logLevelLabel;
+
+    @PluginBuilderAttribute
+    private final long batchSize = 10_2400;
+
+    @PluginBuilderAttribute
+    private final long batchWait = 5;
 
     @PluginBuilderAttribute
     private int maxRequestsInFlight = 100;
@@ -109,6 +116,8 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 httpClient,
                 monitoringModuleWrapper,
                 lokiLabels,
+                batchSize,
+                TimeUnit.SECONDS.toMillis(batchWait),
                 bufferSizeBytes,
                 isUseOffHeapBuffer()
         );
@@ -194,6 +203,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setLogLevelLabel(String logLevelLabel) {
         this.logLevelLabel = logLevelLabel;
+    }
+
+    public long getBatchSize() {
+        return batchSize;
+    }
+
+    public long getBatchWait() {
+        return batchWait;
     }
 
     public void setMaxRequestsInFlight(int maxRequestsInFlight) {

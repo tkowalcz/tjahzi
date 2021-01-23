@@ -68,6 +68,8 @@ class ResourcesCleanupOnCloseTest {
                 httpClient,
                 monitoringModule,
                 Map.of(),
+                0,
+                0,
                 1024 * 1024,
                 false
         );

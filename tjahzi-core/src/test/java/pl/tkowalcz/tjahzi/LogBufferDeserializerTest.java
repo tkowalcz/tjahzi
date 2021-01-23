@@ -46,7 +46,7 @@ class LogBufferDeserializerTest {
 
         // When
         LogBufferDeserializer deserializer = new LogBufferDeserializer();
-        Logproto.StreamAdapter stream = deserializer.deserialize(
+        Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(
                 buffer,
                 0,
                 staticLabels
@@ -101,7 +101,7 @@ class LogBufferDeserializerTest {
 
         // When
         LogBufferDeserializer deserializer = new LogBufferDeserializer();
-        Logproto.StreamAdapter stream = deserializer.deserialize(
+        Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(
                 buffer,
                 0,
                 staticLabels
