@@ -25,11 +25,9 @@ public class LogBufferAgent implements Agent, MessageHandler {
     private final long batchSize;
     private final long batchWaitMillis;
 
-    private final Map<String, String> staticLabels;
-    private final LogBufferDeserializer logBufferDeserializer = new LogBufferDeserializer();
+    private final LogBufferDeserializer logBufferDeserializer;
 
     private Logproto.PushRequest.Builder request = Logproto.PushRequest.newBuilder();
-
     private int estimatedBytesPending;
     private long timeoutDeadline;
 
@@ -48,7 +46,7 @@ public class LogBufferAgent implements Agent, MessageHandler {
         this.batchWaitMillis = batchWaitMillis;
         this.httpClient = httpClient;
 
-        this.staticLabels = staticLabels;
+        this.logBufferDeserializer = new LogBufferDeserializer(staticLabels);
     }
 
     @Override
@@ -103,8 +101,7 @@ public class LogBufferAgent implements Agent, MessageHandler {
     private void processMessage(MutableDirectBuffer buffer, int index) {
         Logproto.StreamAdapter stream = logBufferDeserializer.deserializeIntoProtobuf(
                 buffer,
-                index,
-                staticLabels
+                index
         );
 
         request.addStreams(stream);

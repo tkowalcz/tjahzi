@@ -1,6 +1,7 @@
 package pl.tkowalcz.tjahzi;
 
 import com.google.protobuf.Timestamp;
+import io.netty.util.internal.StringUtil;
 import javolution.text.TextBuilder;
 import logproto.Logproto;
 import org.agrona.DirectBuffer;
@@ -11,11 +12,19 @@ import java.util.Map;
 
 public class LogBufferDeserializer {
 
-    public Logproto.StreamAdapter deserializeIntoProtobuf(
-            DirectBuffer buffer,
-            int index,
-            Map<String, String> staticLabels
-    ) {
+    private final Map<String, String> staticLabels;
+    private final String staticLabelsString;
+
+    public LogBufferDeserializer(Map<String, String> staticLabels) {
+        this.staticLabels = staticLabels;
+        this.staticLabelsString = buildLabelsStringIncludingStatic(
+                Map.of(),
+                StringUtil.EMPTY_STRING,
+                staticLabels
+        );
+    }
+
+    public Logproto.StreamAdapter deserializeIntoProtobuf(DirectBuffer buffer, int index) {
         long timestamp = buffer.getLong(index);
         index += Long.BYTES;
 
@@ -29,7 +38,6 @@ public class LogBufferDeserializer {
         String line = buffer.getStringAscii(index);
 
         return createGrpcStream(
-                staticLabels,
                 timestamp,
                 labels,
                 line
@@ -58,7 +66,6 @@ public class LogBufferDeserializer {
     }
 
     private Logproto.StreamAdapter createGrpcStream(
-            Map<String, String> staticLabels,
             long timestamp,
             Map<String, String> labels,
             String line
@@ -68,7 +75,11 @@ public class LogBufferDeserializer {
 
         return Logproto.StreamAdapter.newBuilder()
                 .setLabels(
-                        buildLabelsStringIncludingStatic(staticLabels, labels)
+                        buildLabelsStringIncludingStatic(
+                                staticLabels,
+                                staticLabelsString,
+                                labels
+                        )
                 )
                 .addEntries(
                         Logproto.EntryAdapter.newBuilder()
@@ -84,7 +95,13 @@ public class LogBufferDeserializer {
 
     private static String buildLabelsStringIncludingStatic(
             Map<String, String> staticLabels,
-            Map<String, String> labels) {
+            String staticLabelsString,
+            Map<String, String> labels
+    ) {
+        if (labels.isEmpty()) {
+            return staticLabelsString;
+        }
+
         TextBuilder textBuilder = TextBuilders.threadLocal();
 
         textBuilder.append("{ ");

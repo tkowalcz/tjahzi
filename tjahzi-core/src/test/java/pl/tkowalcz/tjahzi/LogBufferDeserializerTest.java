@@ -19,6 +19,7 @@ import static pl.tkowalcz.tjahzi.LogBufferSerializerDeserializerTest.toPropertyS
 
 class LogBufferDeserializerTest {
 
+    @SuppressWarnings("unused")
     @ParameterizedTest(name = "{0}")
     @MethodSource("pl.tkowalcz.tjahzi.LogBufferSerializerDeserializerTest#variousMessageConfigurations")
     void shouldDeserializeMessageAndAddStaticLabels(
@@ -45,11 +46,10 @@ class LogBufferDeserializerTest {
         staticLabels.put("bazz", "buzz");
 
         // When
-        LogBufferDeserializer deserializer = new LogBufferDeserializer();
+        LogBufferDeserializer deserializer = new LogBufferDeserializer(staticLabels);
         Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(
                 buffer,
-                0,
-                staticLabels
+                0
         );
 
         // Then
@@ -100,11 +100,10 @@ class LogBufferDeserializerTest {
         );
 
         // When
-        LogBufferDeserializer deserializer = new LogBufferDeserializer();
+        LogBufferDeserializer deserializer = new LogBufferDeserializer(staticLabels);
         Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(
                 buffer,
-                0,
-                staticLabels
+                0
         );
 
         // Then
