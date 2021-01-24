@@ -89,8 +89,8 @@ class LogBufferSerializerDeserializerTest {
         );
 
         // Then
-        LogBufferDeserializer deserializer = new LogBufferDeserializer();
-        Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(buffer, 0, Map.of());
+        LogBufferDeserializer deserializer = new LogBufferDeserializer(Map.of());
+        Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(buffer, 0);
 
         assertThat(stream.getEntriesList()).hasSize(1);
         assertThat(stream.getEntriesList().get(0).getTimestamp()).isEqualTo(

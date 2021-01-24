@@ -23,7 +23,7 @@ class LogBufferAgentTest {
     private SettableClock clock;
 
     @BeforeEach
-    private void setUp() {
+    void setUp() {
         logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(new byte[1024 * 1024 + RingBufferDescriptor.TRAILER_LENGTH])
         );
