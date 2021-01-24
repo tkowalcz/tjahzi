@@ -34,6 +34,7 @@ public class NettyHttpClient implements Closeable {
     public void log(ByteBuf dataBuffer) {
         ByteBuf output = PooledByteBufAllocator.DEFAULT.buffer();
         snappy.encode(dataBuffer, output, dataBuffer.readableBytes());
+        dataBuffer.release();
 
         FullHttpRequest request = new DefaultFullHttpRequest(
                 HttpVersion.HTTP_1_1,

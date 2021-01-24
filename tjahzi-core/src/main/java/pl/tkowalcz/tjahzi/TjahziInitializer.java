@@ -19,6 +19,8 @@ public class TjahziInitializer {
             NettyHttpClient httpClient,
             MonitoringModule monitoringModule,
             Map<String, String> staticLabels,
+            long batchSizeBytes,
+            long batchWaitMillis,
             int bufferSizeBytes,
             boolean offHeap) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
@@ -29,8 +31,11 @@ public class TjahziInitializer {
         );
 
         LogBufferAgent agent = new LogBufferAgent(
+                monitoringModule.getClock(),
                 logBuffer,
                 httpClient,
+                batchSizeBytes,
+                batchWaitMillis,
                 staticLabels
         );
 

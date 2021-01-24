@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.mockito.Mockito.mock;
 
 @Testcontainers
 class LoggingSystemTest {
@@ -45,7 +44,7 @@ class LoggingSystemTest {
             )
             .withExposedPorts(3100);
 
-    private final StandardMonitoringModule monitoringModule = mock(StandardMonitoringModule.class);
+    private final StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
     private LoggingSystem loggingSystem;
 
     @BeforeEach
@@ -69,6 +68,8 @@ class LoggingSystemTest {
                 monitoringModule,
                 Map.of("version", "0.43", "server", "127.0.0.1"),
                 1024 * 1024,
+                0,
+                0,
                 false
         );
 

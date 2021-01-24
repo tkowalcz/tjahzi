@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpStatusClass;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.util.ReferenceCountUtil;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 @ChannelHandler.Sharable
@@ -41,6 +42,8 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
         if (!HttpUtil.isKeepAlive(msg)) {
             ctx.close();
         }
+
+        ReferenceCountUtil.release(msg);
     }
 
     @Override

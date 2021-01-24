@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.mock;
 
 class HeadersTest {
 
@@ -38,7 +37,7 @@ class HeadersTest {
         wireMockServer.start();
 
         initializer = new TjahziInitializer();
-        monitoringModule = mock(StandardMonitoringModule.class);
+        monitoringModule = new StandardMonitoringModule();
     }
 
     @AfterEach
@@ -83,6 +82,8 @@ class HeadersTest {
                 httpClient,
                 monitoringModule,
                 Map.of(),
+                0,
+                0,
                 1024 * 1024,
                 false
         );
@@ -134,6 +135,8 @@ class HeadersTest {
                 httpClient,
                 monitoringModule,
                 Map.of(),
+                0,
+                0,
                 1024 * 1024,
                 false
         );
@@ -187,6 +190,8 @@ class HeadersTest {
                 httpClient,
                 monitoringModule,
                 Map.of(),
+                0,
+                0,
                 1024 * 1024,
                 false
         );

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class LogBufferDeserializer {
 
-    public Logproto.StreamAdapter deserialize(
+    public Logproto.StreamAdapter deserializeIntoProtobuf(
             DirectBuffer buffer,
             int index,
             Map<String, String> staticLabels
