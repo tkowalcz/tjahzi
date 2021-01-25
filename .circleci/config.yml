@@ -51,6 +51,9 @@ workflows:
   main:
     jobs:
       - build-and-test
+          filters:
+            tags:
+              only: /.*/
       - circleci-maven-release-orb/run-maven-release:
           filters:
             branches:
