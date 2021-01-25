@@ -50,7 +50,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - build-and-test
+      - build-and-test:
           filters:
             tags:
               only: /.*/
