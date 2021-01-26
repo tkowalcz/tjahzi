@@ -57,7 +57,7 @@ workflows:
       - circleci-maven-release-orb/run-maven-release:
           filters:
             branches:
-              ignore: /.*/
+              only: /master/
             tags:
               only: /.*/
           requires:
