@@ -1,12 +1,15 @@
 package pl.tkowalcz.tjahzi.http;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.handler.codec.compression.Snappy;
 import io.netty.handler.codec.http.*;
+import io.netty.util.ReferenceCountUtil;
+import logproto.Logproto;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 public class NettyHttpClient implements Closeable {
 
@@ -32,21 +35,17 @@ public class NettyHttpClient implements Closeable {
     }
 
     public void log(ByteBuf dataBuffer) {
-        ByteBuf output = PooledByteBufAllocator.DEFAULT.buffer();
-        snappy.encode(dataBuffer, output, dataBuffer.readableBytes());
-        dataBuffer.release();
-
         FullHttpRequest request = new DefaultFullHttpRequest(
                 HttpVersion.HTTP_1_1,
                 HttpMethod.POST,
                 clientConfiguration.getLogEndpoint(),
-                output
+                dataBuffer
         );
 
         request.headers()
                 .add(headers)
                 .set(HttpHeaderNames.CONTENT_TYPE, PROTOBUF_MIME_TYPE)
-                .set(HttpHeaderNames.CONTENT_LENGTH, output.readableBytes())
+                .set(HttpHeaderNames.CONTENT_LENGTH, dataBuffer.readableBytes())
                 .set(HttpHeaderNames.HOST, clientConfiguration.getHost());
 
         lokiConnection.execute(request);
@@ -55,5 +54,25 @@ public class NettyHttpClient implements Closeable {
     @Override
     public void close() {
         lokiConnection.close();
+    }
+
+    public void log(Logproto.PushRequest.Builder request) throws IOException {
+        ByteBuf dataBuffer = PooledByteBufAllocator.DEFAULT.buffer();
+        ByteBuf compressedBuffer = PooledByteBufAllocator.DEFAULT.buffer();
+
+        try {
+            request.build().writeTo(
+                    new ByteBufOutputStream(dataBuffer)
+            );
+
+            snappy.encode(dataBuffer, compressedBuffer, dataBuffer.readableBytes());
+            log(compressedBuffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ReferenceCountUtil.safeRelease(dataBuffer);
+            ReferenceCountUtil.safeRelease(compressedBuffer);
+
+            throw e;
+        }
     }
 }

@@ -1,8 +1,5 @@
 package pl.tkowalcz.tjahzi;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.buffer.PooledByteBufAllocator;
 import logproto.Logproto;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.Agent;
@@ -55,16 +52,14 @@ public class LogBufferAgent implements Agent, MessageHandler {
 
         long currentTimeMillis = clock.millis();
         if (exceededBatchSizeThreshold() || exceededWaitTimeThreshold(currentTimeMillis)) {
-            ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer();
-            request.build().writeTo(
-                    new ByteBufOutputStream(buffer)
-            );
+            try {
+                httpClient.log(request);
+            } finally {
+                request = Logproto.PushRequest.newBuilder();
 
-            httpClient.log(buffer);
-            request = Logproto.PushRequest.newBuilder();
-
-            estimatedBytesPending = 0;
-            timeoutDeadline = currentTimeMillis + batchWaitMillis;
+                estimatedBytesPending = 0;
+                timeoutDeadline = currentTimeMillis + batchWaitMillis;
+            }
         }
 
         return workDone;
