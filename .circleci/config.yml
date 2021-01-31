@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.15
+  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.16
 
 jobs:
   build-and-test:
@@ -46,17 +46,21 @@ executors:
     machine:
       image: ubuntu-2004:202008-01
 
+parameters:
+  run_workflow_release:
+    default: false
+    type: boolean
+
 workflows:
   version: 2
   main:
     jobs:
       - build-and-test
+  release:
+    when: << pipeline.parameters.run_workflow_release >>
+    jobs:
+      - build-and-test
       - circleci-maven-release-orb/run-maven-release:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /.*/
           requires:
               - build-and-test
           executor: new-java-maven-executor

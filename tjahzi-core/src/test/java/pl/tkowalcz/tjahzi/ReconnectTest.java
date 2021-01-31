@@ -77,8 +77,8 @@ public class ReconnectTest {
                 httpClient,
                 monitoringModule,
                 Map.of(),
-                0,
-                0,
+                10_000,
+                1000,
                 1024 * 1024,
                 false
         );
