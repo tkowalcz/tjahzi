@@ -5,7 +5,7 @@
     <groupId>pl.tkowalcz</groupId>
     <artifactId>tjahzi</artifactId>
     <packaging>pom</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.8.1-SNAPSHOT</version>
 
     <name>Tjahzi</name>
     <description>Tjahzi is a low overhead logging client for Loki</description>
@@ -56,6 +56,7 @@
         <compiler.source.level>9</compiler.source.level>
         <compiler.target.level>9</compiler.target.level>
 
+        <!--suppress UnresolvedMavenProperty -->
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
     </properties>
 
@@ -179,6 +180,7 @@
                 </plugins>
             </build>
             <properties>
+                <!--suppress UnresolvedMavenProperty -->
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
             </properties>
         </profile>
