@@ -66,13 +66,13 @@ public class NettyHttpClient implements Closeable {
             );
 
             snappy.encode(dataBuffer, compressedBuffer, dataBuffer.readableBytes());
-            log(compressedBuffer);
         } catch (Exception e) {
-            e.printStackTrace();
-            ReferenceCountUtil.safeRelease(dataBuffer);
             ReferenceCountUtil.safeRelease(compressedBuffer);
-
             throw e;
+        } finally {
+            ReferenceCountUtil.safeRelease(dataBuffer);
         }
+
+        log(compressedBuffer);
     }
 }
