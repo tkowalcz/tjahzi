@@ -1,13 +1,10 @@
 package pl.tkowalcz.tjahzi.protobuf;
 
-import com.google.common.primitives.Ints;
 import io.netty.buffer.ByteBuf;
 
 public class Protobuf {
 
     public static final int LENGTH_DELIMITED_TYPE = 0x2;
-    public static final int END_GROUP_TYPE = 0x4;
-
     public static final int VARINT_TYPE = 0x0;
 
     public static void writeSize(ByteBuf target, int messageStartIndex) {
@@ -24,7 +21,7 @@ public class Protobuf {
         int byte3 = ((value >>> 14) & 0x07F) | 0x80;
         int byte4 = ((value >>> 21) & 0x07F);
 
-        return Ints.fromBytes(
+        return intFromBytes(
                 (byte) byte1,
                 (byte) byte2,
                 (byte) byte3,
@@ -42,5 +39,12 @@ public class Protobuf {
                 value >>>= 7;
             }
         }
+    }
+
+    public static int intFromBytes(byte byte1, byte byte2, byte byte3, byte byte4) {
+        return (byte1 & 0xFF) << 24
+                | (byte2 & 0xFF) << 16
+                | (byte3 & 0xFF) << 8
+                | (byte4 & 0xFF);
     }
 }
