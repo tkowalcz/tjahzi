@@ -26,20 +26,4 @@ public class StreamSerializer {
 
         Protobuf.writeSize(target, messageStartIndex);
     }
-
-    public static int open(CharSequence labels, ByteBuf target) {
-        int messageStartIndex = target.writerIndex();
-        target.writeInt(0);
-
-        target.writeByte(LABELS_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
-        StringSerializer.serialize(labels, target);
-
-        target.writeByte(ENTRY_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
-
-        return messageStartIndex;
-    }
-
-    public static void close(ByteBuf target, int messageStartIndex) {
-        Protobuf.writeSize(target, messageStartIndex);
-    }
 }

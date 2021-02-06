@@ -2,6 +2,7 @@ package pl.tkowalcz.tjahzi;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.util.internal.StringUtil;
 import javolution.text.TextBuilder;
 import org.agrona.DirectBuffer;
 import pl.tkowalcz.tjahzi.http.TextBuilders;
@@ -16,12 +17,11 @@ public class LogBufferTranscoder {
 
     public LogBufferTranscoder(Map<String, String> staticLabels) {
         this.staticLabels = staticLabels;
-        this.staticLabelsString = "";
-//    buildLabelsStringIncludingStatic(
-//                Map.of(),
-//                StringUtil.EMPTY_STRING,
-//                staticLabels
-//        );
+        this.staticLabelsString = buildLabelsStringIncludingStatic(
+                staticLabels,
+                StringUtil.EMPTY_STRING,
+                TextBuilders.threadLocal().append("{ ")
+        ).toString();
     }
 
     public void deserializeIntoByteBuf(DirectBuffer buffer, int index, OutputBuffer outputBuffer) {
@@ -47,7 +47,6 @@ public class LogBufferTranscoder {
         ByteBuf logLine = Unpooled.wrappedBuffer(byteBuffer)
                 .readerIndex(index);
 
-//        String line = buffer.getStringAscii(index);
         outputBuffer.addLogLine(actualLabels, timestamp, logLine);
     }
 

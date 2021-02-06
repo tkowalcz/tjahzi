@@ -42,7 +42,7 @@ public class LogBufferAgent implements Agent, MessageHandler {
         this.batchWaitMillis = batchWaitMillis;
         this.httpClient = httpClient;
 
-        this.outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.heapBuffer());
+        this.outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         this.logBufferTranscoder = new LogBufferTranscoder(staticLabels);
     }
 

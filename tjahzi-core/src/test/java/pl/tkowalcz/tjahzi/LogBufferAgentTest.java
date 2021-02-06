@@ -25,7 +25,11 @@ class LogBufferAgentTest {
     @BeforeEach
     void setUp() {
         logBuffer = new ManyToOneRingBuffer(
-                new UnsafeBuffer(new byte[1024 * 1024 + RingBufferDescriptor.TRAILER_LENGTH])
+                new UnsafeBuffer(
+                        ByteBuffer.wrap(
+                                new byte[1024 * 1024 + RingBufferDescriptor.TRAILER_LENGTH]
+                        )
+                )
         );
 
         logger = new TjahziLogger(logBuffer, new StandardMonitoringModule());
@@ -140,7 +144,11 @@ class LogBufferAgentTest {
         int sentBatchAfter5kb = 5 * 1024;
 
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
-                new UnsafeBuffer(new byte[1024 + RingBufferDescriptor.TRAILER_LENGTH])
+                new UnsafeBuffer(
+                        ByteBuffer.wrap(
+                                new byte[1024 + RingBufferDescriptor.TRAILER_LENGTH]
+                        )
+                )
         );
 
         TjahziLogger logger = new TjahziLogger(logBuffer, new StandardMonitoringModule());

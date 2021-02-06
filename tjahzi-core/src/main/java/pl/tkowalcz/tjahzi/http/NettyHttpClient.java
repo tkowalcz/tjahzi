@@ -59,7 +59,7 @@ public class NettyHttpClient implements Closeable {
 
     public void log(OutputBuffer outputBuffer) throws IOException {
         ByteBuf dataBuffer = outputBuffer.close();
-        ByteBuf compressedBuffer = PooledByteBufAllocator.DEFAULT.heapBuffer();
+        ByteBuf compressedBuffer = PooledByteBufAllocator.DEFAULT.buffer();
 
         try {
             snappy.encode(dataBuffer, compressedBuffer, dataBuffer.readableBytes());

@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBuf;
 public class Protobuf {
 
     public static final int LENGTH_DELIMITED_TYPE = 0x2;
+    public static final int END_GROUP_TYPE = 0x4;
+
     public static final int VARINT_TYPE = 0x0;
 
     public static void writeSize(ByteBuf target, int messageStartIndex) {

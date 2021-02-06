@@ -214,7 +214,7 @@ class HeadersTest {
                         wireMockServer.verify(
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
                                         .withHeader("content-type", matching("application/x-protobuf"))
-                                        .withHeader("content-length", matching("42|43"))
+                                        .withHeader("content-length", matching("50|51"))
                                         .withHeader("host", matching("localhost"))
                         ));
     }
