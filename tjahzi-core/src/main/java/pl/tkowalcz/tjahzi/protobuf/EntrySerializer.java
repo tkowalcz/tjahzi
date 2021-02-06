@@ -12,7 +12,7 @@ public class EntrySerializer {
 
     public static void serialize(
             long timestamp,
-            String logLine,
+            ByteBuf logLine,
             ByteBuf target
     ) {
         int messageStartIndex = target.writerIndex();

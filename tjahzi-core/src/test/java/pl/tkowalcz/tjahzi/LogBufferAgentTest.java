@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi;
 
-import logproto.Logproto;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
@@ -73,7 +72,7 @@ class LogBufferAgentTest {
         agent.doWork();
 
         // Then
-        verify(httpClient).log((Logproto.PushRequest.Builder) any());
+        verify(httpClient).log((OutputBuffer) any());
     }
 
     @Test
@@ -180,6 +179,6 @@ class LogBufferAgentTest {
         agent.doWork();
 
         // Then
-        verify(httpClient, times(2)).log((Logproto.PushRequest.Builder) any());
+        verify(httpClient, times(2)).log((OutputBuffer) any());
     }
 }
