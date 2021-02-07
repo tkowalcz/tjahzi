@@ -70,7 +70,7 @@
                                 </outputTarget>
                                 <outputTarget>
                                     <type>grpc-java</type>
-                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.0.1</pluginArtifact>
+                                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.35.0</pluginArtifact>
                                 </outputTarget>
                             </outputTargets>
                         </configuration>

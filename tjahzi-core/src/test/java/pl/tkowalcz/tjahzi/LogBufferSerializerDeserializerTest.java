@@ -1,7 +1,11 @@
 package pl.tkowalcz.tjahzi;
 
 import com.google.common.collect.Streams;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.PooledByteBufAllocator;
 import logproto.Logproto;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,6 +69,7 @@ class LogBufferSerializerDeserializerTest {
         );
     }
 
+    @SuppressWarnings("unused")
     @ParameterizedTest(name = "{0}")
     @MethodSource("variousMessageConfigurations")
     void shouldSerializeMessage(
@@ -73,9 +78,9 @@ class LogBufferSerializerDeserializerTest {
             String logLevelLabel,
             String logLevel,
             String logLine,
-            int expectedSize) {
+            int expectedSize) throws InvalidProtocolBufferException {
         // Given
-        UnsafeBuffer buffer = new UnsafeBuffer(new byte[expectedSize]);
+        UnsafeBuffer buffer = new UnsafeBuffer(ByteBuffer.wrap(new byte[expectedSize]));
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
 
         // When
@@ -89,8 +94,23 @@ class LogBufferSerializerDeserializerTest {
         );
 
         // Then
-        LogBufferDeserializer deserializer = new LogBufferDeserializer(Map.of());
-        Logproto.StreamAdapter stream = deserializer.deserializeIntoProtobuf(buffer, 0);
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
+
+        LogBufferTranscoder deserializer = new LogBufferTranscoder(Map.of(), buffer);
+        deserializer.deserializeIntoByteBuf(
+                buffer,
+                0,
+                outputBuffer
+        );
+
+        ByteBuf target = outputBuffer.close();
+        Logproto.PushRequest pushRequest = Logproto.PushRequest
+                .parser()
+                .parsePartialFrom(new ByteBufInputStream(target));
+
+        assertThat(pushRequest).isNotNull();
+        assertThat(pushRequest.getStreamsCount()).isEqualTo(1);
+        Logproto.StreamAdapter stream = pushRequest.getStreams(0);
 
         assertThat(stream.getEntriesList()).hasSize(1);
         assertThat(stream.getEntriesList().get(0).getTimestamp()).isEqualTo(

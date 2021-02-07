@@ -1,6 +1,6 @@
 package pl.tkowalcz.tjahzi;
 
-import logproto.Logproto;
+import io.netty.buffer.PooledByteBufAllocator;
 import org.agrona.MutableDirectBuffer;
 import org.agrona.concurrent.Agent;
 import org.agrona.concurrent.MessageHandler;
@@ -22,10 +22,9 @@ public class LogBufferAgent implements Agent, MessageHandler {
     private final long batchSize;
     private final long batchWaitMillis;
 
-    private final LogBufferDeserializer logBufferDeserializer;
+    private final OutputBuffer outputBuffer;
+    private final LogBufferTranscoder logBufferTranscoder;
 
-    private Logproto.PushRequest.Builder request = Logproto.PushRequest.newBuilder();
-    private int estimatedBytesPending;
     private long timeoutDeadline;
 
     public LogBufferAgent(
@@ -43,7 +42,11 @@ public class LogBufferAgent implements Agent, MessageHandler {
         this.batchWaitMillis = batchWaitMillis;
         this.httpClient = httpClient;
 
-        this.logBufferDeserializer = new LogBufferDeserializer(staticLabels);
+        this.outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
+        this.logBufferTranscoder = new LogBufferTranscoder(
+                staticLabels,
+                logBuffer.buffer()
+        );
     }
 
     @Override
@@ -53,11 +56,9 @@ public class LogBufferAgent implements Agent, MessageHandler {
         long currentTimeMillis = clock.millis();
         if (exceededBatchSizeThreshold() || exceededWaitTimeThreshold(currentTimeMillis)) {
             try {
-                httpClient.log(request);
+                httpClient.log(outputBuffer);
             } finally {
-                request = Logproto.PushRequest.newBuilder();
-
-                estimatedBytesPending = 0;
+                outputBuffer.clear();
                 timeoutDeadline = currentTimeMillis + batchWaitMillis;
             }
         }
@@ -73,7 +74,6 @@ public class LogBufferAgent implements Agent, MessageHandler {
             int length
     ) {
         if (msgTypeId == TjahziLogger.LOG_MESSAGE_TYPE_ID) {
-            estimatedBytesPending += length;
             processMessage(buffer, index);
         } else {
             // Ignore
@@ -86,19 +86,18 @@ public class LogBufferAgent implements Agent, MessageHandler {
     }
 
     private boolean exceededWaitTimeThreshold(long currentTimeMillis) {
-        return currentTimeMillis > timeoutDeadline & estimatedBytesPending > 0;
+        return currentTimeMillis > timeoutDeadline & outputBuffer.getBytesPending() > 0;
     }
 
     private boolean exceededBatchSizeThreshold() {
-        return estimatedBytesPending > batchSize;
+        return outputBuffer.getBytesPending() > batchSize;
     }
 
     private void processMessage(MutableDirectBuffer buffer, int index) {
-        Logproto.StreamAdapter stream = logBufferDeserializer.deserializeIntoProtobuf(
+        logBufferTranscoder.deserializeIntoByteBuf(
                 buffer,
-                index
+                index,
+                outputBuffer
         );
-
-        request.addStreams(stream);
     }
 }

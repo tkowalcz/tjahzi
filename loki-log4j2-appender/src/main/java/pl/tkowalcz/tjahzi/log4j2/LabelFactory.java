@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi.log4j2;
 
-import com.google.common.collect.Maps;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import pl.tkowalcz.tjahzi.github.GitHubDocs;
@@ -60,7 +59,7 @@ public class LabelFactory {
     }
 
     private HashMap<String, String> convertAndLogViolations() {
-        HashMap<String, String> lokiLabels = Maps.newHashMap();
+        HashMap<String, String> lokiLabels = new HashMap<>();
 
         stream(labels)
                 .flatMap(label -> {

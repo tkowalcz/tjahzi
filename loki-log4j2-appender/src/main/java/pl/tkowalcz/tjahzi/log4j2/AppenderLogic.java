@@ -9,7 +9,7 @@ import pl.tkowalcz.tjahzi.TjahziLogger;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -56,7 +56,7 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
         logger.log(
                 event.getTimeMillis(),
-                Map.of(),
+                Collections.emptyMap(),
                 logLevelLabel,
                 logLevel,
                 byteBuffer

@@ -17,6 +17,8 @@ package pl.tkowalcz.tjahzi.http;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.Arrays;
+
 /**
  * Uncompresses an input {@link ByteBuf} encoded with Snappy compression into an
  * output {@link ByteBuf}.
@@ -25,13 +27,15 @@ import io.netty.buffer.ByteBuf;
  */
 public final class Snappy {
 
-    private static final int MAX_HT_SIZE = 1 << 14;
     private static final int MIN_COMPRESSIBLE_BYTES = 15;
 
     // constants for the tag types
     private static final int LITERAL = 0;
     private static final int COPY_1_BYTE_OFFSET = 1;
     private static final int COPY_2_BYTE_OFFSET = 2;
+
+    private static final int MAX_HT_SIZE = 1 << 14;
+    private final short[] hashTable = new short[MAX_HT_SIZE];
 
     public void encode(final ByteBuf in, final ByteBuf out, final int length) {
         // Write the preamble length to the output buffer
@@ -144,12 +148,9 @@ public final class Snappy {
      * @param inputSize The size of our input, ie. the number of bytes we need to encode
      * @return An appropriately sized empty hashtable
      */
-    private static short[] getHashTable(int inputSize) {
-        int htSize = 256;
-        while (htSize < MAX_HT_SIZE && htSize < inputSize) {
-            htSize <<= 1;
-        }
-        return new short[htSize];
+    private short[] getHashTable(int inputSize) {
+        Arrays.fill(hashTable, (short) 0);
+        return hashTable;
     }
 
     /**

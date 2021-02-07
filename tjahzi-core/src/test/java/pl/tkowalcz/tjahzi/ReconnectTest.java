@@ -98,7 +98,7 @@ public class ReconnectTest {
 
         // Then
         await()
-                .atMost(Durations.TEN_MINUTES)
+                .atMost(Durations.TEN_SECONDS)
                 .untilAsserted(() ->
                         wireMockServer.verify(
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))

@@ -1,11 +1,10 @@
 package pl.tkowalcz.tjahzi.http;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCountUtil;
-import logproto.Logproto;
+import pl.tkowalcz.tjahzi.OutputBuffer;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.io.Closeable;
@@ -56,21 +55,15 @@ public class NettyHttpClient implements Closeable {
         lokiConnection.close();
     }
 
-    public void log(Logproto.PushRequest.Builder request) throws IOException {
-        ByteBuf dataBuffer = PooledByteBufAllocator.DEFAULT.buffer();
+    public void log(OutputBuffer outputBuffer) throws IOException {
+        ByteBuf dataBuffer = outputBuffer.close();
         ByteBuf compressedBuffer = PooledByteBufAllocator.DEFAULT.buffer();
 
         try {
-            request.build().writeTo(
-                    new ByteBufOutputStream(dataBuffer)
-            );
-
             snappy.encode(dataBuffer, compressedBuffer, dataBuffer.readableBytes());
         } catch (Exception e) {
             ReferenceCountUtil.safeRelease(compressedBuffer);
             throw e;
-        } finally {
-            ReferenceCountUtil.safeRelease(dataBuffer);
         }
 
         log(compressedBuffer);

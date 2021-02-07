@@ -1,7 +1,5 @@
 package pl.tkowalcz.tjahzi.stats;
 
-import com.google.common.util.concurrent.Uninterruptibles;
-
 import java.util.concurrent.TimeUnit;
 
 public class StatsDumpingThread extends Thread {
@@ -31,7 +29,10 @@ public class StatsDumpingThread extends Thread {
     public void run() {
         while (isEnabled()) {
             System.out.println(monitoringModule.toString());
-            Uninterruptibles.sleepUninterruptibly(LAUNCH_DUMP_INTERVAL_SECONDS, TimeUnit.SECONDS);
+            try {
+                TimeUnit.SECONDS.sleep(LAUNCH_DUMP_INTERVAL_SECONDS);
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 }

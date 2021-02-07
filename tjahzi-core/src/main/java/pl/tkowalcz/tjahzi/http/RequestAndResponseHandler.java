@@ -11,6 +11,8 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.util.ReferenceCountUtil;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
+import java.nio.charset.Charset;
+
 @ChannelHandler.Sharable
 class RequestAndResponseHandler extends ChannelDuplexHandler {
 
@@ -36,6 +38,7 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
 
         monitoringModule.incrementHttpResponses();
         if (msg.status().codeClass() != HttpStatusClass.SUCCESS) {
+            System.out.println(msg.content().toString(Charset.defaultCharset()));
             monitoringModule.incrementHttpErrors(msg.status(), msg.content());
         }
 
