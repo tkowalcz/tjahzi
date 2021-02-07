@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.internal.StringUtil;
 import javolution.text.TextBuilder;
 import org.agrona.DirectBuffer;
+import org.agrona.concurrent.AtomicBuffer;
 import pl.tkowalcz.tjahzi.http.TextBuilders;
 
 import java.nio.ByteBuffer;
@@ -15,13 +16,18 @@ public class LogBufferTranscoder {
     private final Map<String, String> staticLabels;
     private final String staticLabelsString;
 
-    public LogBufferTranscoder(Map<String, String> staticLabels) {
+    private final ByteBuf logLineHolder;
+
+    public LogBufferTranscoder(Map<String, String> staticLabels, AtomicBuffer buffer) {
         this.staticLabels = staticLabels;
         this.staticLabelsString = buildLabelsStringIncludingStatic(
                 staticLabels,
                 StringUtil.EMPTY_STRING,
                 TextBuilders.threadLocal().append("{ ")
         ).toString();
+
+        ByteBuffer byteBuffer = buffer.byteBuffer();
+        logLineHolder = Unpooled.wrappedBuffer(byteBuffer);
     }
 
     public void deserializeIntoByteBuf(DirectBuffer buffer, int index, OutputBuffer outputBuffer) {
@@ -43,11 +49,8 @@ public class LogBufferTranscoder {
                 labelsBuilder
         );
 
-        ByteBuffer byteBuffer = buffer.byteBuffer();
-        ByteBuf logLine = Unpooled.wrappedBuffer(byteBuffer)
-                .readerIndex(index);
-
-        outputBuffer.addLogLine(actualLabels, timestamp, logLine);
+        logLineHolder.readerIndex(index);
+        outputBuffer.addLogLine(actualLabels, timestamp, logLineHolder);
     }
 
     private int readLabels(
@@ -78,13 +81,11 @@ public class LogBufferTranscoder {
         }
 
         staticLabels.forEach((key, value) -> {
-//            if (!labels.containsKey(key)) {
             labels.append(key)
                     .append("=")
                     .append("\"")
                     .append(value)
                     .append("\",");
-//            }
         });
 
         labels.setCharAt(labels.length() - 1, '}');

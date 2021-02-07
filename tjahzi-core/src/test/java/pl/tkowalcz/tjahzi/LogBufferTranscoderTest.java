@@ -55,7 +55,7 @@ class LogBufferTranscoderTest {
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
 
         // When
-        LogBufferTranscoder deserializer = new LogBufferTranscoder(staticLabels);
+        LogBufferTranscoder deserializer = new LogBufferTranscoder(staticLabels, buffer);
         deserializer.deserializeIntoByteBuf(
                 buffer,
                 0,
@@ -122,7 +122,7 @@ class LogBufferTranscoderTest {
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
 
         // When
-        LogBufferTranscoder deserializer = new LogBufferTranscoder(staticLabels);
+        LogBufferTranscoder deserializer = new LogBufferTranscoder(staticLabels, buffer);
         deserializer.deserializeIntoByteBuf(
                 buffer,
                 0,

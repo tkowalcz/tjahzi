@@ -96,7 +96,7 @@ class LogBufferSerializerDeserializerTest {
         // Then
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
 
-        LogBufferTranscoder deserializer = new LogBufferTranscoder(Map.of());
+        LogBufferTranscoder deserializer = new LogBufferTranscoder(Map.of(), buffer);
         deserializer.deserializeIntoByteBuf(
                 buffer,
                 0,

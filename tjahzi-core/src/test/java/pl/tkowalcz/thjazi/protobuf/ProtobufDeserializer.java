@@ -20,12 +20,14 @@ public class ProtobufDeserializer {
 
     @Test
     void shouldDeserialize() throws IOException {
-        ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
-                new UnsafeBuffer(
-                        ByteBuffer.wrap(
-                                new byte[1024 + RingBufferDescriptor.TRAILER_LENGTH]
-                        )
+        UnsafeBuffer buffer = new UnsafeBuffer(
+                ByteBuffer.wrap(
+                        new byte[1024 + RingBufferDescriptor.TRAILER_LENGTH]
                 )
+        );
+
+        ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
+                buffer
         );
 
         LogBufferSerializer serializer = new LogBufferSerializer(logBuffer.buffer());
@@ -38,7 +40,7 @@ public class ProtobufDeserializer {
                 ByteBuffer.wrap("Test".getBytes())
         );
 
-        LogBufferTranscoder deserializer = new LogBufferTranscoder(Map.of());
+        LogBufferTranscoder deserializer = new LogBufferTranscoder(Map.of(), buffer);
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         deserializer.deserializeIntoByteBuf(
                 logBuffer.buffer(),

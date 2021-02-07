@@ -43,7 +43,10 @@ public class LogBufferAgent implements Agent, MessageHandler {
         this.httpClient = httpClient;
 
         this.outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        this.logBufferTranscoder = new LogBufferTranscoder(staticLabels);
+        this.logBufferTranscoder = new LogBufferTranscoder(
+                staticLabels,
+                logBuffer.buffer()
+        );
     }
 
     @Override
