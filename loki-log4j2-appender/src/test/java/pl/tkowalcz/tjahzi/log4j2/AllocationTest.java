@@ -14,6 +14,9 @@ import org.testcontainers.shaded.com.google.common.util.concurrent.Uninterruptib
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -35,8 +38,18 @@ public class AllocationTest {
     @Test
     @Disabled
     void shouldSendData() throws URISyntaxException {
-        AtomicLong allocatedMemory = new AtomicLong();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("allocatedMemory = " + allocatedMemory)));
+        AtomicLong totalAllocatedMemory = new AtomicLong();
+        Map<String, AtomicLong> allocatedMemory = new HashMap<>();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            allocatedMemory
+                    .entrySet()
+                    .stream()
+                    .sorted(Comparator.<Map.Entry<String, AtomicLong>>comparingLong(e -> e.getValue().get()).reversed())
+                    .limit(30)
+                    .forEach(System.out::println);
+
+            System.out.println("totalAllocatedMemory = " + totalAllocatedMemory);
+        }));
 
         // Given
         System.setProperty("loki.host", loki.getHost());
@@ -63,9 +76,20 @@ public class AllocationTest {
         }
 
         AllocationRecorder.addSampler((count, desc, newObj, size) -> {
-            if (!desc.startsWith("java/time")) {
-                allocatedMemory.addAndGet(size);
+            if (desc.contains("AllocationTest")) {
+                return;
             }
+
+            if (desc.contains("instrumentation")) {
+                return;
+            }
+
+            if (desc.contains("asm")) {
+                return;
+            }
+
+            allocatedMemory.computeIfAbsent(desc, __ -> new AtomicLong()).addAndGet(size);
+            totalAllocatedMemory.addAndGet(size);
         });
 
         for (int i = 0; i < 1000; i++) {
