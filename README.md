@@ -49,6 +49,8 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 +-------------+                                                           
 ```
 
+For those interested wiki contains some information on [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing).
+
 # Log4j2 Appender
 
 On top of a `Core` component  with rather simplistic API we intend to build several layers that make it truly useful. Log4j2 
@@ -56,7 +58,8 @@ appender seemed like a good first.
 
 ## Example Log4j2 configuration
 
-This example sets up a root logger with a Loki appender.
+This example sets up a root logger with a Loki appender. Note that `pl.tkowalcz.tjahzi.log4j2` is added to `packages` attribute
+of configuration so that the appender can be found.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -85,7 +88,7 @@ This example sets up a root logger with a Loki appender.
     </appenders>
 </configuration>
 ``` 
-           
+
 ### Lookups / variable substitution 
 
 Contents of the properties are automatically interpolated by Log4j2 (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).
@@ -119,7 +122,7 @@ Specify additional labels attached to each log line sent via this appender insta
 
 If defined then log level label of configured name will be added to each line sent to Loki. It will contain Log4j log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
 
-#### bufferSizeMegabytes (optional, default = 1MB)
+#### bufferSizeMegabytes (optional, default = 32 MB)
 
 Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations.
 
@@ -143,6 +146,16 @@ Sets socket read timeout on Loki connection.
 Whether Tjahzi should allocate native buffer for `Log buffer` component. We can go into a rabbit hole of divagations what are the
 implications of this. Most important in our view is that having 10s or 100s of MB of space taken out of heap is not very 
 friendly to garbage collector which might have to occasionally copy it around.
+
+#### batchSize (optional, default = 10_2400)
+
+Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum batch 
+size (in bytes) of logs to accumulate before sending the batch to Loki`.
+
+#### batchWait = (optional, default = 5s)
+
+Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum amount
+of time to wait before sending a batch, even if that batch isn't full`.
 
 # LICENSE
 
