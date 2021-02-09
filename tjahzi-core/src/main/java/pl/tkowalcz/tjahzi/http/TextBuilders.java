@@ -1,7 +1,7 @@
 package pl.tkowalcz.tjahzi.http;
 
 import io.netty.util.concurrent.FastThreadLocal;
-import javolution.text.TextBuilder;
+import pl.tkowalcz.tjahzi.javolution.text.TextBuilder;
 
 public class TextBuilders {
 
