@@ -3,10 +3,10 @@ package pl.tkowalcz.tjahzi;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.util.internal.StringUtil;
-import javolution.text.TextBuilder;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.AtomicBuffer;
 import pl.tkowalcz.tjahzi.http.TextBuilders;
+import pl.tkowalcz.tjahzi.javolution.text.TextBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -80,13 +80,13 @@ public class LogBufferTranscoder {
             return staticLabelsString;
         }
 
-        staticLabels.forEach((key, value) -> {
-            labels.append(key)
-                    .append("=")
-                    .append("\"")
-                    .append(value)
-                    .append("\",");
-        });
+        staticLabels.forEach(
+                (key, value) -> labels.append(key)
+                        .append("=")
+                        .append("\"")
+                        .append(value)
+                        .append("\",")
+        );
 
         labels.setCharAt(labels.length() - 1, '}');
         return labels;
