@@ -10,12 +10,10 @@ Latest releases:
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
 
-# About
-
-Tjahzi allows pushing log data to Loki. It uses protobuf format to push log lines with timestamps and labels to Loki. This 
-is implemented in the `core` component. On top of that we built the log4j2 appender, others might follow.
-
 ## Features
+
+Tjahzi allows pushing log data to Loki. It uses protobuf format to push log lines with timestamps and labels to Loki. This
+is implemented in the `core` component. On top of that we built the `log4j2 appender`. It's features include:
 
 1. Logging does not allocate objects nor take any locks.
 1. Sending data to Loki in batches allocates as little as possible.
