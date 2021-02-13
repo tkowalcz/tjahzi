@@ -25,6 +25,15 @@
             <version>4.1.52.Final</version>
         </dependency>
 
+        <!-- For the example metric consumer -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>4.1.17</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>pl.tkowalcz</groupId>
             <artifactId>loki-protobuf</artifactId>
@@ -68,13 +77,6 @@
             <artifactId>catch-exception</artifactId>
             <version>1.2.0</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>4.1.17</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Testcontainers -->
