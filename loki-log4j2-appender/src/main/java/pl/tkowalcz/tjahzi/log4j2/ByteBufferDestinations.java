@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi.log4j2;
 
-import io.netty.util.concurrent.FastThreadLocal;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.layout.ByteBufferDestination;
 import org.apache.logging.log4j.core.layout.ByteBufferDestinationHelper;
@@ -10,12 +9,7 @@ import java.util.function.BiConsumer;
 
 public class ByteBufferDestinations implements ByteBufferDestination {
 
-    private static final FastThreadLocal<ByteBufferDestinations> THREAD_LOCAL = new FastThreadLocal<>() {
-        @Override
-        protected ByteBufferDestinations initialValue() throws Exception {
-            return new ByteBufferDestinations();
-        }
-    };
+    private static final ThreadLocal<ByteBufferDestinations> THREAD_LOCAL = ThreadLocal.withInitial(ByteBufferDestinations::new);
 
     /**
      * 10kb should be enough for everyone. Even in case of 1000s of threads we will allocate at most 10s of MB of buffers.
