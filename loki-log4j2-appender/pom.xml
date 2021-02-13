@@ -149,7 +149,7 @@
                             </relocations>
 
                             <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>-nodep</shadedClassifierName>
+                            <shadedClassifierName>nodep</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>
