@@ -60,7 +60,7 @@ is implemented in the `core` component. On top of that we built the `log4j2 appe
 ```
 
 Detailed discussion of how to configure the appender with examples and description of all possible tags check 
-[README.md](loki-log4j2-appender/README.md).
+[Log4j2 appender docs](loki-log4j2-appender/README.md).
 
 ## Design principles
 
