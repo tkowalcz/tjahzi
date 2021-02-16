@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>pl.tkowalcz</groupId>
-        <artifactId>tjahzi</artifactId>
+        <groupId>pl.tkowalcz.tjahzi</groupId>
+        <artifactId>tjahzi-parent</artifactId>
         <version>0.9.2-SNAPSHOT</version>
     </parent>
 
-    <name>tjahzi-log4j2-appender</name>
+    <name>log4j2-appender</name>
     <artifactId>log4j2-appender</artifactId>
     <packaging>jar</packaging>
 
@@ -96,51 +96,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>nodep</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.2.4</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactSet>
-                                        <excludes>
-                                            <exclude>org.apache.logging.log4j</exclude>
-                                        </excludes>
-                                    </artifactSet>
-                                    <minimizeJar>true</minimizeJar>
-                                    <relocations>
-                                        <relocation>
-                                            <pattern>org.agrona</pattern>
-                                            <shadedPattern>pl.tkowalcz.tjahzi.org.agrona</shadedPattern>
-                                        </relocation>
-                                        <relocation>
-                                            <pattern>io.netty</pattern>
-                                            <shadedPattern>pl.tkowalcz.tjahzi.io.netty</shadedPattern>
-                                        </relocation>
-                                    </relocations>
-
-                                    <!--                            <createDependencyReducedPom>true</createDependencyReducedPom>-->
-                                    <!--                            <shadedArtifactAttached>true</shadedArtifactAttached>-->
-                                    <!--                            <shadedClassifierName>nodep</shadedClassifierName>-->
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <build>
         <plugins>

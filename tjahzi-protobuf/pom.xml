@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>pl.tkowalcz</groupId>
-        <artifactId>tjahzi</artifactId>
+        <groupId>pl.tkowalcz.tjahzi</groupId>
+        <artifactId>tjahzi-parent</artifactId>
         <version>0.9.2-SNAPSHOT</version>
     </parent>
 
-    <name>tjahzi-loki-protobuf</name>
+    <name>loki-protobuf</name>
     <artifactId>loki-protobuf</artifactId>
     <packaging>jar</packaging>
 

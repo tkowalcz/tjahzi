@@ -31,7 +31,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     private static final Logger LOGGER = StatusLogger.getLogger();
 
-    public static final int BYTES_IN_MEGABYTE = 1024 * 1024;
+    private static final int BYTES_IN_MEGABYTE = 1024 * 1024;
 
     @PluginBuilderAttribute
     @Required(message = "No Loki address provided for LokiAppender")

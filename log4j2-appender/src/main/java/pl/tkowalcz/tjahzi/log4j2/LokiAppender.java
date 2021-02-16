@@ -31,7 +31,6 @@ public class LokiAppender extends AbstractAppender {
         return new LokiAppenderBuilder<B>().asBuilder();
     }
 
-
     private final LoggingSystem loggingSystem;
     private final MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
@@ -83,7 +82,7 @@ public class LokiAppender extends AbstractAppender {
     }
 
     @Override
-    public void append(final LogEvent event) {
+    public void append(LogEvent event) {
         appenderLogic.append(getLayout(), event);
     }
 
