@@ -71,3 +71,12 @@ workflows:
           requires:
               - build-and-test
           executor: new-java-maven-executor
+          mvn-release-perform-command: >-
+            mvn --batch-mode release:perform -DskipTests -s .circleci/.maven.xml
+      - circleci-maven-release-orb/run-maven-release:
+          requires:
+            - build-and-test
+          executor: new-java-maven-executor
+          mvn-release-perform-command: >-
+            mvn --batch-mode release:perform -DskipTests -Pnodep -s .circleci/.maven.xml
+
