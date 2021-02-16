@@ -13,10 +13,10 @@
     <url>https://github.com/tkowalcz/tjahzi</url>
 
     <modules>
-        <module>tjahzi-protobuf</module>
-        <module>tjahzi-log4j2-appender</module>
-        <module>tjahzi-log4j2-appender-nodep</module>
-        <module>tjahzi-core</module>
+        <module>loki-protobuf</module>
+        <module>log4j2-appender</module>
+        <module>log4j2-appender-nodep</module>
+        <module>core</module>
     </modules>
 
     <scm>
