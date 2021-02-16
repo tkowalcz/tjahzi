@@ -5,7 +5,7 @@
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.3-SNAPSHOT</version>
     </parent>
 
     <name>loki-protobuf</name>
