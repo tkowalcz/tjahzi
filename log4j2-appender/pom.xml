@@ -117,48 +117,4 @@
             </plugin>
         </plugins>
     </build>
-
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>nodep</id>-->
-
-<!--            <build>-->
-<!--                <finalName>${artifactId}-nodep-${version}</finalName>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-shade-plugin</artifactId>-->
-<!--                        <version>3.2.4</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <phase>package</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>shade</goal>-->
-<!--                                </goals>-->
-<!--                                <configuration>-->
-<!--                                    <artifactSet>-->
-<!--                                        <excludes>-->
-<!--                                            <exclude>org.apache.logging.log4j</exclude>-->
-<!--                                        </excludes>-->
-<!--                                    </artifactSet>-->
-<!--                                    <relocations>-->
-<!--                                        <relocation>-->
-<!--                                            <pattern>org.agrona</pattern>-->
-<!--                                            <shadedPattern>pl.tkowalcz.tjahzi.org.agrona</shadedPattern>-->
-<!--                                        </relocation>-->
-<!--                                        <relocation>-->
-<!--                                            <pattern>io.netty</pattern>-->
-<!--                                            <shadedPattern>pl.tkowalcz.tjahzi.io.netty</shadedPattern>-->
-<!--                                        </relocation>-->
-<!--                                    </relocations>-->
-
-<!--                                    <minimizeJar>true</minimizeJar>-->
-<!--                                </configuration>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--        </profile>-->
-<!--    </profiles>-->
 </project>
