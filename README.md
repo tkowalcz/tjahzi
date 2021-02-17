@@ -7,8 +7,8 @@
 
 Latest releases:
 
-[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
-[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
 
 ## Features
 
@@ -26,9 +26,9 @@ is implemented in the `core` component. On top of that we built the `log4j2 appe
    
    ```xml
    <dependency>
-     <groupId>pl.tkowalcz</groupId>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender-nodep</artifactId>
-     <version>0.9.1</version>
+     <version>0.9.4</version>
    </dependency>
    ```
    
@@ -37,9 +37,9 @@ is implemented in the `core` component. On top of that we built the `log4j2 appe
    
    ```xml
    <dependency>
-     <groupId>pl.tkowalcz</groupId>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender</artifactId>
-     <version>0.9.1</version>
+     <version>0.9.4</version>
    </dependency>
    ```
    
