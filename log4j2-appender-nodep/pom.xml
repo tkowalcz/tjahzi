@@ -85,6 +85,7 @@
                                 </relocation>
                             </relocations>
 
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
                             <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
