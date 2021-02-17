@@ -70,7 +70,8 @@ public class AllocationTest {
         Logger logger = LogManager.getLogger(pl.tkowalcz.tjahzi.log4j2.LokiAppenderTest.class);
 
         // When
-        for (int i = 0; i < 1000; i++) {
+        System.out.println("Warmup...");
+        for (int i = 0; i < 2000; i++) {
             logger.info(logLine);
             Uninterruptibles.sleepUninterruptibly(10, TimeUnit.MILLISECONDS);
         }
@@ -88,10 +89,15 @@ public class AllocationTest {
                 return;
             }
 
+            if (desc.contains("Object")) {
+                return;
+            }
+
             allocatedMemory.computeIfAbsent(desc, __ -> new AtomicLong()).addAndGet(size);
             totalAllocatedMemory.addAndGet(size);
         });
 
+        System.out.println("Test...");
         for (int i = 0; i < 1000; i++) {
             logger.info(logLine);
             Uninterruptibles.sleepUninterruptibly(10, TimeUnit.MILLISECONDS);
