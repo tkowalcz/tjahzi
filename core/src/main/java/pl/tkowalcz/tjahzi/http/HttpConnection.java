@@ -27,8 +27,10 @@ public class HttpConnection implements Closeable {
 
         EventLoopGroupRetry retry = new EventLoopGroupRetry(
                 group,
-                this::recreateConnection,
-                monitoringModule
+                __ -> {
+                    monitoringModule.incrementHttpConnectAttempts();
+                    recreateConnection(__);
+                }
         );
         recreateConnection(retry);
     }
@@ -54,9 +56,15 @@ public class HttpConnection implements Closeable {
 
     public void execute(FullHttpRequest request) {
         BlockingRetry blockingRetry = new BlockingRetry(
-                retry -> execute(request, retry),
-                clientConfiguration.getMaxRetries(),
-                monitoringModule
+                retry -> {
+                    monitoringModule.incrementRetriedHttpRequests();
+                    execute(request, retry);
+                },
+                () -> {
+                    monitoringModule.incrementFailedHttpRequests();
+                    request.release();
+                },
+                clientConfiguration.getMaxRetries()
         );
 
         execute(request, blockingRetry);

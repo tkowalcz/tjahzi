@@ -1,40 +1,39 @@
 package pl.tkowalcz.tjahzi.http;
 
-import pl.tkowalcz.tjahzi.stats.MonitoringModule;
-
 import java.util.function.Consumer;
 
 class BlockingRetry implements Retry {
 
-    private final ExponentialBackoffStrategy strategy;
     private final Consumer<BlockingRetry> operation;
-    private final MonitoringModule monitoringModule;
+    private final Runnable failureAction;
 
+    private final ExponentialBackoffStrategy strategy;
     private int retries;
 
     // VisibleForTesting
     BlockingRetry(
             Consumer<BlockingRetry> operation,
+            Runnable failureAction,
             ExponentialBackoffStrategy strategy,
-            int retries,
-            MonitoringModule monitoringModule
+            int retries
     ) {
         this.operation = operation;
+        this.failureAction = failureAction;
         this.strategy = strategy;
 
         this.retries = retries;
-        this.monitoringModule = monitoringModule;
     }
 
     BlockingRetry(
             Consumer<BlockingRetry> operation,
-            int retries,
-            MonitoringModule monitoringModule) {
+            Runnable failureAction,
+            int retries
+    ) {
         this(
                 operation,
+                failureAction,
                 ExponentialBackoffStrategy.withDefault(),
-                retries,
-                monitoringModule
+                retries
         );
     }
 
@@ -42,7 +41,6 @@ class BlockingRetry implements Retry {
     public void retry() {
         if (retries > 0) {
             retries--;
-            monitoringModule.incrementRetriedHttpRequests();
 
             try {
                 Thread.sleep(strategy.getAsLong(), 0);
@@ -52,7 +50,7 @@ class BlockingRetry implements Retry {
 
             operation.accept(this);
         } else {
-            monitoringModule.incrementFailedHttpRequests();
+            failureAction.run();
         }
     }
 }
