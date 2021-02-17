@@ -1,7 +1,6 @@
 package pl.tkowalcz.tjahzi.http;
 
 import org.junit.jupiter.api.Test;
-import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,43 +9,62 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BlockingRetryTest {
 
     @Test
-    void shouldRetryAndInvokeOperation() {
+    void shouldInvokeOperation() {
         // Given
-        AtomicInteger retryCounter = new AtomicInteger();
-        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
+        AtomicInteger invocationCounter = new AtomicInteger();
+        AtomicInteger failureCounter = new AtomicInteger();
 
         BlockingRetry retry = new BlockingRetry(
-                __ -> {
-                    retryCounter.incrementAndGet();
-                    __.retry();
-                },
+                __ -> invocationCounter.incrementAndGet(),
+                failureCounter::incrementAndGet,
                 new ExponentialBackoffStrategy(1, 1, 1),
-                5,
-                monitoringModule
+                5
         );
 
         // When
         retry.retry();
 
         // Then
-        assertThat(retryCounter).hasValue(5);
-        assertThat(monitoringModule.getRetriedHttpRequests()).isEqualTo(5);
-        assertThat(monitoringModule.getFailedHttpRequests()).isEqualTo(1);
+        assertThat(invocationCounter).hasValue(1);
+        assertThat(failureCounter).hasValue(0);
+    }
+
+    @Test
+    void shouldRetryAndInvokeFailureCallback() {
+        // Given
+        AtomicInteger invocationCounter = new AtomicInteger();
+        AtomicInteger failureCounter = new AtomicInteger();
+
+        BlockingRetry retry = new BlockingRetry(
+                __ -> {
+                    invocationCounter.incrementAndGet();
+                    __.retry();
+                },
+                failureCounter::incrementAndGet,
+                new ExponentialBackoffStrategy(1, 1, 1),
+                5
+        );
+
+        // When
+        retry.retry();
+
+        // Then
+        assertThat(invocationCounter).hasValue(5);
+        assertThat(failureCounter).hasValue(1);
     }
 
     @Test
     void shouldNotRetryOnItsOwn() {
         // Given
         AtomicInteger retryCounter = new AtomicInteger();
-        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
+        AtomicInteger failureCounter = new AtomicInteger();
 
         BlockingRetry retry = new BlockingRetry(
-                __ -> {
-                    retryCounter.incrementAndGet();
+                __ -> retryCounter.incrementAndGet(),
+                () -> {
                 },
                 new ExponentialBackoffStrategy(1, 1, 1),
-                5,
-                monitoringModule
+                5
         );
 
         // When
@@ -54,7 +72,6 @@ class BlockingRetryTest {
 
         // Then
         assertThat(retryCounter).hasValue(1);
-        assertThat(monitoringModule.getRetriedHttpRequests()).isEqualTo(1);
-        assertThat(monitoringModule.getFailedHttpRequests()).isEqualTo(0);
+        assertThat(failureCounter).hasValue(0);
     }
 }

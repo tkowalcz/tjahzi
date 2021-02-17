@@ -5,7 +5,6 @@ import org.awaitility.Durations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,12 +15,10 @@ import static org.awaitility.Awaitility.await;
 class EventLoopGroupRetryTest {
 
     private NioEventLoopGroup eventLoopGroup;
-    private StandardMonitoringModule monitoringModule;
 
     @BeforeEach
     void setUp() {
         eventLoopGroup = new NioEventLoopGroup(Executors.defaultThreadFactory());
-        monitoringModule = new StandardMonitoringModule();
     }
 
     @AfterEach
@@ -33,7 +30,6 @@ class EventLoopGroupRetryTest {
     void shouldRetryAndInvokeOperation() {
         // Given
         AtomicInteger retryCounter = new AtomicInteger();
-        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
 
         EventLoopGroupRetry retry = new EventLoopGroupRetry(
                 eventLoopGroup,
@@ -41,8 +37,7 @@ class EventLoopGroupRetryTest {
                     retryCounter.incrementAndGet();
                     __.retry();
                 },
-                new ExponentialBackoffStrategy(250, 1000, 2),
-                monitoringModule
+                new ExponentialBackoffStrategy(250, 1000, 2)
         );
 
         // When
@@ -52,8 +47,6 @@ class EventLoopGroupRetryTest {
         await().atMost(Durations.TEN_SECONDS).untilAsserted(() -> {
             assertThat(retryCounter).hasValueGreaterThan(3);
         });
-
-        assertThat(monitoringModule.getHttpConnectAttempts()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
@@ -66,8 +59,7 @@ class EventLoopGroupRetryTest {
                 __ -> {
                     retryCounter.incrementAndGet();
                 },
-                new ExponentialBackoffStrategy(1, 1, 1),
-                monitoringModule
+                new ExponentialBackoffStrategy(1, 1, 1)
         );
 
         // When
@@ -77,7 +69,5 @@ class EventLoopGroupRetryTest {
         await().atMost(Durations.TEN_SECONDS).untilAsserted(() -> {
             assertThat(retryCounter).hasValue(1);
         });
-
-        assertThat(monitoringModule.getHttpConnectAttempts()).isEqualTo(1);
     }
 }
