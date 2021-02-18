@@ -48,15 +48,15 @@ is implemented in the `core` component. On top of that we built the `log4j2 appe
 
 ```xml
     <Loki name="loki-appender">
-            <host>${sys:loki.host}</host>
-            <port>${sys:loki.port}</port>
+        <host>${sys:loki.host}</host>
+        <port>${sys:loki.port}</port>
 
-            <PatternLayout>
-                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
-            </PatternLayout>
+        <PatternLayout>
+            <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
+        </PatternLayout>
 
-            <Label name="server" value="${sys:hostname}"/>
-        </Loki>
+        <Label name="server" value="${sys:hostname}"/>
+    </Loki>
 ```
 
 Detailed discussion of how to configure the appender with examples and description of all possible tags check 
@@ -82,23 +82,23 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 ```
                 [via 10kB thread local buffer]
                            │                                          
-+-------------+    Log  <──┘                                                
-│ Application │----------------+                                          
+┌─────────────┐    Log  ←──┘                                                
+│ Application │----------------┐                                          
 │  Thread 1   │                │                                          
-+-------------+                │                                          
+└─────────────┘                │                                          
                                │                                          
-       .                      \│/                                          
-                          +----+---------------+         +---------+         +---------+
+       .                       ▼                                          
+                          ┌────────────────────┐         ┌─────────┐         ┌─────────┐
        .      Log         │                    │         │ Reading │         │  I/O    │
-          --------------->┤     Log buffer     ├-->--->--┤ agent   ├-->--->--┤ thread  │      
+          ---------------▶│     Log buffer     ├--→---→--┤ agent   ├--→---→--┤ thread  │      
        .                  │                    │         │ thread  │         │ (Netty) │    
-                          +----------+---------+         +---------+         +---------+    
-       .                            /│\                                    
+                          └────────────────────┘         └─────────┘         └─────────┘    
+       .                             ▲                                    
                                      │                                    
-+-------------+      Log             │                                    
-│ Application │----------------------+                                    
+┌─────────────┐      Log             │                                    
+│ Application │----------------------┘                                    
 │  Thread N   │                                                           
-+-------------+                                                           
+└─────────────┘                                                           
 ```
 
 For those interested wiki contains some information on [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing).
