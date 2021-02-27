@@ -6,7 +6,7 @@ import io.netty.util.internal.StringUtil;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.AtomicBuffer;
 import pl.tkowalcz.tjahzi.http.TextBuilders;
-import pl.tkowalcz.tjahzi.javolution.text.TextBuilder;
+import pl.tkowalcz.tjahzi.utils.TextBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
