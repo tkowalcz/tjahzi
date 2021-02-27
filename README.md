@@ -107,6 +107,3 @@ For those interested wiki contains some information on [log buffer sizing](https
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 
 Pull and feature requests are welcome.
-
-This repository contains code copied from Javolution (http://javolution.org/) library. Javolution is BSD licensed and 
-copied file(s) contain copyright notice as per the license requirements. 
