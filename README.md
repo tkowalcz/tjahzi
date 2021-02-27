@@ -20,6 +20,8 @@ is implemented in the `core` component. On top of that we built the `log4j2 appe
 1. We also provide a no-dependency version of log4j2 appender. 
 1. Includes in-house implementation of protobuf wire format for Loki to reduce dependencies and improve performance 
 
+It is currently used (that I know of) to ship logs from tens of servers at about 10GB of logs per day.
+
 ## Getting started
 
 1. Grab the no-dependency version of the appender:
