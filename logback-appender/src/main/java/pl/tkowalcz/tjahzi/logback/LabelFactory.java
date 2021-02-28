@@ -1,7 +1,5 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.status.StatusLogger;
 import pl.tkowalcz.tjahzi.github.GitHubDocs;
 
 import java.util.HashMap;
@@ -14,8 +12,6 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.counting;
 
 public class LabelFactory {
-
-    private static final Logger LOGGER = StatusLogger.getLogger();
 
     private final String logLevelLabel;
     private final Label[] labels;
@@ -50,9 +46,9 @@ public class LabelFactory {
                 .collect(Collectors.toList());
 
         if (!duplicatedLabels.isEmpty()) {
-            LOGGER.error(
+            System.out.printf(
                     "There are duplicated labels which is not allowed by Loki. " +
-                            "These labels will be deduplicated non-deterministically: {}",
+                            "These labels will be deduplicated non-deterministically: %s\n",
                     duplicatedLabels
             );
         }
@@ -67,8 +63,8 @@ public class LabelFactory {
                                 return Stream.of(label);
                             }
 
-                            LOGGER.error(
-                                    "Ignoring label '{}' - contains invalid characters. {}",
+                            System.out.printf(
+                                    "Ignoring label '%s' - contains invalid characters. %s\n",
                                     label.getName(),
                                     GitHubDocs.LABEL_NAMING.getLogMessage()
                             );
@@ -86,8 +82,8 @@ public class LabelFactory {
             String logLevelLabel
     ) {
         if (!Label.hasValidName(logLevelLabel)) {
-            LOGGER.error(
-                    "Ignoring log level label '{}' - contains invalid characters. {}",
+            System.out.printf(
+                    "Ignoring log level label '%s' - contains invalid characters. %s\n",
                     logLevelLabel,
                     GitHubDocs.LABEL_NAMING.getLogMessage()
             );
@@ -96,7 +92,8 @@ public class LabelFactory {
         }
 
         if (existingLabels.remove(logLevelLabel) != null) {
-            LOGGER.error("Log level label '{} conflicts with label defined in configuration - ignoring it.",
+            System.out.printf(
+                    "Ignoring log level label '%s' - conflicts with label defined in configuration.\n",
                     logLevelLabel
             );
         }
