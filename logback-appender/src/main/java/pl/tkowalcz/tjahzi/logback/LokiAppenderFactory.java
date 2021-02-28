@@ -23,7 +23,12 @@ public class LokiAppenderFactory {
     public LokiAppenderFactory(LokiAppenderConfigurator configurator) {
         this.configurator = configurator;
 
-        LabelFactory labelFactory = new LabelFactory(configurator.getLogLevelLabel(), configurator.getLabels().toArray(new Label[0]));
+        LabelFactory labelFactory = new LabelFactory(
+                configurator,
+                configurator.getLogLevelLabel(),
+                configurator.getLabels().toArray(new Label[0])
+        );
+
         lokiLabels = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelFactory.validateLogLevelLabel(lokiLabels);
     }
@@ -55,10 +60,12 @@ public class LokiAppenderFactory {
 
         int bufferSizeBytes = configurator.getBufferSizeMegabytes() * LokiAppenderConfigurator.BYTES_IN_MEGABYTE;
         if (TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
-            System.out.printf(
-                    "Invalid log buffer size %d - using nearest power of two greater than provided value, no less than 1MB. %s\n",
-                    bufferSizeBytes,
-                    GitHubDocs.LOG_BUFFER_SIZING.getLogMessage()
+            configurator.addWarn(
+                    String.format(
+                            "Invalid log buffer size %d - using nearest power of two greater than provided value, no less than 1MB. %s\n",
+                            bufferSizeBytes,
+                            GitHubDocs.LOG_BUFFER_SIZING.getLogMessage()
+                    )
             );
         }
 

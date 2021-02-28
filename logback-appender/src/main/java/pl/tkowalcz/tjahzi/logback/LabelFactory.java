@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.core.spi.ContextAware;
 import pl.tkowalcz.tjahzi.github.GitHubDocs;
 
 import java.util.HashMap;
@@ -13,10 +14,17 @@ import static java.util.stream.Collectors.counting;
 
 public class LabelFactory {
 
+    private final ContextAware internalLogger;
+
     private final String logLevelLabel;
     private final Label[] labels;
 
-    public LabelFactory(String logLevelLabel, Label... labels) {
+    public LabelFactory(
+            ContextAware internalLogger,
+            String logLevelLabel,
+            Label... labels
+    ) {
+        this.internalLogger = internalLogger;
         this.logLevelLabel = logLevelLabel;
         this.labels = labels;
     }
@@ -46,10 +54,12 @@ public class LabelFactory {
                 .collect(Collectors.toList());
 
         if (!duplicatedLabels.isEmpty()) {
-            System.out.printf(
-                    "There are duplicated labels which is not allowed by Loki. " +
-                            "These labels will be deduplicated non-deterministically: %s\n",
-                    duplicatedLabels
+            internalLogger.addWarn(
+                    String.format(
+                            "There are duplicated labels which is not allowed by Loki. " +
+                                    "These labels will be deduplicated non-deterministically: %s\n",
+                            duplicatedLabels
+                    )
             );
         }
     }
@@ -63,10 +73,12 @@ public class LabelFactory {
                                 return Stream.of(label);
                             }
 
-                            System.out.printf(
-                                    "Ignoring label '%s' - contains invalid characters. %s\n",
-                                    label.getName(),
-                                    GitHubDocs.LABEL_NAMING.getLogMessage()
+                            internalLogger.addWarn(
+                                    String.format(
+                                            "Ignoring label '%s' - contains invalid characters. %s\n",
+                                            label.getName(),
+                                            GitHubDocs.LABEL_NAMING.getLogMessage()
+                                    )
                             );
 
                             return Stream.of();
@@ -82,19 +94,23 @@ public class LabelFactory {
             String logLevelLabel
     ) {
         if (!Label.hasValidName(logLevelLabel)) {
-            System.out.printf(
-                    "Ignoring log level label '%s' - contains invalid characters. %s\n",
-                    logLevelLabel,
-                    GitHubDocs.LABEL_NAMING.getLogMessage()
+            internalLogger.addWarn(
+                    String.format(
+                            "Ignoring log level label '%s' - contains invalid characters. %s\n",
+                            logLevelLabel,
+                            GitHubDocs.LABEL_NAMING.getLogMessage()
+                    )
             );
 
             return null;
         }
 
         if (existingLabels.remove(logLevelLabel) != null) {
-            System.out.printf(
-                    "Ignoring log level label '%s' - conflicts with label defined in configuration.\n",
-                    logLevelLabel
+            internalLogger.addWarn(
+                    String.format(
+                            "Ignoring log level label '%s' - conflicts with label defined in configuration.\n",
+                            logLevelLabel
+                    )
             );
         }
 

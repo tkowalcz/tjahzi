@@ -60,7 +60,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     public void stop() {
         loggingSystem.close(
                 1000,
-                thread -> System.out.println("Loki appender was unable to stop thread on shutdown: " + thread)
+                thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
         );
 
         super.stop();
