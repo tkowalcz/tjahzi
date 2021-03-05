@@ -10,6 +10,8 @@ Latest releases:
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
 
+If you find the project useful (or not useful for some reason) please let me know to encourage further development. ⭐ Stars are also welcome ⭐ ;).
+
 ## Features
 
 Tjahzi allows pushing log data to Loki. It uses protobuf format to push log lines with timestamps and labels to Loki. This
