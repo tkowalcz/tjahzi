@@ -17,7 +17,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -41,14 +40,14 @@ class LokiAppenderTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldSendData() throws URISyntaxException {
+    void shouldSendData() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("basic-appender-test-log4j2-configuration.xml")
+                .getResource("basic-appender-test-configuration.xml")
                 .toURI();
 
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))

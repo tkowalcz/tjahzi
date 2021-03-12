@@ -23,7 +23,7 @@ class LokiAppenderMonitoringTest {
         // Given
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("basic-appender-test-log4j2-configuration.xml")
+                .getResource("basic-appender-test-configuration.xml")
                 .toURI();
 
         LoggerContext context = (LoggerContext) LogManager.getContext(false);

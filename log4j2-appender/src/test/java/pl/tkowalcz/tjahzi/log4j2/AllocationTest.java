@@ -57,7 +57,7 @@ public class AllocationTest {
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("basic-appender-test-log4j2-configuration.xml")
+                .getResource("basic-appender-test-configuration.xml")
                 .toURI();
 
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
