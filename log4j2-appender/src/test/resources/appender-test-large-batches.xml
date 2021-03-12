@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="OFF" shutdownHook="disable" packages="pl.tkowalcz.tjahzi.log4j2">
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Loki"/>
@@ -8,6 +8,8 @@
 
     <appenders>
         <Loki name="Loki" bufferSizeMegabytes="2" batchWait="10000">
+            <batchSize>1048576</batchSize>
+
             <host>${sys:loki.host}</host>
             <port>${sys:loki.port}</port>
 

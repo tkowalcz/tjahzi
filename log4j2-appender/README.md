@@ -10,7 +10,7 @@ of configuration so that the appender can be found.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="OFF" shutdownHook="disable" packages="pl.tkowalcz.tjahzi.log4j2">
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Loki"/>
