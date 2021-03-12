@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import io.restassured.RestAssured;
@@ -10,7 +11,6 @@ import org.awaitility.Durations;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
@@ -27,7 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @Testcontainers
-class LokiAppenderTest {
+class LokiAppenderLargeBatchesTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -49,7 +49,7 @@ class LokiAppenderTest {
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("basic-appender-test-configuration.xml")
+                .getResource("appender-test-large-batches.xml")
                 .toURI();
 
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -60,12 +60,23 @@ class LokiAppenderTest {
         context.reset();
         configurator.doConfigure(uri.toURL());
 
-        String expectedLogLine = "Test";
+        String expectedLogLine = "Cupcake ipsum dolor sit amet cake wafer. " +
+                "Souffle jelly beans biscuit topping. " +
+                "Danish bonbon gummies powder caramels. " +
+                "Danish jelly beans sweet roll topping jelly beans oat cake toffee. " +
+                "Chocolate cake sesame snaps brownie biscuit cheesecake. " +
+                "Ice cream dessert sweet donut marshmallow. " +
+                "Muffin bear claw cookie jelly-o sugar plum jelly beans apple pie fruitcake cookie. " +
+                "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
+                "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
+
         long expectedTimestamp = System.currentTimeMillis();
+        Logger logger = context.getLogger(LokiAppenderLargeBatchesTest.class);
 
         // When
-        Logger logger = context.getLogger(LokiAppenderTest.class);
-        logger.info(expectedLogLine);
+        for (int i = 0; i < 1000; i++) {
+            logger.info(i + " " + expectedLogLine);
+        }
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -74,14 +85,14 @@ class LokiAppenderTest {
 
         Awaitility
                 .await()
-                .atMost(Durations.TEN_SECONDS)
+                .atMost(Durations.ONE_MINUTE)
                 .pollInterval(Durations.ONE_SECOND)
                 .ignoreExceptions()
                 .untilAsserted(() -> {
                     given()
                             .contentType(ContentType.URLENC)
                             .urlEncodingEnabled(false)
-                            .formParam("query=%7Bserver%3D%22127.0.0.1%22%7D")
+                            .formParam("&start=" + expectedTimestamp + "&limit=1000&query=%7Bserver%3D%22127.0.0.1%22%7D")
                             .when()
                             .get("/loki/api/v1/query_range")
                             .then()
@@ -91,6 +102,7 @@ class LokiAppenderTest {
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
+                            .body("data.result[0].values.size()", equalTo(1000))
                             .body("data.result[0].values", hasItems(new BaseMatcher<>() {
                                                                         @Override
                                                                         public boolean matches(Object o) {
