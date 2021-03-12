@@ -17,7 +17,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +25,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @Testcontainers
-class LokiAppenderLargeBatchesTestTest {
+class LokiAppenderLargeBatchesTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -41,7 +40,7 @@ class LokiAppenderLargeBatchesTestTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldSendData() throws URISyntaxException {
+    void shouldSendData() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
@@ -65,7 +64,7 @@ class LokiAppenderLargeBatchesTestTest {
                 "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
 
         long expectedTimestamp = System.currentTimeMillis();
-        Logger logger = LogManager.getLogger(LokiAppenderLargeBatchesTestTest.class);
+        Logger logger = LogManager.getLogger(LokiAppenderLargeBatchesTest.class);
 
         // When
         for (int i = 0; i < 1000; i++) {
