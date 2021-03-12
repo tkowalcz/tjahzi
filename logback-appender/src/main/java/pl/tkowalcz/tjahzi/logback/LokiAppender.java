@@ -4,17 +4,21 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
+import pl.tkowalcz.tjahzi.stats.MonitoringModule;
+import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
 
 public class LokiAppender extends LokiAppenderConfigurator {
 
+
     private PatternLayoutEncoder encoder;
     private LoggingSystem loggingSystem;
 
     private TjahziLogger logger;
     private String logLevelLabel;
+    private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public PatternLayoutEncoder getEncoder() {
         return encoder;
@@ -22,6 +26,19 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     public void setEncoder(PatternLayoutEncoder encoder) {
         this.encoder = encoder;
+    }
+
+    /**
+     * This is an entry point to set monitoring (statistics) hooks for this appender. This
+     * API is in beta and is subject to change (and probably will).
+     */
+    public void setMonitoringModule(MonitoringModule monitoringModule) {
+        monitoringModuleWrapper.setMonitoringModule(monitoringModule);
+    }
+
+    // @VisibleForTesting
+    public LoggingSystem getLoggingSystem() {
+        return loggingSystem;
     }
 
     @Override
@@ -50,6 +67,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
         LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
         loggingSystem = lokiAppenderFactory.createAppender();
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
+        monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
         logger = loggingSystem.createLogger();
         loggingSystem.start();

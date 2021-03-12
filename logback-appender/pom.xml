@@ -28,6 +28,13 @@
         </dependency>
 
         <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>4.1.17</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.java-allocation-instrumenter</groupId>
             <artifactId>java-allocation-instrumenter</artifactId>
             <version>3.3.0</version>

@@ -2,7 +2,7 @@
     <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
 
         <bufferSizeMegabytes>2</bufferSizeMegabytes>
-        <batchWait>10000</batchWait>
+        <batchWait>10</batchWait>
         <batchSize>1048576</batchSize>
 
         <host>${loki.host}</host>

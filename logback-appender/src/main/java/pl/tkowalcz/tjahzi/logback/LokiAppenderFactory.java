@@ -19,6 +19,7 @@ public class LokiAppenderFactory {
 
     private final HashMap<String, String> lokiLabels;
     private final String logLevelLabel;
+    private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public LokiAppenderFactory(LokiAppenderConfigurator configurator) {
         this.configurator = configurator;
@@ -47,7 +48,7 @@ public class LokiAppenderFactory {
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
 
-        MutableMonitoringModuleWrapper monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
+        monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
         monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
 
         NettyHttpClient httpClient = HttpClientFactory
@@ -59,7 +60,7 @@ public class LokiAppenderFactory {
                 );
 
         int bufferSizeBytes = configurator.getBufferSizeMegabytes() * LokiAppenderConfigurator.BYTES_IN_MEGABYTE;
-        if (TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
+        if (!TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
             configurator.addWarn(
                     String.format(
                             "Invalid log buffer size %d - using nearest power of two greater than provided value, no less than 1MB. %s\n",
@@ -82,5 +83,9 @@ public class LokiAppenderFactory {
 
     public String getLogLevelLabel() {
         return logLevelLabel;
+    }
+
+    public MutableMonitoringModuleWrapper getMonitoringModuleWrapper() {
+        return monitoringModuleWrapper;
     }
 }

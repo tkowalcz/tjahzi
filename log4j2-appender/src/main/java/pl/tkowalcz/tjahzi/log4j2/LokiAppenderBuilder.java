@@ -101,7 +101,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 );
 
         int bufferSizeBytes = getBufferSizeMegabytes() * BYTES_IN_MEGABYTE;
-        if (TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
+        if (!TjahziInitializer.isCorrectSize(bufferSizeBytes)) {
             LOGGER.warn("Invalid log buffer size {} - using nearest power of two greater than provided value, no less than 1MB. {}",
                     bufferSizeBytes,
                     GitHubDocs.LOG_BUFFER_SIZING.getLogMessage()
