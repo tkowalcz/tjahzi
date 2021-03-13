@@ -1,15 +1,17 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -17,7 +19,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @Testcontainers
-class LokiAppenderLargeBatchesTestTest {
+class LokiAppenderLargeBatchesTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -41,7 +42,7 @@ class LokiAppenderLargeBatchesTestTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldSendData() throws URISyntaxException {
+    void shouldSendData() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
@@ -51,8 +52,13 @@ class LokiAppenderLargeBatchesTestTest {
                 .getResource("appender-test-large-batches.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         String expectedLogLine = "Cupcake ipsum dolor sit amet cake wafer. " +
                 "Souffle jelly beans biscuit topping. " +
@@ -65,7 +71,7 @@ class LokiAppenderLargeBatchesTestTest {
                 "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
 
         long expectedTimestamp = System.currentTimeMillis();
-        Logger logger = LogManager.getLogger(LokiAppenderLargeBatchesTestTest.class);
+        Logger logger = context.getLogger(LokiAppenderLargeBatchesTest.class);
 
         // When
         for (int i = 0; i < 1000; i++) {

@@ -3,14 +3,61 @@
 On top of a `Core` component  with rather simplistic API we intend to build several layers that make it truly useful. Log4j2
 appender seemed like a good first.
 
-## Example Log4j2 configuration
+## Quick start guide
+
+1. Grab the no-dependency version of the appender:
+
+   ```xml
+   <dependency>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
+     <artifactId>log4j2-appender-nodep</artifactId>
+     <version>0.9.4</version>
+   </dependency>
+   ```
+
+   If you already use a compatible version of Netty in your project then to reduce the size of your dependencies include
+   regular appender distribution:
+
+   ```xml
+   <dependency>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
+     <artifactId>log4j2-appender</artifactId>
+     <version>0.9.4</version>
+   </dependency>
+   ```
+
+1. Add `packages="pl.tkowalcz.tjahzi.log4j2"` attribute to your existing log4j2 configuration file.
+1. Include minimal appender configuration:
+
+```xml
+    <Loki name="loki-appender">
+        <host>${sys:loki.host}</host>
+        <port>${sys:loki.port}</port>
+
+        <PatternLayout>
+            <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
+        </PatternLayout>
+
+        <Label name="server" value="${sys:hostname}"/>
+    </Loki>
+```
+
+1. Reference the appender from inside one of your logger definitions:
+
+```xml
+    <Root level="INFO">
+        <AppenderRef ref="Loki"/>
+    </Root>
+```
+
+## Advanced configuration
 
 This example sets up a root logger with a Loki appender. Note that `pl.tkowalcz.tjahzi.log4j2` is added to `packages` attribute
 of configuration so that the appender can be found.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="OFF" shutdownHook="disable" packages="pl.tkowalcz.tjahzi.log4j2">
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Loki"/>

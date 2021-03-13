@@ -1,15 +1,17 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -50,14 +52,19 @@ class LokiAppenderTest {
                 .getResource("basic-appender-test-configuration.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         String expectedLogLine = "Test";
         long expectedTimestamp = System.currentTimeMillis();
 
         // When
-        Logger logger = LogManager.getLogger(LokiAppenderTest.class);
+        Logger logger = context.getLogger(LokiAppenderTest.class);
         logger.info(expectedLogLine);
 
         // Then

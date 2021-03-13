@@ -9,64 +9,28 @@ Latest releases:
 
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/core.svg?label=Core&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
 [![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/log4j2-appender.svg?label=Log4j2%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
+[![Maven Central](https://img.shields.io/maven-central/v/pl.tkowalcz.tjahzi/logback-appender.svg?label=Logback%20Appender&style=for-the-badge)](https://search.maven.org/search?q=g:pl.tkowalcz.tjahzi)
 
 If you find the project useful (or not useful for some reason) please let me know to encourage further development. ⭐ Stars are also welcome ⭐ ;).
 
 ## Features
 
 Tjahzi allows pushing log data to Loki. It uses protobuf format to push log lines with timestamps and labels to Loki. This
-is implemented in the `core` component. On top of that we built the `log4j2 appender`. It's features include:
+is implemented in the `core` component. On top of that we built appenders for `log4j2` and `Logback`. These feature:
 
 1. Logging does not allocate objects nor take any locks.
 1. Sending data to Loki in batches allocates as little as possible.
-1. We also provide a no-dependency version of log4j2 appender. 
-1. Includes in-house implementation of protobuf wire format for Loki to reduce dependencies and improve performance 
+1. We also provide a no-dependency versions of these appenders. 
+1. Includes in-house implementation of protobuf wire format for Loki to reduce dependencies and improve performance. 
 
-It is currently used (that I know of) to ship logs from tens of servers at about 10GB of logs per day.
+Log4j2 appender is currently used to ship logs from tens of servers at about 10GB of logs per day.
 
 ## Getting started
 
-1. Grab the no-dependency version of the appender:
-   
-   ```xml
-   <dependency>
-     <groupId>pl.tkowalcz.tjahzi</groupId>
-     <artifactId>log4j2-appender-nodep</artifactId>
-     <version>0.9.4</version>
-   </dependency>
-   ```
-   
-   If you already use a compatible version of Netty in your project then to reduce the size of your dependencies include 
-   regular appender distribution:
-   
-   ```xml
-   <dependency>
-     <groupId>pl.tkowalcz.tjahzi</groupId>
-     <artifactId>log4j2-appender</artifactId>
-     <version>0.9.4</version>
-   </dependency>
-   ```
-   
-1. Add `packages="pl.tkowalcz.tjahzi.log4j2"` attribute to your log4j2 configuration xml.
-1. Include minimal appender configuration
+For `log4j2` appender quick start guide and detailed discussions see this [README.md](log4j2-appender/README.md).
+For `Logback` appender quick start guide and detailed discussions see this [README.md](logback-appender/README.md).
 
-```xml
-    <Loki name="loki-appender">
-        <host>${sys:loki.host}</host>
-        <port>${sys:loki.port}</port>
-
-        <PatternLayout>
-            <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
-        </PatternLayout>
-
-        <Label name="server" value="${sys:hostname}"/>
-    </Loki>
-```
-
-Detailed discussion of how to configure the appender with examples and description of all possible tags check 
-[Log4j2 appender docs](log4j2-appender/README.md).
-
-## Design principles
+## Core design principles
 
 Logging should be lightweight and not interfere with main business tasks of threads that happen to log a message. 
 Asking the logging subsystem to log a message should be as CPU efficient as possible. 

@@ -1,13 +1,15 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -15,7 +17,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -47,11 +48,16 @@ class LogLevelLabelConfigurationTest {
                 .getResource("appender-test-with-log-label-unset.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         // When
-        Logger logger = LogManager.getLogger(LokiAppenderTest.class);
+        Logger logger = context.getLogger(LokiAppenderLargeBatchesTest.class);
         logger.info("Test");
 
         // Then
@@ -83,7 +89,7 @@ class LogLevelLabelConfigurationTest {
     }
 
     @Test
-    void shouldSendLogLevelAsConfigured() throws URISyntaxException {
+    void shouldSendLogLevelAsConfigured() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
@@ -93,11 +99,16 @@ class LogLevelLabelConfigurationTest {
                 .getResource("appender-test-with-log-label-set.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         // When
-        Logger logger = LogManager.getLogger(LokiAppenderTest.class);
+        Logger logger = context.getLogger(LokiAppenderLargeBatchesTest.class);
         logger.info("Test");
 
         // Then

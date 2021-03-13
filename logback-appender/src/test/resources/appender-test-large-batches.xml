@@ -1,0 +1,29 @@
+<configuration debug="true">
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+
+        <bufferSizeMegabytes>2</bufferSizeMegabytes>
+        <batchWait>10</batchWait>
+        <batchSize>1048576</batchSize>
+
+        <host>${loki.host}</host>
+        <port>${loki.port}</port>
+
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+
+        <header>
+            <name>X-Org-Id</name>
+            <value>Circus</value>
+        </header>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="Loki"/>
+    </root>
+</configuration>

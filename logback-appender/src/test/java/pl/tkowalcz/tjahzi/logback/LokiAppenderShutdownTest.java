@@ -1,8 +1,10 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
-import org.apache.logging.log4j.LogManager;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -13,7 +15,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ class LokiAppenderShutdownTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldSendData() throws URISyntaxException {
+    void shouldSendData() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
@@ -43,8 +44,13 @@ class LokiAppenderShutdownTest {
                 .getResource("basic-appender-test-configuration.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         // Verify our assumptions that we can find threads started by Tjahzi
         Awaitility.await().untilAsserted(() -> {
@@ -60,7 +66,7 @@ class LokiAppenderShutdownTest {
         });
 
         // When
-        LogManager.shutdown();
+        context.stop();
 
         // Then
         Awaitility.await().untilAsserted(() -> {
