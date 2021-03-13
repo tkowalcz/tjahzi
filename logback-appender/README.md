@@ -2,7 +2,56 @@
 
 On top of the `Core` component that sends logs to Loki this project gives you Logback appender.
 
-## Example configuration
+## Quick start guide
+
+1. Grab the no-dependency version of the appender:
+
+   ```xml
+   <dependency>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
+     <artifactId>logback-appender-nodep</artifactId>
+     <version>0.1.0</version>
+   </dependency>
+   ```
+
+   If you already use a compatible version of Netty in your project then to reduce the size of your dependencies include
+   regular appender distribution:
+
+   ```xml
+   <dependency>
+     <groupId>pl.tkowalcz.tjahzi</groupId>
+     <artifactId>logback-appender</artifactId>
+     <version>0.1.0</version>
+   </dependency>
+   ```
+
+1. Include minimal appender configuration in your existing logback configuration:
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+   <host>${loki.host}</host>
+   <port>${loki.port}</port>
+
+   <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+   </encoder>
+   
+   <label>
+      <name>server</name>
+      <value>${HOSTNAME}</value>
+   </label>
+</appender>
+```
+
+1. Reference the appender from inside one of your logger definitions:
+
+```xml
+<root level="debug">
+   <appender-ref ref="Loki"/>
+</root>
+```
+
+## Advanced configuration
 
 This example sets up a root logger with Loki appender. The appender definition must point to class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
 
