@@ -27,7 +27,10 @@ Log4j2 appender is currently used to ship logs from tens of servers at about 10G
 
 ## Getting started
 
+#### Log4j2
 For `log4j2` appender quick start guide and detailed discussions see this [README.md](log4j2-appender/README.md).
+
+#### Logback
 For `Logback` appender quick start guide and detailed discussions see this [README.md](logback-appender/README.md).
 
 ## Core design principles
