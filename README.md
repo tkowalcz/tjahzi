@@ -1,5 +1,5 @@
 # About
-[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a Log4j2 Appender for [Grafana Loki](https://grafana.com/oss/loki/). 
+[Tjahzi](http://www.thorgal.com/personnages/tjahzi/) is a set of Java tools and appenders for logging to [Grafana Loki](https://grafana.com/oss/loki/). 
 
 [![License: MIT](https://img.shields.io/github/license/tkowalcz/tjahzi?style=for-the-badge)](https://github.com/tkowalcz/tjahzi/blob/master/LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/tkowalcz/tjahzi?style=for-the-badge)](https://github.com/tkowalcz/tjahzi/commits/master)
