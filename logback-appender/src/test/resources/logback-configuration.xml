@@ -8,11 +8,6 @@
         </encoder>
 
         <header>
-            <name>server</name>
-            <value>127.0.0.1</value>
-        </header>
-
-        <header>
             <name>X-Org-Id</name>
             <value>Codewise</value>
         </header>
