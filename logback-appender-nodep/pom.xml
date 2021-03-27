@@ -11,6 +11,7 @@
     <name>logback-appender-nodep</name>
     <artifactId>logback-appender-nodep</artifactId>
     <packaging>jar</packaging>
+    <version>0.1.1-SNAPSHOT</version>
 
     <properties>
         <!--add comma separated artifact names from dependencies, to be included in unpacking-->
