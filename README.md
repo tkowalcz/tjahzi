@@ -23,6 +23,9 @@ is implemented in the `core` component. On top of that we built appenders for `l
 1. We also provide a no-dependency versions of these appenders. 
 1. Includes in-house implementation of protobuf wire format for Loki to reduce dependencies and improve performance. 
 
+These points apply to log4j2 appender. Logback design does not allow allocation free operation, but we go to great
+lengths to reduce allocations and even provide an optimized version of pattern layout.
+
 Log4j2 appender is currently used to ship logs from tens of servers at about 10GB of logs per day.
 
 ## Getting started
