@@ -6,9 +6,9 @@
         <host>${loki.host}</host>
         <port>${loki.port}</port>
 
-        <encoder>
+        <efficientLayout>
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-        </encoder>
+        </efficientLayout>
 
         <header>
             <name>X-Org-Id</name>

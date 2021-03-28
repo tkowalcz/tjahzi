@@ -28,14 +28,13 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
 1. Include minimal appender configuration in your existing logback configuration:
 
 ```xml
-
 <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
     <host>${loki.host}</host>
     <port>${loki.port}</port>
 
-    <encoder>
+    <efficientLayout>
         <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-    </encoder>
+    </efficientLayout>
 
     <label>
         <name>server</name>
@@ -47,10 +46,27 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
 1. Reference the appender from inside one of your logger definitions:
 
 ```xml
-
 <root level="debug">
     <appender-ref ref="Loki"/>
 </root>
+```
+
+## Custom pattern layout and decreasing allocations
+
+Tjahzi provides its own pattern layout class `ch.qos.logback.core.pattern.EfficientPatternLayout`. It is based on
+existing `PatternLayout` from Logback and uses exact same code for formatting events. The key difference is that it
+swaps out some parts of the implementation and introduces reusable thread local buffers for constructing log line and
+allocation free string to bytes encoder.
+
+Tjahzi appender supports all kinds of layouts. To enable `EfficientPatternLayout` us following configuration:
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+    ...
+    <efficientLayout>
+        <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+    </efficientLayout>
+</appender>
 ```
 
 ## Advanced configuration
@@ -59,15 +75,14 @@ This example sets up a root logger with Loki appender. The appender definition m
 class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
 
 ```xml
-
 <configuration>
     <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
         <host>${loki.host}</host>
         <port>${loki.port}</port>
 
-        <encoder>
+        <efficientLayout>
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-        </encoder>
+        </efficientLayout>
 
         <header>
             <name>X-Org-Id</name>
@@ -88,7 +103,6 @@ class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
         <appender-ref ref="Loki"/>
     </root>
 </configuration>
-
 ``` 
 
 ### Lookups / variable substitution
@@ -107,6 +121,25 @@ Let's go through the example config above and analyze configuration options (**N
 |-----|-------------|
 | Host | Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being resolved by call to `InetSocketAddress.createUnresolved`. |
 | Port | Self-explanatory :) |
+| Encoder | You need to specify pattern for the layout. See section below |
+
+#### Pattern definition
+
+You can define layout and pattern in a traditional Logback way:
+
+```xml
+<encoder>
+    <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+</encoder>
+```
+
+or use Tjahzi optimized efficient, low allocation encoder:
+
+```xml
+<efficientLayout>
+    <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+</efficientLayout>
+```
 
 #### Optional configuration parameters
 

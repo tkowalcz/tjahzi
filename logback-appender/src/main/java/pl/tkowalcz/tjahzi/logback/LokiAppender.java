@@ -2,6 +2,7 @@ package pl.tkowalcz.tjahzi.logback;
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.pattern.EfficientPatternLayout;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
@@ -9,16 +10,27 @@ import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.function.Function;
 
 public class LokiAppender extends LokiAppenderConfigurator {
 
-
+    private EfficientPatternLayout efficientLayout;
     private PatternLayoutEncoder encoder;
+
     private LoggingSystem loggingSystem;
+    private Function<ILoggingEvent, ByteBuffer> actualEncoder;
 
     private TjahziLogger logger;
     private String logLevelLabel;
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
+
+    public EfficientPatternLayout getEfficientLayout() {
+        return efficientLayout;
+    }
+
+    public void setEfficientLayout(EfficientPatternLayout efficientLayout) {
+        this.efficientLayout = efficientLayout;
+    }
 
     public PatternLayoutEncoder getEncoder() {
         return encoder;
@@ -44,25 +56,30 @@ public class LokiAppender extends LokiAppenderConfigurator {
     @Override
     protected void append(ILoggingEvent event) {
         String logLevel = event.getLevel().toString();
-        byte[] logLine = encoder.encode(event);
+        ByteBuffer logLine = actualEncoder.apply(event);
 
         logger.log(
                 event.getTimeStamp(),
                 Collections.emptyMap(),
                 logLevelLabel,
                 logLevel,
-                ByteBuffer.wrap(logLine)
+                logLine
         );
     }
 
     @Override
     public void start() {
         if (encoder == null) {
-            addError("No encoder set for the appender named [" + name + "].");
-            return;
-        }
+            if (efficientLayout == null) {
+                addError("No encoder set for the appender named [" + name + "]. You can also try setting efficientLayout instead.");
+                return;
+            }
 
-        encoder.start();
+            actualEncoder = efficientLayout::doEfficientLayout;
+        } else {
+            encoder.start();
+            actualEncoder = event -> ByteBuffer.wrap(encoder.encode(event));
+        }
 
         LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
         loggingSystem = lokiAppenderFactory.createAppender();
