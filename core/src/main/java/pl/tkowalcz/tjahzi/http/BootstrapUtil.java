@@ -12,9 +12,6 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import javax.net.ssl.SSLException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Optional;
 
 public class BootstrapUtil {
 
@@ -64,18 +61,5 @@ public class BootstrapUtil {
         } catch (SSLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static Optional<String> createAuthString(String username, String password) {
-        if (username == null && password == null) {
-            return Optional.empty();
-        }
-
-        String userPassword = username + ":" + password;
-        String authString = "Basic " + Base64
-                .getEncoder()
-                .encodeToString(userPassword.getBytes(StandardCharsets.UTF_8));
-
-        return Optional.of(authString);
     }
 }
