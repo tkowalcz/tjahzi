@@ -44,6 +44,7 @@ class GrafanaCloudAppenderTest {
         logger.info(expectedLogLine);
 
         // Then
+        RestAssured.reset();
         RestAssured.registerParser("text/plain", Parser.JSON);
 
         Awaitility
