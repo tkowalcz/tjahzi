@@ -15,6 +15,9 @@ public class ClientConfigurationBuilder {
     private String host;
     private int port;
 
+    private String username;
+    private String password;
+
     private int connectionTimeoutMillis = DEFAULT_CONNECT_TIMEOUT_MILLIS;
     private int requestTimeoutMillis = DEFAULT_REQUEST_TIMEOUT_MILLIS;
     private int maxRequestsInFlight = DEFAULT_MAX_REQUESTS_IN_FLIGHT;
@@ -33,6 +36,16 @@ public class ClientConfigurationBuilder {
 
     public ClientConfigurationBuilder withPort(int port) {
         this.port = port;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withPassword(String password) {
+        this.password = password;
         return this;
     }
 
@@ -65,6 +78,8 @@ public class ClientConfigurationBuilder {
                 logEndpoint,
                 host,
                 port,
+                username,
+                password,
                 connectionTimeoutMillis,
                 requestTimeoutMillis,
                 maxRequestsInFlight,

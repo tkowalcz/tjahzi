@@ -6,6 +6,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
@@ -17,16 +18,20 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
     private final MonitoringModule monitoringModule;
     private final RequestAndResponseHandler responseHandler;
 
+    private final SslContext sslContext;
+
     private final int requestTimeoutMillis;
     private final int maxRequestsInFlight;
 
     HttpClientInitializer(
             MonitoringModule monitoringModule,
+            SslContext sslContext,
             int requestTimeoutMillis,
             int maxRequestsInFlight
     ) {
         this.monitoringModule = monitoringModule;
         this.responseHandler = new RequestAndResponseHandler(monitoringModule);
+        this.sslContext = sslContext;
 
         this.requestTimeoutMillis = requestTimeoutMillis;
         this.maxRequestsInFlight = maxRequestsInFlight;
@@ -41,6 +46,11 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
                         60
                 )
         );
+
+        if (sslContext != null) {
+            p.addLast(sslContext.newHandler(ch.alloc()));
+        }
+
         p.addLast(new HttpClientCodec());
         p.addLast(new HttpObjectAggregator(MAX_CONTENT_LENGTH));
         p.addLast(new HttpContentDecompressor());

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Loki"/>
+        </Root>
+    </Loggers>
+
+    <appenders>
+        <Loki name="Loki">
+            <host>${sys:loki.host}</host>
+            <port>${sys:loki.port}</port>
+
+            <username>${env:grafana_username}</username>
+            <password>${env:grafana_password}</password>
+
+            <ThresholdFilter level="ALL"/>
+            <PatternLayout>
+                <Pattern>%X{tid} [%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
+            </PatternLayout>
+
+            <Header name="server" value="127.0.0.1"/>
+            <Label name="server" value="127.0.0.1"/>
+        </Loki>
+    </appenders>
+</configuration>

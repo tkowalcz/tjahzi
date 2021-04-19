@@ -15,22 +15,21 @@ public class NettyHttpClient implements Closeable {
     public static final String PROTOBUF_MIME_TYPE = "application/x-protobuf";
 
     private final ClientConfiguration clientConfiguration;
+
     private final HttpHeaders headers;
+    private final HttpConnection lokiConnection;
 
     private final Snappy snappy = new Snappy();
-    private final HttpConnection lokiConnection;
 
     public NettyHttpClient(
             ClientConfiguration clientConfiguration,
             MonitoringModule monitoringModule,
-            String[] additionalHeaders) {
+            String... additionalHeaders
+    ) {
         this.clientConfiguration = clientConfiguration;
-        this.headers = new ReadOnlyHttpHeaders(
-                true,
-                additionalHeaders
-        );
 
-        lokiConnection = new HttpConnection(clientConfiguration, monitoringModule);
+        this.headers = HttpHeadersFactory.createHeaders(clientConfiguration, additionalHeaders);
+        this.lokiConnection = new HttpConnection(clientConfiguration, monitoringModule);
     }
 
     public void log(ByteBuf dataBuffer) {

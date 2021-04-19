@@ -6,6 +6,9 @@ public class ClientConfiguration {
     private final String host;
     private final int port;
 
+    private final String username;
+    private final String password;
+
     private final int connectionTimeoutMillis;
     private final int requestTimeoutMillis;
     private final int maxRequestsInFlight;
@@ -16,6 +19,8 @@ public class ClientConfiguration {
             String logEndpoint,
             String host,
             int port,
+            String username,
+            String password,
             int connectionTimeoutMillis,
             int requestTimeoutMillis,
             int maxRequestsInFlight,
@@ -23,6 +28,10 @@ public class ClientConfiguration {
         this.logEndpoint = logEndpoint;
         this.host = host;
         this.port = port;
+
+        this.username = username;
+        this.password = password;
+
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.requestTimeoutMillis = requestTimeoutMillis;
         this.maxRequestsInFlight = maxRequestsInFlight;
@@ -40,6 +49,14 @@ public class ClientConfiguration {
 
     public int getPort() {
         return port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public int getConnectionTimeoutMillis() {

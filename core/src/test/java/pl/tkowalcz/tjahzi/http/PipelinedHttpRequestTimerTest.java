@@ -3,6 +3,7 @@ package pl.tkowalcz.tjahzi.http;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.ssl.SslContext;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.lang.mutable.MutableLong;
 import pl.tkowalcz.tjahzi.stats.SettableClock;
@@ -11,6 +12,7 @@ import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 import java.time.Clock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class PipelinedHttpRequestTimerTest {
 
@@ -28,6 +30,7 @@ class PipelinedHttpRequestTimerTest {
 
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
+                mock(SslContext.class),
                 10_000,
                 42
         );
@@ -76,6 +79,7 @@ class PipelinedHttpRequestTimerTest {
 
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
+                mock(SslContext.class),
                 10_000,
                 42
         );
@@ -130,6 +134,7 @@ class PipelinedHttpRequestTimerTest {
 
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
+                mock(SslContext.class),
                 10_000,
                 42
         );
@@ -188,6 +193,7 @@ class PipelinedHttpRequestTimerTest {
 
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
+                mock(SslContext.class),
                 10_000,
                 42
         );
