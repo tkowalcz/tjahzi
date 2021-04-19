@@ -50,6 +50,11 @@ appender seemed like a good first.
     </Root>
 ```
 
+### Note on Loki HTTP endpoint and host/port configuration
+
+Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying e.g. `<host>loki.mydomain.com</host><port>3100</port>` 
+will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/api/v1/push`.
+
 ## Advanced configuration
 
 This example sets up a root logger with a Loki appender. Note that `pl.tkowalcz.tjahzi.log4j2` is added to `packages` attribute

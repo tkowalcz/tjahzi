@@ -51,6 +51,11 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
 </root>
 ```
 
+### Note on Loki HTTP endpoint and host/port configuration
+
+Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying e.g. `<host>loki.mydomain.com</host><port>3100</port>`
+will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/api/v1/push`.
+
 ## Custom pattern layout and decreasing allocations
 
 Tjahzi provides its own pattern layout class `ch.qos.logback.core.pattern.EfficientPatternLayout`. It is based on
