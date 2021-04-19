@@ -55,6 +55,27 @@ appender seemed like a good first.
 Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying e.g. `<host>loki.mydomain.com</host><port>3100</port>` 
 will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/api/v1/push`.
 
+### Grafana Cloud configuration
+
+Tjahzi can send logs to Grafana Cloud. It needs two things to be configured:
+- Set port number to `443` which switches HTTP client into HTTPS mode.
+- Specify `username` and `password` for HTTP basic authentication that Grafana uses. 
+  
+Password is your "Grafana.com API Key" and can be generated in "Grafana datasource settings". The host in below example
+is just for illustrative purposes.
+
+```xml
+    <Loki name="loki-appender">
+        <!-- example host -->
+        <host>logs-prod-us-central1.grafana.net</host>
+        <port>443</port>
+
+        <username>...</username>
+        <password>...</password>
+       ...
+    </Loki>
+```
+
 ## Advanced configuration
 
 This example sets up a root logger with a Loki appender. Note that `pl.tkowalcz.tjahzi.log4j2` is added to `packages` attribute
@@ -106,7 +127,16 @@ by call to `InetSocketAddress.createUnresolved`.
 
 #### Port (required)
 
-Self-explanatory.
+Port used for connecting to running Loki. Tjahzi by default uses plain HTTP but if the port is `443` then it will
+automatically switch to HTTPS.
+
+#### Username
+
+Username for HTTP basic auth.
+
+#### Password
+
+Password for HTTP basic auth.
 
 #### Header (optional)
 
