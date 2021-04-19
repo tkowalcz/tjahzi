@@ -42,6 +42,12 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private int port;
 
     @PluginBuilderAttribute
+    private String username;
+
+    @PluginBuilderAttribute
+    private String password;
+
+    @PluginBuilderAttribute
     private int connectTimeoutMillis = 5000;
 
     @PluginBuilderAttribute
@@ -78,8 +84,10 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     public LokiAppender build() {
         ClientConfiguration configurationBuilder = ClientConfiguration.builder()
                 .withHost(host)
-                .withConnectionTimeoutMillis(connectTimeoutMillis)
                 .withPort(port)
+                .withUsername(username)
+                .withPassword(password)
+                .withConnectionTimeoutMillis(connectTimeoutMillis)
                 .withMaxRetries(maxRetries)
                 .withRequestTimeoutMillis(readTimeoutMillis)
                 .withMaxRequestsInFlight(maxRequestsInFlight)

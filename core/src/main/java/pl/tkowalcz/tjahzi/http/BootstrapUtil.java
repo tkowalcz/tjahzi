@@ -6,9 +6,19 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
+import javax.net.ssl.SSLException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
+
 public class BootstrapUtil {
+
+    public static final int HTTPS_PORT = 443;
 
     public static ChannelFuture initConnection(
             EventLoopGroup group,
@@ -16,6 +26,11 @@ public class BootstrapUtil {
             MonitoringModule monitoringModule
     ) {
         Bootstrap bootstrap = new Bootstrap();
+
+        SslContext sslContext = null;
+        if (isSsl(clientConfiguration)) {
+            sslContext = createSslContext();
+        }
 
         return bootstrap.group(group)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
@@ -26,6 +41,7 @@ public class BootstrapUtil {
                 .handler(
                         new HttpClientInitializer(
                                 monitoringModule,
+                                sslContext,
                                 clientConfiguration.getRequestTimeoutMillis(),
                                 clientConfiguration.getMaxRequestsInFlight()
                         )
@@ -34,5 +50,32 @@ public class BootstrapUtil {
                         clientConfiguration.getHost(),
                         clientConfiguration.getPort()
                 ).connect();
+    }
+
+    private static boolean isSsl(ClientConfiguration clientConfiguration) {
+        return clientConfiguration.getPort() == HTTPS_PORT;
+    }
+
+    private static SslContext createSslContext() {
+        try {
+            return SslContextBuilder.forClient()
+                    .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                    .build();
+        } catch (SSLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Optional<String> createAuthString(String username, String password) {
+        if (username == null && password == null) {
+            return Optional.empty();
+        }
+
+        String userPassword = username + ":" + password;
+        String authString = "Basic " + Base64
+                .getEncoder()
+                .encodeToString(userPassword.getBytes(StandardCharsets.UTF_8));
+
+        return Optional.of(authString);
     }
 }
