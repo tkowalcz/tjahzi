@@ -48,7 +48,7 @@ class GrafanaCloudAppenderTest {
 
         Awaitility
                 .await()
-                .atMost(Durations.TEN_SECONDS)
+                .atMost(Durations.ONE_MINUTE)
                 .pollInterval(Durations.ONE_SECOND)
                 .ignoreExceptions()
                 .untilAsserted(() -> {
@@ -71,28 +71,30 @@ class GrafanaCloudAppenderTest {
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
-                            .body("data.result[0].values", hasItems(new BaseMatcher<>() {
-                                                                        @Override
-                                                                        public boolean matches(Object o) {
-                                                                            List<Object> list = (List<Object>) o;
-                                                                            if (list.size() != 2) {
-                                                                                return false;
-                                                                            }
+                            .body("data.result[0].values", hasItems(
+                                    new BaseMatcher<>() {
+                                        @Override
+                                        public boolean matches(Object o) {
+                                            List<Object> list = (List<Object>) o;
+                                            if (list.size() != 2) {
+                                                return false;
+                                            }
 
-                                                                            long actualTimestamp = Long.parseLong(list.get(0).toString());
-                                                                            String actualLogLine = list.get(1).toString();
+                                            long actualTimestamp = Long.parseLong(list.get(0).toString());
+                                            String actualLogLine = list.get(1).toString();
 
-                                                                            return actualLogLine.contains(expectedLogLine)
-                                                                                    && (expectedTimestamp - actualTimestamp) < TimeUnit.MINUTES.toMillis(1);
-                                                                        }
+                                            return actualLogLine.contains(expectedLogLine)
+                                                    && (expectedTimestamp - actualTimestamp) < TimeUnit.MINUTES.toMillis(1);
+                                        }
 
-                                                                        @Override
-                                                                        public void describeTo(Description description) {
+                                        @Override
+                                        public void describeTo(Description description) {
 
-                                                                        }
-                                                                    }
+                                        }
+                                    }
 
-                            ));
+                                    )
+                            );
                 });
     }
 }
