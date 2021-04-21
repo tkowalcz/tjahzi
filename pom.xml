@@ -56,8 +56,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <compiler.source.level>9</compiler.source.level>
-        <compiler.target.level>9</compiler.target.level>
+        <compiler.source.level>8</compiler.source.level>
+        <compiler.target.level>8</compiler.target.level>
+
+        <maven.compiler.testSource>9</maven.compiler.testSource>
+        <maven.compiler.testTarget>9</maven.compiler.testTarget>
 
         <!--suppress UnresolvedMavenProperty -->
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
