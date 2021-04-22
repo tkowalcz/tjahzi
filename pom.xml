@@ -118,6 +118,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>${maven.compiler.target}</release>
+                    <testRelease>${maven.compiler.testTarget}</testRelease>
                 </configuration>
             </plugin>
             <plugin>
