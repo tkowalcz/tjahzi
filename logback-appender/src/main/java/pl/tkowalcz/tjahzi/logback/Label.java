@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi.logback;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Label {
@@ -37,11 +36,6 @@ public class Label {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    // @VisibleForTests
-    public Map.Entry<String, String> asEntry() {
-        return Map.entry(getName(), getValue());
     }
 
     public static boolean hasValidName(String label) {
