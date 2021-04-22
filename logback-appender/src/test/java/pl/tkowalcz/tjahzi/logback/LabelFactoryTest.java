@@ -30,8 +30,8 @@ class LabelFactoryTest {
 
         // Then
         assertThat(actual).containsOnly(
-                thisShouldStay.asEntry(),
-                thisTooShouldStay.asEntry()
+                asEntry(thisShouldStay),
+                asEntry(thisTooShouldStay)
         );
     }
 
@@ -55,8 +55,8 @@ class LabelFactoryTest {
 
         // Then
         assertThat(actual).containsOnly(
-                thisShouldStay.asEntry(),
-                thisShouldStayToo.asEntry()
+                asEntry(thisShouldStay),
+                asEntry(thisShouldStayToo)
         );
     }
 
@@ -78,8 +78,8 @@ class LabelFactoryTest {
 
         // Then
         assertThat(actual).containsOnly(
-                label1.asEntry(),
-                label2.asEntry()
+                asEntry(label1),
+                asEntry(label2)
         );
     }
 
@@ -100,8 +100,8 @@ class LabelFactoryTest {
 
         HashMap<String, String> labels = new HashMap<>(
                 Map.ofEntries(
-                        thisShouldStay.asEntry(),
-                        thisShouldBeRemovedDueToConflict.asEntry()
+                        asEntry(thisShouldStay),
+                        asEntry(thisShouldBeRemovedDueToConflict)
                 )
         );
 
@@ -110,7 +110,7 @@ class LabelFactoryTest {
 
         // Then
         assertThat(labels).containsOnly(
-                thisShouldStay.asEntry()
+                asEntry(thisShouldStay)
         );
 
         assertThat(actual).isEqualTo(logLevelLabel);
@@ -141,5 +141,9 @@ class LabelFactoryTest {
 
         // Then
         assertThat(actual).isNull();
+    }
+
+    public Map.Entry<String, String> asEntry(Label label) {
+        return Map.entry(label.getName(), label.getValue());
     }
 }
