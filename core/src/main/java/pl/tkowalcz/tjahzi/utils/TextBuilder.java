@@ -1,7 +1,6 @@
 package pl.tkowalcz.tjahzi.utils;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public class TextBuilder implements Appendable, CharSequence {
 

@@ -8,7 +8,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.config.plugins.PluginValue;
 import org.apache.logging.log4j.status.StatusLogger;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 @Plugin(name = "label", category = Node.CATEGORY, printObject = true)
@@ -35,11 +34,6 @@ public class Label extends Property {
 
     public boolean hasValidName() {
         return hasValidName(getName());
-    }
-
-    // @VisibleForTests
-    public Map.Entry<String, String> asEntry() {
-        return Map.entry(getName(), getValue());
     }
 
     public static boolean hasValidName(String label) {
