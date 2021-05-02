@@ -106,9 +106,7 @@ class LoggingSystemTest {
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
-//        RestAssured.port = 3100;
         RestAssured.baseURI = "http://" + loki.getHost();
-//        RestAssured.baseURI = "http://localhost";
         RestAssured.registerParser("text/plain", Parser.JSON);
 
         Awaitility

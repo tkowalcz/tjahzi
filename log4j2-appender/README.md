@@ -111,10 +111,13 @@ of configuration so that the appender can be found.
 
 ### Lookups / variable substitution
 
-Contents of the properties are automatically interpolated by Log4j2 (see [here](https://logging.apache.org/log4j/log4j-2.2/manual/lookups.html)).
+Contents of the properties are [automatically interpolated by Log4j2](https://logging.apache.org/log4j/log4j-2.2/manual/configuration.html#PropertySubstitution).
 All environment, system etc. variable references will be replaced by their values during initialization of the appender.
-Alternatively this process could have been executed for every log message. The latter approach was deemed too expensive. If you need a mechanism
-to replace a variable after logging system initialization I would lvie to hear your use case - please file an issue.
+The exception is context/MDC (`${ctx:foo}`) value lookup as it make sense only during runtime.
+
+NOTE: This process could have been executed for every lookup type at runtime (for each log message). This approach was 
+deemed too expensive. If you need a mechanism to replace a variable (other than context/MDC) after logging system 
+initialization I would love to hear your use case - please file an issue.
 
 ## Details
 

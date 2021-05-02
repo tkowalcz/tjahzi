@@ -15,7 +15,6 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -117,13 +116,13 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         }
 
         LabelFactory labelFactory = new LabelFactory(logLevelLabel, labels);
-        HashMap<String, String> lokiLabels = labelFactory.convertLabelsDroppingInvalid();
-        logLevelLabel = labelFactory.validateLogLevelLabel(lokiLabels);
+        LabelsDescriptor labelsDescriptor = labelFactory.convertLabelsDroppingInvalid();
+        logLevelLabel = labelsDescriptor.getLogLevelLabel();
 
         LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                 httpClient,
                 monitoringModuleWrapper,
-                lokiLabels,
+                labelsDescriptor.getStaticLabels(),
                 batchSize,
                 TimeUnit.SECONDS.toMillis(batchWait),
                 bufferSizeBytes,
@@ -137,6 +136,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 isIgnoreExceptions(),
                 getPropertyArray(),
                 logLevelLabel,
+                labelsDescriptor.getDynamicLabels(),
                 loggingSystem,
                 monitoringModuleWrapper
         );

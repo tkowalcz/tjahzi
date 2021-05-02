@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Loki"/>
+        </Root>
+    </Loggers>
+
+    <appenders>
+        <Loki name="Loki">
+            <host>${sys:loki.host}</host>
+            <port>${sys:loki.port}</port>
+
+            <ThresholdFilter level="ALL"/>
+            <PatternLayout>
+                <Pattern>%c{1} - %m</Pattern>
+            </PatternLayout>
+
+            <Header name="server" value="127.0.0.1"/>
+            <Label name="server" value="127.0.0.1"/>
+            <Label name="object" value="prefix_${ctx:object}"/>
+            <Label name="owner" value="${ctx:owner}_suffix"/>
+        </Loki>
+    </appenders>
+</configuration>
