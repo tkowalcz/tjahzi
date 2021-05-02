@@ -2,7 +2,6 @@ package pl.tkowalcz.tjahzi.log4j2;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,13 +23,47 @@ class LabelFactoryTest {
         );
 
         // When
-        HashMap<String, String> actual = labelFactory.convertLabelsDroppingInvalid();
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(actual).containsOnly(
-                asEntry(thisShouldStay),
-                asEntry(thisTooShouldStay)
+        assertThat(actual.getStaticLabels())
+                .containsOnly(
+                        asEntry(thisShouldStay),
+                        asEntry(thisTooShouldStay)
+                );
+    }
+
+    @Test
+    void shouldIdentifyDynamicLabels() {
+        // Given
+        Label thisIsAStaticLabel = Label.createLabel("ip", "127.0.0.1");
+        Label thisIsAlsoAStaticLabel = Label.createLabel("region", "us-east-1");
+        Label thisIsADynamicLabel = Label.createLabel("tenant", "${ctx:tenant}");
+        Label thisIsAnotherDynamicLabel = Label.createLabel("tenant", "foo_${ctx:baz}_bar");
+
+        LabelFactory labelFactory = new LabelFactory(
+                "log_level",
+                thisIsAStaticLabel,
+                thisIsAlsoAStaticLabel,
+                thisIsADynamicLabel,
+                thisIsAnotherDynamicLabel
         );
+
+        // When
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
+
+        // Then
+        assertThat(actual.getStaticLabels())
+                .containsOnly(
+                        asEntry(thisIsAStaticLabel),
+                        asEntry(thisIsAlsoAStaticLabel)
+                );
+
+        assertThat(actual.getDynamicLabels())
+                .containsOnly(
+                        asEntry(thisIsADynamicLabel),
+                        asEntry(thisIsAnotherDynamicLabel)
+                );
     }
 
     @Test
@@ -48,10 +81,10 @@ class LabelFactoryTest {
         );
 
         // When
-        HashMap<String, String> actual = labelFactory.convertLabelsDroppingInvalid();
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(actual).containsOnly(
+        assertThat(actual.getStaticLabels()).containsOnly(
                 asEntry(thisShouldStay),
                 asEntry(thisShouldStayToo)
         );
@@ -70,10 +103,10 @@ class LabelFactoryTest {
         );
 
         // When
-        HashMap<String, String> actual = labelFactory.convertLabelsDroppingInvalid();
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(actual).containsOnly(
+        assertThat(actual.getStaticLabels()).containsOnly(
                 asEntry(label1),
                 asEntry(label2)
         );
@@ -93,22 +126,15 @@ class LabelFactoryTest {
                 thisShouldStay
         );
 
-        HashMap<String, String> labels = new HashMap<>(
-                Map.ofEntries(
-                        asEntry(thisShouldStay),
-                        asEntry(thisShouldBeRemovedDueToConflict)
-                )
-        );
-
         // When
-        String actual = labelFactory.validateLogLevelLabel(labels);
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(labels).containsOnly(
+        assertThat(actual.getStaticLabels()).containsOnly(
                 asEntry(thisShouldStay)
         );
 
-        assertThat(actual).isEqualTo(logLevelLabel);
+        assertThat(actual.getLogLevelLabel()).isEqualTo(logLevelLabel);
     }
 
     @Test
@@ -119,10 +145,10 @@ class LabelFactoryTest {
         LabelFactory labelFactory = new LabelFactory(logLevelLabel);
 
         // When
-        String actual = labelFactory.validateLogLevelLabel(new HashMap<>());
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(actual).isNull();
+        assertThat(actual.getLogLevelLabel()).isNull();
     }
 
     @Test
@@ -132,10 +158,10 @@ class LabelFactoryTest {
         LabelFactory labelFactory = new LabelFactory(logLevelLabel);
 
         // When
-        String actual = labelFactory.validateLogLevelLabel(new HashMap<>());
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
 
         // Then
-        assertThat(actual).isNull();
+        assertThat(actual.getLogLevelLabel()).isNull();
     }
 
     public Map.Entry<String, String> asEntry(Label label) {

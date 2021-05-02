@@ -14,6 +14,7 @@ import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +44,7 @@ public class LokiAppender extends AbstractAppender {
             boolean ignoreExceptions,
             Property[] properties,
             String logLevelLabel,
+            Map<String, String> lokiLabels,
             LoggingSystem loggingSystem,
             MutableMonitoringModuleWrapper monitoringModuleWrapper
     ) {
@@ -59,7 +61,8 @@ public class LokiAppender extends AbstractAppender {
         this.loggingSystem = loggingSystem;
         this.appenderLogic = new AppenderLogic(
                 loggingSystem,
-                logLevelLabel
+                logLevelLabel,
+                lokiLabels
         );
     }
 
