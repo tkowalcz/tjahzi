@@ -20,6 +20,7 @@
             <Label name="server" value="127.0.0.1"/>
             <Label name="object" value="prefix_${ctx:object}"/>
             <Label name="owner" value="${ctx:owner}_suffix"/>
+            <Label name="default_value_test" value="${ctx:missing:-use_this_if_missing}"/>
         </Loki>
     </appenders>
 </configuration>

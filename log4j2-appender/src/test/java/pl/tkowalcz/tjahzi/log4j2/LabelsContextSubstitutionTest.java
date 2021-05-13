@@ -52,9 +52,6 @@ class LabelsContextSubstitutionTest {
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
                 .setConfigLocation(uri);
 
-        String expectedLogLine = "Test";
-        long expectedTimestamp = System.currentTimeMillis();
-
         Logger logger = LogManager.getLogger(LokiAppenderTest.class);
 
         // When
@@ -95,6 +92,7 @@ class LabelsContextSubstitutionTest {
                             .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
                             .body("data.result.stream.object", contains("prefix_${ctx:object}", "prefix_bust_ticket", "prefix_comb"))
                             .body("data.result.stream.owner", contains("${ctx:owner}_suffix", "wally_suffix", "jennifer_suffix"))
+                            .body("data.result.stream.default_value_test", contains("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
                             .body("data.result.values",
                                     hasItems(
                                             hasItems(hasItems(("LokiAppenderTest - Test3"))),
