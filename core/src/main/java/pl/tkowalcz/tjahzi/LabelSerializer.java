@@ -3,8 +3,6 @@ package pl.tkowalcz.tjahzi;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
 
-import java.util.Arrays;
-
 public class LabelSerializer {
 
     private final ExpandableArrayBuffer buffer = new ExpandableArrayBuffer();
@@ -45,11 +43,20 @@ public class LabelSerializer {
         if (o instanceof LabelSerializer) {
             LabelSerializer that = (LabelSerializer) o;
 
+            if (this.cursor != that.cursor) {
+                return false;
+            }
+
             byte[] thisArray = this.buffer.byteArray();
             byte[] thatArray = that.buffer.byteArray();
 
-            return this.cursor == that.cursor &&
-                    Arrays.equals(thisArray, 0, cursor, thatArray, 0, cursor);
+            for (int i = 0; i < cursor; i++) {
+                if (thisArray[i] != thatArray[i]) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         return false;
