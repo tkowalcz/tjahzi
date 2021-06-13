@@ -3,17 +3,16 @@ package pl.tkowalcz.tjahzi.log4j2;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.lookup.Interpolator;
-import org.apache.logging.log4j.core.lookup.StrLookup;
-import org.apache.logging.log4j.core.lookup.StrSubstitutor;
 import org.apache.logging.log4j.status.StatusLogger;
+import pl.tkowalcz.tjahzi.LabelSerializer;
+import pl.tkowalcz.tjahzi.LabelSerializers;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
+import pl.tkowalcz.tjahzi.log4j2.labels.LabelPrinter;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -22,39 +21,25 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
     private static final Logger LOGGER = StatusLogger.getLogger();
 
-    private static final Map<String, String> EMPTY_MAP = new HashMap<>();
+    private static final Map<String, CharSequence> EMPTY_MAP = new HashMap<>();
 
     private final LoggingSystem loggingSystem;
 
     private final String logLevelLabel;
     private final TjahziLogger logger;
 
-    private final Map<String, String> lokiLabels;
-    private final StrSubstitutor strSubstitutor;
+    private final Map<String, LabelPrinter> lokiLabels;
 
     public AppenderLogic(
             LoggingSystem loggingSystem,
             String logLevelLabel,
-            Map<String, String> lokiLabels
+            Map<String, LabelPrinter> lokiLabels
     ) {
         this.loggingSystem = loggingSystem;
         this.logLevelLabel = logLevelLabel;
 
         logger = loggingSystem.createLogger();
         this.lokiLabels = lokiLabels;
-
-        Interpolator interpolator = new Interpolator();
-        strSubstitutor = new StrSubstitutor(new StrLookup() {
-            @Override
-            public String lookup(String key) {
-                return null;
-            }
-
-            @Override
-            public String lookup(LogEvent event, String key) {
-                return interpolator.lookup(event, key);
-            }
-        });
     }
 
     public void append(
@@ -77,30 +62,25 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
     @Override
     public void accept(LogEvent event, ByteBuffer byteBuffer) {
-        String logLevel = event.getLevel().toString();
-
-        Map<String, String> dynamicLabels = processDynamicLabelsIfAny(event);
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        processDynamicLabelsIfAny(labelSerializer, event);
 
         logger.log(
                 event.getTimeMillis(),
-                dynamicLabels,
-                logLevelLabel,
-                logLevel,
+                labelSerializer,
                 byteBuffer
         );
     }
 
-    private Map<String, String> processDynamicLabelsIfAny(LogEvent event) {
-        if (lokiLabels.isEmpty()) {
-            return EMPTY_MAP;
+    private void processDynamicLabelsIfAny(LabelSerializer labelSerializer, LogEvent event) {
+        if (logLevelLabel != null) {
+            labelSerializer.appendLabelName(logLevelLabel);
+            labelSerializer.appendLabelValue(event.getLevel().toString());
         }
 
-        LinkedHashMap<String, String> dynamicLabels = new LinkedHashMap<>();
-        for (Map.Entry<String, String> label : lokiLabels.entrySet()) {
-            String replaced = strSubstitutor.replace(event, label.getValue());
-            dynamicLabels.put(label.getKey(), replaced);
+        for (Map.Entry<String, LabelPrinter> labelPrinter : lokiLabels.entrySet()) {
+            labelSerializer.appendLabelName(labelPrinter.getKey());
+            labelPrinter.getValue().append(event, labelSerializer::appendLabelValue);
         }
-
-        return dynamicLabels;
     }
 }

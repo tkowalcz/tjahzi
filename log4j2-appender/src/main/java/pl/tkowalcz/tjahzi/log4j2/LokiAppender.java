@@ -10,6 +10,7 @@ import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderFactory;
 import pl.tkowalcz.tjahzi.LoggingSystem;
+import pl.tkowalcz.tjahzi.log4j2.labels.LabelPrinter;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
@@ -44,7 +45,7 @@ public class LokiAppender extends AbstractAppender {
             boolean ignoreExceptions,
             Property[] properties,
             String logLevelLabel,
-            Map<String, String> lokiLabels,
+            Map<String, LabelPrinter> lokiLabels,
             LoggingSystem loggingSystem,
             MutableMonitoringModuleWrapper monitoringModuleWrapper
     ) {

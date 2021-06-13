@@ -1,4 +1,4 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Node;
@@ -7,6 +7,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.config.plugins.PluginValue;
 import org.apache.logging.log4j.status.StatusLogger;
+import pl.tkowalcz.tjahzi.log4j2.Property;
 
 import java.util.regex.Pattern;
 

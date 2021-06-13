@@ -67,7 +67,7 @@ public class AllocationTest {
                 "Souffle jelly beans biscuit topping. " +
                 "Danish bonbon gummies powder caramels. ";
 
-        Logger logger = LogManager.getLogger(pl.tkowalcz.tjahzi.log4j2.LokiAppenderTest.class);
+        Logger logger = LogManager.getLogger(AllocationTest.class);
 
         // When
         System.out.println("Warmup...");

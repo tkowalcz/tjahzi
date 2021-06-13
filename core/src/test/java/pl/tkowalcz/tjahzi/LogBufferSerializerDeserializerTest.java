@@ -79,17 +79,23 @@ class LogBufferSerializerDeserializerTest {
             String logLevel,
             String logLine,
             int expectedSize) throws InvalidProtocolBufferException {
+
         // Given
         UnsafeBuffer buffer = new UnsafeBuffer(ByteBuffer.wrap(new byte[expectedSize]));
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
+
+        LabelSerializer labelSerializer = LabelSerializers.from(labels);
+        if (logLevelLabel != null) {
+            labelSerializer
+                    .appendLabelName(logLevelLabel)
+                    .appendLabelValue(logLevel);
+        }
 
         // When
         serializer.writeTo(
                 0,
                 32042L,
-                labels,
-                logLevelLabel,
-                logLevel,
+                labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
 

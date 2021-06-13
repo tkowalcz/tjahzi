@@ -12,6 +12,9 @@ import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.log4j2.labels.Label;
+import pl.tkowalcz.tjahzi.log4j2.labels.LabelFactory;
+import pl.tkowalcz.tjahzi.log4j2.labels.LabelsDescriptor;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
