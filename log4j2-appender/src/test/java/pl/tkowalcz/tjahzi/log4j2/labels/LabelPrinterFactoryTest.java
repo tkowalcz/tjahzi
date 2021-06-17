@@ -42,7 +42,10 @@ class LabelPrinterFactoryTest {
 
         // When
         LabelPrinter printer = LabelPrinterFactory.parse(pattern);
-        printer.append(event, labelSerializer::appendLabelValue);
+
+        labelSerializer.startAppendingLabelValue();
+        printer.append(event, labelSerializer::appendPartialLabelValue);
+        labelSerializer.finishAppendingLabelValue();
 
         // Then
         assertThat(labelSerializer.toString()).isEqualTo(expected);

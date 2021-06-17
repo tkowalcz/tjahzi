@@ -19,13 +19,13 @@ public class LabelSerializers {
 
         labels.forEach((key, value) -> {
                     labelSerializer.appendLabelName(key);
-                    labelSerializer.appendLabelValue(value);
+                    labelSerializer.appendWholeLabelValue(value);
                 }
         );
 
         for (int i = 0; i < moreLabels.length; i += 2) {
             labelSerializer.appendLabelName(moreLabels[i]);
-            labelSerializer.appendLabelValue(moreLabels[i + 1]);
+            labelSerializer.appendWholeLabelValue(moreLabels[i + 1]);
         }
 
         return labelSerializer;
@@ -37,7 +37,7 @@ public class LabelSerializers {
 
         for (int i = 0; i < labels.length; i += 2) {
             labelSerializer.appendLabelName(labels[i]);
-            labelSerializer.appendLabelValue(labels[i + 1]);
+            labelSerializer.appendWholeLabelValue(labels[i + 1]);
         }
 
         return labelSerializer;

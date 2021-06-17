@@ -60,8 +60,9 @@ public class LokiAppender extends LokiAppenderConfigurator {
         ByteBuffer logLine = actualEncoder.apply(event);
 
         LabelSerializer labelSerializer = LabelSerializers.threadLocal();
-        labelSerializer.appendLabelName(logLevelLabel)
-                .appendLabelValue(logLevel);
+        labelSerializer
+                .appendLabelName(logLevelLabel)
+                .appendWholeLabelValue(logLevel);
 
         logger.log(
                 event.getTimeStamp(),

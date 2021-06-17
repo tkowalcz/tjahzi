@@ -88,7 +88,7 @@ class LogBufferSerializerDeserializerTest {
         if (logLevelLabel != null) {
             labelSerializer
                     .appendLabelName(logLevelLabel)
-                    .appendLabelValue(logLevel);
+                    .appendWholeLabelValue(logLevel);
         }
 
         // When

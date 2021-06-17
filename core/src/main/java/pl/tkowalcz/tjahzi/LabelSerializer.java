@@ -10,6 +10,8 @@ public class LabelSerializer {
     private int cursor;
     private int labelsCount;
 
+    private int lastSizePosition;
+
     public void clear() {
         cursor = 0;
         labelsCount = 0;
@@ -30,7 +32,22 @@ public class LabelSerializer {
         return this;
     }
 
-    public void appendLabelValue(String value) {
+    public void startAppendingLabelValue() {
+        lastSizePosition = cursor;
+        cursor += Integer.BYTES;
+    }
+
+    public void appendPartialLabelValue(String value) {
+        cursor += buffer.putStringWithoutLengthAscii(cursor, value);
+    }
+
+    public void finishAppendingLabelValue() {
+        buffer.putInt(
+                lastSizePosition,
+                cursor - lastSizePosition - Integer.BYTES);
+    }
+
+    public void appendWholeLabelValue(String value) {
         cursor += buffer.putStringAscii(cursor, value);
     }
 

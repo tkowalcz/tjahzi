@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class LabelPrinterFactory {
 
-    private static final Pattern CONTEXT_PATTERN = Pattern.compile("\\$\\{ctx:([^}:]+)}");
+    private static final Pattern CONTEXT_PATTERN = Pattern.compile("\\$\\{ctx:([^}:]+)(:-[^}]+)?}");
 
     public static LabelPrinter parse(Label label) {
         return parse(label.getValue());
@@ -25,8 +25,13 @@ public class LabelPrinterFactory {
             String substring = string.substring(start, end);
             result.add(Literal.of(substring));
 
+            String defaultValue = null;
+            if (matcher.groupCount() == 2) {
+                defaultValue = matcher.group(2);
+            }
+
             String group = matcher.group(1);
-            result.add(MDCLookup.of(group));
+            result.add(MDCLookup.of(group, defaultValue));
             lastAppend = matcher.end();
         }
 

@@ -90,14 +90,14 @@ class LabelsContextSubstitutionTest {
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(3))
                             .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
-                            .body("data.result.stream.object", contains("prefix_${ctx:object}", "prefix_bust_ticket", "prefix_comb"))
-                            .body("data.result.stream.owner", contains("${ctx:owner}_suffix", "wally_suffix", "jennifer_suffix"))
+                            .body("data.result.stream.object", contains("prefix_", "prefix_bust_ticket", "prefix_comb"))
+                            .body("data.result.stream.owner", contains("_suffix", "wally_suffix", "jennifer_suffix"))
                             .body("data.result.stream.default_value_test", contains("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
                             .body("data.result.values",
                                     hasItems(
-                                            hasItems(hasItems(("LokiAppenderTest - Test3"))),
-                                            hasItems(hasItems(("LokiAppenderTest - Test1"))),
-                                            hasItems(hasItems(("LokiAppenderTest - Test2")))
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test3")),
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test1")),
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test2"))
                                     )
                             );
                 });
