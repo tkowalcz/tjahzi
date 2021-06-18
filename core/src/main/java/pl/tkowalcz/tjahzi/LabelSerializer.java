@@ -47,11 +47,14 @@ public class LabelSerializer {
                 cursor - lastSizePosition - Integer.BYTES);
     }
 
-    public void appendLabel(String key, String value) {
+    public LabelSerializer appendLabel(String key, String value) {
         appendLabelName(key);
+
         startAppendingLabelValue();
         appendPartialLabelValue(value);
         finishAppendingLabelValue();
+
+        return this;
     }
 
     public DirectBuffer getBuffer() {

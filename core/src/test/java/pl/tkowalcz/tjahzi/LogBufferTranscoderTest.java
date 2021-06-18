@@ -40,7 +40,7 @@ class LogBufferTranscoderTest {
         );
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
 
-        LabelSerializer labelSerializer = LabelSerializers.from(labels);
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(labels);
         if (logLevelLabel != null) {
             labelSerializer.appendLabel(logLevelLabel, logLevel);
         }
@@ -115,7 +115,7 @@ class LogBufferTranscoderTest {
         UnsafeBuffer buffer = new UnsafeBuffer(ByteBuffer.wrap(new byte[256]));
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
 
-        LabelSerializer labelSerializer = LabelSerializers.from(incomingLabels);
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(incomingLabels);
         labelSerializer.appendLabelName("log_level");
         labelSerializer.appendLabelName("WARN");
 

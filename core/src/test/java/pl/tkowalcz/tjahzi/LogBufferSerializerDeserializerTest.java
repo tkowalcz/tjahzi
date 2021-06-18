@@ -84,7 +84,7 @@ class LogBufferSerializerDeserializerTest {
         UnsafeBuffer buffer = new UnsafeBuffer(ByteBuffer.wrap(new byte[expectedSize]));
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
 
-        LabelSerializer labelSerializer = LabelSerializers.from(labels);
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(labels);
         if (logLevelLabel != null) {
             labelSerializer.appendLabel(logLevelLabel, logLevel);
         }

@@ -44,7 +44,7 @@ public class ReconnectTest {
         initializer = new TjahziInitializer();
         monitoringModule = new StandardMonitoringModule();
 
-        labelSerializer = LabelSerializers.from("level", "warn");
+        labelSerializer = LabelSerializerCreator.from("level", "warn");
     }
 
     @AfterEach

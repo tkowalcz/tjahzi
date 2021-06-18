@@ -42,7 +42,8 @@ class AppenderLogicTest {
         logEvent.setTimeMillis(timestamp);
         logEvent.setContextData(new JdkMapAdapterStringMap(Map.of()));
 
-        LabelSerializer labelSerializer = LabelSerializers.from(logLevelLabel, "INFO");
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal()
+                .appendLabel(logLevelLabel, "INFO");
 
         // When
         logic.accept(logEvent, ByteBuffer.allocate(1024));
@@ -98,7 +99,8 @@ class AppenderLogicTest {
         logEvent.setTimeMillis(timestamp);
         logEvent.setContextData(new JdkMapAdapterStringMap(contextMap));
 
-        LabelSerializer labelSerializer = LabelSerializers.from(logLevelLabel, "INFO");
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal()
+                .appendLabel(logLevelLabel, "INFO");
 
         // When
         logic.accept(logEvent, ByteBuffer.allocate(1024));
