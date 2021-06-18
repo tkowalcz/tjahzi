@@ -42,9 +42,7 @@ class LogBufferTranscoderTest {
 
         LabelSerializer labelSerializer = LabelSerializers.from(labels);
         if (logLevelLabel != null) {
-            labelSerializer
-                    .appendLabelName(logLevelLabel)
-                    .appendWholeLabelValue(logLevel);
+            labelSerializer.appendLabel(logLevelLabel, logLevel);
         }
 
         serializer.writeTo(

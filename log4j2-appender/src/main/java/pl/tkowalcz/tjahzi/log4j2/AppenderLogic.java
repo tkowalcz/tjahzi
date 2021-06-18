@@ -74,8 +74,7 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
 
     private void processDynamicLabelsIfAny(LabelSerializer labelSerializer, LogEvent event) {
         if (logLevelLabel != null) {
-            labelSerializer.appendLabelName(logLevelLabel);
-            labelSerializer.appendWholeLabelValue(event.getLevel().toString());
+            labelSerializer.appendLabel(logLevelLabel, event.getLevel().toString());
         }
 
         for (Map.Entry<String, LabelPrinter> labelPrinter : lokiLabels.entrySet()) {

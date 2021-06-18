@@ -47,8 +47,11 @@ public class LabelSerializer {
                 cursor - lastSizePosition - Integer.BYTES);
     }
 
-    public void appendWholeLabelValue(String value) {
-        cursor += buffer.putStringAscii(cursor, value);
+    public void appendLabel(String key, String value) {
+        appendLabelName(key);
+        startAppendingLabelValue();
+        appendPartialLabelValue(value);
+        finishAppendingLabelValue();
     }
 
     public DirectBuffer getBuffer() {
