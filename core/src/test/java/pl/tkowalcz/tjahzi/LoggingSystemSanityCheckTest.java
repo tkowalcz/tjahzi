@@ -89,12 +89,12 @@ class LoggingSystemSanityCheckTest {
         long timestamp = System.currentTimeMillis();
         TjahziLogger logger = loggingSystem.createLogger();
 
+        LabelSerializer labelSerializer = LabelSerializerCreator.from("level", "warn");
+
         // When
         logger.log(
                 timestamp,
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 

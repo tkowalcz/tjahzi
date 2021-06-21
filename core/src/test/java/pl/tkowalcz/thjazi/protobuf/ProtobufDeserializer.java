@@ -8,9 +8,7 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
 import org.junit.jupiter.api.Test;
-import pl.tkowalcz.tjahzi.LogBufferSerializer;
-import pl.tkowalcz.tjahzi.LogBufferTranscoder;
-import pl.tkowalcz.tjahzi.OutputBuffer;
+import pl.tkowalcz.tjahzi.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,13 +28,17 @@ public class ProtobufDeserializer {
                 buffer
         );
 
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        labelSerializer
+                .appendLabel("faaaoo", "baqwefewr")
+                .appendLabel("a232aa", "bbbrgwew")
+                .appendLabel("LEVEL", "DEBUG");
+
         LogBufferSerializer serializer = new LogBufferSerializer(logBuffer.buffer());
         serializer.writeTo(
                 0,
                 System.currentTimeMillis(),
-                Map.of("faaaoo", "baqwefewr", "a232aa", "bbbrgwew"),
-                "LEVEL",
-                "DEBUG",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 

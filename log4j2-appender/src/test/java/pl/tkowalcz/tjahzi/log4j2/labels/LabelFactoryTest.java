@@ -1,4 +1,4 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import org.junit.jupiter.api.Test;
 
@@ -59,10 +59,10 @@ class LabelFactoryTest {
                         asEntry(thisIsAlsoAStaticLabel)
                 );
 
-        assertThat(actual.getDynamicLabels())
+        assertThat(actual.getDynamicLabels().keySet())
                 .containsOnly(
-                        asEntry(thisIsADynamicLabel),
-                        asEntry(thisIsAnotherDynamicLabel)
+                        thisIsADynamicLabel.getName(),
+                        thisIsAnotherDynamicLabel.getName()
                 );
     }
 

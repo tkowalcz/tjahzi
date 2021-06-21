@@ -1,13 +1,13 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.status.StatusLogger;
 import pl.tkowalcz.tjahzi.github.GitHubDocs;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,9 +18,6 @@ import static java.util.stream.Collectors.toMap;
 public class LabelFactory {
 
     private static final Logger LOGGER = StatusLogger.getLogger();
-
-    private static final Pattern DYNAMIC_LABEL_PATTERN = Pattern.compile("\\$\\{ctx:[^}:]+}");
-    private static final Predicate<Map.Entry<String, String>> IS_DYNAMIC_LABEL = (entry) -> DYNAMIC_LABEL_PATTERN.matcher(entry.getValue()).find();
 
     private final String logLevelLabel;
     private final Label[] labels;
@@ -33,19 +30,21 @@ public class LabelFactory {
     public LabelsDescriptor convertLabelsDroppingInvalid() {
         detectAndLogDuplicateLabels();
 
-        Map<String, String> allLabels = convertAndLogViolations();
+        Map<String, LabelPrinter> allLabels = convertAndLogViolations();
 
-        Map<String, String> dynamicLabels = allLabels
+        Map<String, LabelPrinter> dynamicLabels = new HashMap<>();
+        allLabels
                 .entrySet()
                 .stream()
-                .filter(IS_DYNAMIC_LABEL)
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .filter(entry -> !entry.getValue().isStatic())
+                .forEach(entry -> dynamicLabels.put(entry.getKey(), entry.getValue()));
 
-        Map<String, String> staticLabels = allLabels
+        Map<String, String> staticLabels = new LinkedHashMap<>();
+        allLabels
                 .entrySet()
                 .stream()
-                .filter(IS_DYNAMIC_LABEL.negate())
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .filter(entry -> entry.getValue().isStatic())
+                .forEach(entry -> staticLabels.put(entry.getKey(), entry.getValue().toStringWithoutEvent()));
 
         String actualLogLevelLabel = validateLogLevelLabel(
                 logLevelLabel,
@@ -78,7 +77,7 @@ public class LabelFactory {
         }
     }
 
-    private Map<String, String> convertAndLogViolations() {
+    private Map<String, LabelPrinter> convertAndLogViolations() {
         return stream(labels)
                 .flatMap(label -> {
                             if (label.hasValidName()) {
@@ -96,15 +95,15 @@ public class LabelFactory {
                 )
                 .collect(toMap(
                         Label::getName,
-                        Label::getValue,
+                        LabelPrinterFactory::parse,
                         (original, duplicate) -> duplicate)
                 );
     }
 
     private static String validateLogLevelLabel(
             String logLevelLabel,
-            Map<String, String> staticLabels,
-            Map<String, String> dynamicLabels
+            Map<String, ?> staticLabels,
+            Map<String, ?> dynamicLabels
     ) {
         if (logLevelLabel == null) {
             return null;

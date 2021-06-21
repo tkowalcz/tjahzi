@@ -26,6 +26,8 @@ public class ReconnectTest {
     private LoggingSystem loggingSystem;
     private StandardMonitoringModule monitoringModule;
 
+    private LabelSerializer labelSerializer;
+
     @BeforeEach
     void setUp() {
         wireMockServer = new WireMockServer(
@@ -41,6 +43,8 @@ public class ReconnectTest {
 
         initializer = new TjahziInitializer();
         monitoringModule = new StandardMonitoringModule();
+
+        labelSerializer = LabelSerializerCreator.from("level", "warn");
     }
 
     @AfterEach
@@ -88,9 +92,7 @@ public class ReconnectTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -138,9 +140,7 @@ public class ReconnectTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -159,9 +159,7 @@ public class ReconnectTest {
         // When
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 

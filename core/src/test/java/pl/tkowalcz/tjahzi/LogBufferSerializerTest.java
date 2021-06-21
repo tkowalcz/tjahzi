@@ -24,11 +24,14 @@ class LogBufferSerializerTest {
         UnsafeBuffer buffer = new UnsafeBuffer(new byte[expectedSize]);
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
 
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(labels);
+        if (logLevelLabel != null) {
+            labelSerializer.appendLabel(logLevelLabel, logLevel);
+        }
+
         // When
-        int actual = serializer.calculateRequiredSizeAscii(
-                labels,
-                logLevelLabel,
-                logLevel,
+        int actual = serializer.calculateRequiredSize(
+                labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
 

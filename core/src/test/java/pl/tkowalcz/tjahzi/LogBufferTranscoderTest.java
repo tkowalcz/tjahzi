@@ -39,12 +39,16 @@ class LogBufferTranscoderTest {
                 ByteBuffer.wrap(new byte[expectedSize])
         );
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
+
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(labels);
+        if (logLevelLabel != null) {
+            labelSerializer.appendLabel(logLevelLabel, logLevel);
+        }
+
         serializer.writeTo(
                 0,
                 32042L,
-                labels,
-                logLevelLabel,
-                logLevel,
+                labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
 
@@ -110,12 +114,15 @@ class LogBufferTranscoderTest {
 
         UnsafeBuffer buffer = new UnsafeBuffer(ByteBuffer.wrap(new byte[256]));
         LogBufferSerializer serializer = new LogBufferSerializer(buffer);
+
+        LabelSerializer labelSerializer = LabelSerializerCreator.from(incomingLabels);
+        labelSerializer.appendLabelName("log_level");
+        labelSerializer.appendLabelName("WARN");
+
         serializer.writeTo(
                 0,
                 32042L,
-                incomingLabels,
-                "log_level",
-                "WARN",
+                labelSerializer,
                 ByteBuffer.wrap("[Mando] You have something I want.".getBytes())
         );
 

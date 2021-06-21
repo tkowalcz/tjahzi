@@ -4,7 +4,6 @@ import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 public class TjahziLogger {
 
@@ -23,14 +22,10 @@ public class TjahziLogger {
     }
 
     public TjahziLogger log(long timestamp,
-                            Map<String, String> labels,
-                            String logLevelLabel,
-                            String logLevel,
+                            LabelSerializer serializedLabels,
                             ByteBuffer line) {
-        int requiredSize = serializer.calculateRequiredSizeAscii(
-                labels,
-                logLevelLabel,
-                logLevel,
+        int requiredSize = serializer.calculateRequiredSize(
+                serializedLabels,
                 line
         );
 
@@ -38,9 +33,7 @@ public class TjahziLogger {
         if (claim > 0) {
             putMessageOnRing(
                     timestamp,
-                    labels,
-                    logLevelLabel,
-                    logLevel,
+                    serializedLabels,
                     line,
                     claim
             );
@@ -53,9 +46,7 @@ public class TjahziLogger {
 
     private void putMessageOnRing(
             long timestamp,
-            Map<String, String> labels,
-            String logLevelLabel,
-            String logLevel,
+            LabelSerializer serializedLabels,
             ByteBuffer line,
             int claim
     ) {
@@ -64,9 +55,7 @@ public class TjahziLogger {
                     .writeTo(
                             claim,
                             timestamp,
-                            labels,
-                            logLevelLabel,
-                            logLevel,
+                            serializedLabels,
                             line
                     );
 

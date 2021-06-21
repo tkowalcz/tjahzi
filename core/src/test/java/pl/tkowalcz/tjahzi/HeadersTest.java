@@ -26,6 +26,8 @@ class HeadersTest {
     private LoggingSystem loggingSystem;
     private StandardMonitoringModule monitoringModule;
 
+    private LabelSerializer labelSerializer;
+
     @BeforeEach
     void setUp() {
         wireMockServer = new WireMockServer(
@@ -38,6 +40,8 @@ class HeadersTest {
 
         initializer = new TjahziInitializer();
         monitoringModule = new StandardMonitoringModule();
+
+        labelSerializer = LabelSerializerCreator.from("level", "warn");
     }
 
     @AfterEach
@@ -89,13 +93,11 @@ class HeadersTest {
         );
         loggingSystem.start();
 
-        // WHen
+        // When
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -146,9 +148,7 @@ class HeadersTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -201,9 +201,7 @@ class HeadersTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
-                Map.of(),
-                "level",
-                "warn",
+                labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 

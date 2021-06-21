@@ -1,4 +1,4 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -15,14 +16,15 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.core.Every.everyItem;
 
 @Testcontainers
-class LogLevelLabelConfigurationTest {
+class LabelsContextSubstitutionTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -37,22 +39,32 @@ class LogLevelLabelConfigurationTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldWorkWIthNoLogLevelConfigured() throws Exception {
+    void shouldSendData() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("appender-test-with-log-label-unset.xml")
+                .getResource("labels-context-substitution-test-configuration.xml")
                 .toURI();
 
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
                 .setConfigLocation(uri);
 
+        Logger logger = LogManager.getLogger(LabelsContextSubstitutionTest.class);
+
         // When
-        Logger logger = LogManager.getLogger(LokiAppenderTest.class);
-        logger.info("Test");
+        MDC.put("object", "bust_ticket");
+        MDC.put("owner", "wally");
+        logger.info("Test1");
+
+        MDC.put("object", "comb");
+        MDC.put("owner", "jennifer");
+        logger.info("Test2");
+
+        MDC.clear();
+        logger.info("Test3");
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -76,55 +88,18 @@ class LogLevelLabelConfigurationTest {
                             .all()
                             .statusCode(200)
                             .body("status", equalTo("success"))
-                            .body("data.result.size()", equalTo(1))
-                            .body("data.result[0].stream.server", equalTo("127.0.0.1"))
-                            .body("data.result[0].stream.log_level", nullValue());
-                });
-    }
-
-    @Test
-    void shouldSendLogLevelAsConfigured() throws URISyntaxException {
-        // Given
-        System.setProperty("loki.host", loki.getHost());
-        System.setProperty("loki.port", loki.getFirstMappedPort().toString());
-
-        URI uri = getClass()
-                .getClassLoader()
-                .getResource("appender-test-with-log-label-set.xml")
-                .toURI();
-
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
-
-        // When
-        Logger logger = LogManager.getLogger(LokiAppenderTest.class);
-        logger.info("Test");
-
-        // Then
-        RestAssured.port = loki.getFirstMappedPort();
-        RestAssured.baseURI = "http://" + loki.getHost();
-        RestAssured.registerParser("text/plain", Parser.JSON);
-
-        Awaitility
-                .await()
-                .atMost(Durations.TEN_SECONDS)
-                .pollInterval(Durations.ONE_SECOND)
-                .ignoreExceptions()
-                .untilAsserted(() -> {
-                    given()
-                            .contentType(ContentType.URLENC)
-                            .urlEncodingEnabled(false)
-                            .formParam("query=%7Bserver%3D%22127.0.0.1%22%7D")
-                            .when()
-                            .get("/loki/api/v1/query_range")
-                            .then()
-                            .log()
-                            .all()
-                            .statusCode(200)
-                            .body("status", equalTo("success"))
-                            .body("data.result.size()", equalTo(1))
-                            .body("data.result[0].stream.server", equalTo("127.0.0.1"))
-                            .body("data.result[0].stream.log_level", equalTo("INFO"));
+                            .body("data.result.size()", equalTo(3))
+                            .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
+                            .body("data.result.stream.object", contains("prefix_", "prefix_bust_ticket", "prefix_comb"))
+                            .body("data.result.stream.owner", contains("_suffix", "wally_suffix", "jennifer_suffix"))
+                            .body("data.result.stream.default_value_test", contains("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
+                            .body("data.result.values",
+                                    hasItems(
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test3")),
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test1")),
+                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test2"))
+                                    )
+                            );
                 });
     }
 }

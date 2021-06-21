@@ -4,8 +4,12 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.impl.JdkMapAdapterStringMap;
 import org.apache.logging.log4j.core.impl.MutableLogEvent;
 import org.junit.jupiter.api.Test;
+import pl.tkowalcz.tjahzi.LabelSerializer;
+import pl.tkowalcz.tjahzi.LabelSerializers;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
+import pl.tkowalcz.tjahzi.log4j2.labels.LabelPrinter;
+import pl.tkowalcz.tjahzi.log4j2.labels.Literal;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -38,15 +42,16 @@ class AppenderLogicTest {
         logEvent.setTimeMillis(timestamp);
         logEvent.setContextData(new JdkMapAdapterStringMap(Map.of()));
 
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal()
+                .appendLabel(logLevelLabel, "INFO");
+
         // When
         logic.accept(logEvent, ByteBuffer.allocate(1024));
 
         // Then
         verify(tjahziLogger).log(
                 eq(timestamp),
-                eq(Map.of()),
-                eq(logLevelLabel),
-                eq("INFO"),
+                eq(labelSerializer),
                 any()
         );
     }
@@ -63,10 +68,10 @@ class AppenderLogicTest {
         String logLevelLabel = "log_level";
         Level logLevel = Level.INFO;
 
-        Map<String, String> dynamicLabels = Map.of(
-                "id", "foo_${ctx:foo}_bar_${ctx:bar}",
-                "tennant", "${ctx:tennant}",
-                "region", "region_${ctx:region}"
+        Map<String, LabelPrinter> dynamicLabels = Map.of(
+                "id", Literal.of("foo_${ctx:foo}_bar_${ctx:bar}"),
+                "tennant", Literal.of("${ctx:tennant}"),
+                "region", Literal.of("region_${ctx:region}")
         );
 
         Map<String, String> contextMap = Map.of(
@@ -94,15 +99,16 @@ class AppenderLogicTest {
         logEvent.setTimeMillis(timestamp);
         logEvent.setContextData(new JdkMapAdapterStringMap(contextMap));
 
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal()
+                .appendLabel(logLevelLabel, "INFO");
+
         // When
         logic.accept(logEvent, ByteBuffer.allocate(1024));
 
         // Then
         verify(tjahziLogger).log(
                 eq(timestamp),
-                eq(expected),
-                eq(logLevelLabel),
-                eq("INFO"),
+                eq(labelSerializer),
                 any()
         );
     }

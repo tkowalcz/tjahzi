@@ -97,9 +97,9 @@ class LoggingSystemTest {
         for (int i = 0; i < 1000; i++) {
             logger.log(
                     timestamp + i,
-                    Map.of(),
-                    "level",
-                    "warn",
+                    LabelSerializerCreator.from(
+                            Map.of("level", "warn")
+                    ),
                     ByteBuffer.wrap(("Test" + i).getBytes())
             );
         }

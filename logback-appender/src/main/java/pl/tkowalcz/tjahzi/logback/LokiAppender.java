@@ -3,13 +3,14 @@ package pl.tkowalcz.tjahzi.logback;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.EfficientPatternLayout;
+import pl.tkowalcz.tjahzi.LabelSerializer;
+import pl.tkowalcz.tjahzi.LabelSerializers;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.function.Function;
 
 public class LokiAppender extends LokiAppenderConfigurator {
@@ -58,11 +59,14 @@ public class LokiAppender extends LokiAppenderConfigurator {
         String logLevel = event.getLevel().toString();
         ByteBuffer logLine = actualEncoder.apply(event);
 
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        if (logLevelLabel != null) {
+            labelSerializer.appendLabel(logLevelLabel, logLevel);
+        }
+
         logger.log(
                 event.getTimeStamp(),
-                Collections.emptyMap(),
-                logLevelLabel,
-                logLevel,
+                labelSerializer,
                 logLine
         );
     }
