@@ -21,7 +21,8 @@ class LabelPrinterFactoryTest {
                 Arguments.of("Should handle no substitution", "Macaroon ice cream gummies donut jujubes", "Macaroon ice cream gummies donut jujubes"),
                 Arguments.of("Should handle one substitution", "fafaewff ${ctx:tid} eawfawefweafwe", "fafaewff req-43tnfwenb eawfawefweafwe"),
                 Arguments.of("Should handle substitution with no matching MDC", "fafaewff ${ctx:tenant} eawfawefweafwe", "fafaewff  eawfawefweafwe"),
-                Arguments.of("Should handle many substitutions", "fooba${ctx:tenant}r${ctx:baz}_42", "foobarbaz_42")
+                Arguments.of("Should handle many substitutions", "fooba${ctx:tenant}r${ctx:baz}_42", "foobarbaz_42"),
+                Arguments.of("Should use default values if no matching MDC", "tid-${ctx:request-id:-empty}_${ctx:tid}", "tid-empty_req-43tnfwenb")
         );
     }
 

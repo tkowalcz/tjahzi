@@ -14,8 +14,8 @@ public class MDCLookup implements LabelPrinter {
         this.defaultValue = defaultValue == null ? "" : defaultValue;
     }
 
-    public static LabelPrinter of(String group, String defaultValue) {
-        return new MDCLookup(group, defaultValue);
+    public static MDCLookup of(String variableName, String defaultValue) {
+        return new MDCLookup(variableName, defaultValue);
     }
 
     @Override

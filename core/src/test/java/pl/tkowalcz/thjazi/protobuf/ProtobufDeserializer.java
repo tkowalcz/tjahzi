@@ -29,9 +29,10 @@ public class ProtobufDeserializer {
         );
 
         LabelSerializer labelSerializer = LabelSerializers.threadLocal();
-        labelSerializer.appendLabel("faaaoo", "baqwefewr");
-        labelSerializer.appendLabel("a232aa", "bbbrgwew");
-        labelSerializer.appendLabel("LEVEL", "DEBUG");
+        labelSerializer
+                .appendLabel("faaaoo", "baqwefewr")
+                .appendLabel("a232aa", "bbbrgwew")
+                .appendLabel("LEVEL", "DEBUG");
 
         LogBufferSerializer serializer = new LogBufferSerializer(logBuffer.buffer());
         serializer.writeTo(

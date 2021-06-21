@@ -17,7 +17,7 @@ public class Literal implements LabelPrinter {
         return true;
     }
 
-    public static LabelPrinter of(String string) {
+    public static Literal of(String string) {
         return new Literal(string);
     }
 
