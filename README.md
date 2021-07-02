@@ -77,6 +77,10 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
 
 For those interested wiki contains some information on [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing).
 
+## Monitoring
+
+Check out [this wiki article](https://github.com/tkowalcz/tjahzi/wiki/Monitoring).
+
 # LICENSE
 
 This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 
