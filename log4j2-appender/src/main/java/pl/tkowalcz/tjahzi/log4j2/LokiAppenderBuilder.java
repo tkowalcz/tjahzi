@@ -118,7 +118,12 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
             );
         }
 
-        LabelFactory labelFactory = new LabelFactory(logLevelLabel, labels);
+        LabelFactory labelFactory = new LabelFactory(
+                getConfiguration(),
+                logLevelLabel,
+                labels
+        );
+
         LabelsDescriptor labelsDescriptor = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelsDescriptor.getLogLevelLabel();
 

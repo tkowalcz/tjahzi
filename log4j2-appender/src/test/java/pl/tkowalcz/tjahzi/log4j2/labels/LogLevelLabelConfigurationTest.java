@@ -37,7 +37,7 @@ class LogLevelLabelConfigurationTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldWorkWIthNoLogLevelConfigured() throws Exception {
+    void shouldWorkWithNoLogLevelConfigured() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());

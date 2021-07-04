@@ -1,6 +1,9 @@
 package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.status.StatusLogger;
 import pl.tkowalcz.tjahzi.github.GitHubDocs;
 
@@ -22,9 +25,13 @@ public class LabelFactory {
     private final String logLevelLabel;
     private final Label[] labels;
 
-    public LabelFactory(String logLevelLabel, Label... labels) {
+    private final PatternParser patternParser;
+
+    public LabelFactory(Configuration configuration, String logLevelLabel, Label... labels) {
         this.logLevelLabel = logLevelLabel;
         this.labels = labels;
+
+        this.patternParser = new PatternParser(configuration, PatternLayout.KEY, null);
     }
 
     public LabelsDescriptor convertLabelsDroppingInvalid() {
@@ -95,9 +102,17 @@ public class LabelFactory {
                 )
                 .collect(toMap(
                         Label::getName,
-                        LabelPrinterFactory::parse,
+                        this::toLabelOrLog4jPattern,
                         (original, duplicate) -> duplicate)
                 );
+    }
+
+    private LabelPrinter toLabelOrLog4jPattern(Label label) {
+        if (label.getPattern() != null) {
+            return Log4jAdapterLabelPrinter.of(patternParser.parse(label.getPattern()));
+        }
+
+        return LabelPrinterFactory.parse(label);
     }
 
     private static String validateLogLevelLabel(

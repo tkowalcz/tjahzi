@@ -9,9 +9,9 @@ class LabelTest {
     @Test
     void shouldValidateNamePattern() {
         // Given
-        Label correctLabel = Label.createLabel("aaa_bbb_ccc", "fobar");
-        Label tooShortLabel = Label.createLabel("", "foobar");
-        Label labelWithInvalidChars = Label.createLabel("log-level", "foobar");
+        Label correctLabel = Label.createLabel("aaa_bbb_ccc", "fobar", null);
+        Label tooShortLabel = Label.createLabel("", "foobar", null);
+        Label labelWithInvalidChars = Label.createLabel("log-level", "foobar", null);
 
         // When & Then
         assertThat(correctLabel.hasValidName()).isTrue();

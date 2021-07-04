@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public interface LabelPrinter {
 
-    void append(LogEvent event, Consumer<String> appendable);
+    void append(LogEvent event, Consumer<CharSequence> appendable);
 
     default boolean isStatic() {
         return false;
