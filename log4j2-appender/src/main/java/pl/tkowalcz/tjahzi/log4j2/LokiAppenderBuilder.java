@@ -34,6 +34,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private static final Logger LOGGER = StatusLogger.getLogger();
 
     private static final int BYTES_IN_MEGABYTE = 1024 * 1024;
+    private static final int BYTES_IN_KILOBYTE = 1024;
 
     @PluginBuilderAttribute
     @Required(message = "No Loki address provided for LokiAppender")
@@ -68,10 +69,13 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private String logLevelLabel;
 
     @PluginBuilderAttribute
-    private final long batchSize = 10_2400;
+    private long batchSize = 10_2400;
 
     @PluginBuilderAttribute
-    private final long batchWait = 5;
+    private long batchWait = 5;
+
+    @PluginBuilderAttribute
+    private int maxLogLineSizeKilobytes = 10;
 
     @PluginBuilderAttribute
     private int maxRequestsInFlight = 100;
@@ -132,6 +136,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 isUseOffHeapBuffer()
         );
 
+        int maxLogLineSizeBytes = Math.toIntExact(getMaxLogLineSizeKilobytes() * BYTES_IN_KILOBYTE);
         return new LokiAppender(
                 getName(),
                 getLayout(),
@@ -140,6 +145,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 getPropertyArray(),
                 logLevelLabel,
                 labelsDescriptor.getDynamicLabels(),
+                maxLogLineSizeBytes,
                 loggingSystem,
                 monitoringModuleWrapper
         );
@@ -220,8 +226,24 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         return batchSize;
     }
 
+    public void setBatchSize(long batchSize) {
+        this.batchSize = batchSize;
+    }
+
     public long getBatchWait() {
         return batchWait;
+    }
+
+    public void setBatchWait(long batchWait) {
+        this.batchWait = batchWait;
+    }
+
+    public void setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
+        this.maxLogLineSizeKilobytes = maxLogLineSizeKilobytes;
+    }
+
+    public long getMaxLogLineSizeKilobytes() {
+        return maxLogLineSizeKilobytes;
     }
 
     public void setMaxRequestsInFlight(int maxRequestsInFlight) {
