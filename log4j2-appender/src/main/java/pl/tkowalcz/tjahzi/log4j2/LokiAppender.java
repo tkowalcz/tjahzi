@@ -46,6 +46,7 @@ public class LokiAppender extends AbstractAppender {
             Property[] properties,
             String logLevelLabel,
             Map<String, LabelPrinter> lokiLabels,
+            int maxLogLineSizeKilobytes,
             LoggingSystem loggingSystem,
             MutableMonitoringModuleWrapper monitoringModuleWrapper
     ) {
@@ -63,7 +64,8 @@ public class LokiAppender extends AbstractAppender {
         this.appenderLogic = new AppenderLogic(
                 loggingSystem,
                 logLevelLabel,
-                lokiLabels
+                lokiLabels,
+                maxLogLineSizeKilobytes
         );
     }
 

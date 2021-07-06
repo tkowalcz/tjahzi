@@ -7,24 +7,15 @@ import org.apache.logging.log4j.core.layout.ByteBufferDestinationHelper;
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-public class ByteBufferDestinations implements ByteBufferDestination {
+public class TjahziByteBufferDestination implements ByteBufferDestination {
 
-    private static final ThreadLocal<ByteBufferDestinations> THREAD_LOCAL = ThreadLocal.withInitial(ByteBufferDestinations::new);
-
-    /**
-     * 10kb should be enough for everyone. Even in case of 1000s of threads we will allocate at most 10s of MB of buffers.
-     * Larger messages will be fragmented.
-     */
-    private final ByteBuffer buffer = ByteBuffer.allocate(10 * 1024);
+    private final ByteBuffer buffer;
 
     private BiConsumer<LogEvent, ByteBuffer> drain;
     private LogEvent context;
 
-    public static ByteBufferDestinations threadLocal() {
-        ByteBufferDestinations result = THREAD_LOCAL.get();
-        result.getByteBuffer().clear();
-
-        return result;
+    public TjahziByteBufferDestination(int maxLogLineSizeBytes) {
+        buffer = ByteBuffer.allocate(maxLogLineSizeBytes);
     }
 
     public void drainRemaining() {
@@ -60,5 +51,7 @@ public class ByteBufferDestinations implements ByteBufferDestination {
     public void initialize(BiConsumer<LogEvent, ByteBuffer> drain, LogEvent context) {
         this.context = context;
         this.drain = drain;
+
+        buffer.clear();
     }
 }

@@ -33,7 +33,8 @@ class AppenderLogicTest {
         AppenderLogic logic = new AppenderLogic(
                 loggingSystem,
                 logLevelLabel,
-                Map.of()
+                Map.of(),
+                ByteBufferDestinationRepository.DEFAULT_MAX_LINE_SIZE_BYTES
         );
 
         MutableLogEvent logEvent = new MutableLogEvent();
@@ -90,7 +91,8 @@ class AppenderLogicTest {
         AppenderLogic logic = new AppenderLogic(
                 loggingSystem,
                 logLevelLabel,
-                dynamicLabels
+                dynamicLabels,
+                ByteBufferDestinationRepository.DEFAULT_MAX_LINE_SIZE_BYTES
         );
 
         MutableLogEvent logEvent = new MutableLogEvent();
