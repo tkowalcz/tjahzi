@@ -69,10 +69,10 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private String logLevelLabel;
 
     @PluginBuilderAttribute
-    private final long batchSize = 10_2400;
+    private long batchSize = 10_2400;
 
     @PluginBuilderAttribute
-    private final long batchWait = 5;
+    private long batchWait = 5;
 
     @PluginBuilderAttribute
     private int maxLogLineSizeKilobytes = 10;
@@ -226,8 +226,16 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         return batchSize;
     }
 
+    public void setBatchSize(long batchSize) {
+        this.batchSize = batchSize;
+    }
+
     public long getBatchWait() {
         return batchWait;
+    }
+
+    public void setBatchWait(long batchWait) {
+        this.batchWait = batchWait;
     }
 
     public void setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
