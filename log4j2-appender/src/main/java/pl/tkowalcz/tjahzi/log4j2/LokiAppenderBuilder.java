@@ -75,7 +75,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private final long batchWait = 5;
 
     @PluginBuilderAttribute
-    private final int maxLogLineSizeKilobytes = 10;
+    private int maxLogLineSizeKilobytes = 10;
 
     @PluginBuilderAttribute
     private int maxRequestsInFlight = 100;
@@ -228,6 +228,10 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public long getBatchWait() {
         return batchWait;
+    }
+
+    public void setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
+        this.maxLogLineSizeKilobytes = maxLogLineSizeKilobytes;
     }
 
     public long getMaxLogLineSizeKilobytes() {
