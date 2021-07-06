@@ -68,7 +68,7 @@ class LogLineFragmentationTest {
 
         Awaitility
                 .await()
-                .atMost(Durations.TEN_SECONDS)
+                .atMost(Durations.ONE_MINUTE)
                 .pollInterval(Durations.ONE_SECOND)
                 .ignoreExceptions()
                 .untilAsserted(() -> given()
