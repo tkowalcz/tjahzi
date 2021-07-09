@@ -30,6 +30,7 @@ Log4j2 appender seemed like a good first.
 1. Include minimal appender configuration:
 
 ```xml
+
 <Loki name="loki-appender">
     <host>${sys:loki.host}</host>
     <port>${sys:loki.port}</port>
@@ -45,6 +46,7 @@ Log4j2 appender seemed like a good first.
 1. Reference the appender from inside one of your logger definitions:
 
 ```xml
+
 <Root level="INFO">
     <AppenderRef ref="Loki"/>
 </Root>
@@ -59,6 +61,7 @@ will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/
 ### Grafana Cloud configuration
 
 Tjahzi can send logs to Grafana Cloud. It needs two things to be configured:
+
 - Set port number to `443` which switches HTTP client into HTTPS mode.
 - Specify `username` and `password` for HTTP basic authentication that Grafana uses.
 
@@ -66,6 +69,7 @@ Password is your "Grafana.com API Key" and can be generated in "Grafana datasour
 is just for illustrative purposes.
 
 ```xml
+
 <Loki name="loki-appender">
     <!-- example host -->
     <host>logs-prod-us-central1.grafana.net</host>
@@ -115,11 +119,26 @@ attribute of configuration so that the appender can be found.
 Contents of the properties
 are [automatically interpolated by Log4j2](https://logging.apache.org/log4j/log4j-2.2/manual/configuration.html#PropertySubstitution)
 . All environment, system etc. variable references will be replaced by their values during initialization of the
-appender. The exception is context/MDC (`${ctx:foo}`) value lookup as it make sense only during runtime.
+appender. The exception to this rule is context/MDC (`${ctx:foo}`) value lookup - it is performed for each message at
+runtime (allocation free).
 
 NOTE: This process could have been executed for every lookup type at runtime (for each log message). This approach was
 deemed too expensive. If you need a mechanism to replace a variable (other than context/MDC) after logging system
 initialization I would love to hear your use case - please file an issue.
+
+## Patterns in Labels
+
+Alternative way of specifying label contents is via pattern attribute:
+
+```xml
+
+<Label name="server" pattern="%C{1.}"/>
+```
+
+This pattern is compatible with
+Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout). In fact, we reuse lgo4j
+internal classes for this implementation. It is generally efficient and allocation free as
+per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbagefree.html#PatternLayout).
 
 ## Details
 
@@ -153,6 +172,13 @@ when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/op
 
 Specify additional labels attached to each log line sent via this appender instance. See also note
 about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
+
+You can use value attribute to specify static text. You can use `${}` variable substitution inside that text and Tjahzi
+will resolve variables once at startup. If the varaible is a context/MDC lookup it will be resolved dynamically for each
+log line.
+
+This tag also supports `pattern` attribute where you can use pattern layout expressions that will be resolved at
+runtime.
 
 #### LogLevelLabel (optional)
 
