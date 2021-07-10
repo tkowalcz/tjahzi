@@ -18,11 +18,10 @@
 
             <Header name="server" value="127.0.0.1"/>
 
-            <Label name="server" value="127.0.0.1"/>
-            <Label name="server" value="127.0.0.1"/>
-            <Label name="object" value="prefix_${ctx:object}"/>
-            <Label name="owner" value="${ctx:owner}_suffix"/>
-            <Label name="default_value_test" value="${ctx:missing:-use_this_if_missing}"/>
+            <Label name="server" pattern="127.0.0.1"/>
+            <Label name="class_pattern" pattern="%C{1.}"/>
+            <Label name="sequence_number" pattern="%sn"/>
+            <Label name="mdc_tid" pattern="%mdc{tid}"/>
         </Loki>
     </appenders>
 </configuration>

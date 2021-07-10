@@ -19,7 +19,7 @@ public class MDCLookup implements LabelPrinter {
     }
 
     @Override
-    public void append(LogEvent event, Consumer<String> appendable) {
+    public void append(LogEvent event, Consumer<CharSequence> appendable) {
         Object value = event.getContextData().getValue(variableName);
         if (value != null) {
             appendable.accept(value.toString());

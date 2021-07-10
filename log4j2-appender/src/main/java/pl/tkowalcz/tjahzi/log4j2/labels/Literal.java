@@ -22,7 +22,7 @@ public class Literal implements LabelPrinter {
     }
 
     @Override
-    public void append(LogEvent event, Consumer<String> appendable) {
+    public void append(LogEvent event, Consumer<CharSequence> appendable) {
         appendable.accept(contents);
     }
 }

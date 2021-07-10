@@ -24,16 +24,19 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Every.everyItem;
 
 @Testcontainers
-class LabelsContextSubstitutionTest {
+class Log4jPatternsInLabelsTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
             .withCommand("-config.file=/etc/loki-config.yaml")
-            .withClasspathResourceMapping("loki-config.yaml",
+            .withClasspathResourceMapping(
+                    "loki-config.yaml",
                     "/etc/loki-config.yaml",
-                    BindMode.READ_ONLY)
+                    BindMode.READ_ONLY
+            )
             .waitingFor(
-                    Wait.forHttp("/ready")
+                    Wait
+                            .forHttp("/ready")
                             .forPort(3100)
             )
             .withExposedPorts(3100);
@@ -46,25 +49,20 @@ class LabelsContextSubstitutionTest {
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("labels-context-substitution-test-configuration.xml")
+                .getResource("log4j-patterns-in-labels-configuration.xml")
                 .toURI();
 
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
                 .setConfigLocation(uri);
 
-        Logger logger = LogManager.getLogger(LabelsContextSubstitutionTest.class);
+        Logger logger = LogManager.getLogger(Log4jPatternsInLabelsTest.class);
 
         // When
-        MDC.put("object", "bus_ticket");
-        MDC.put("owner", "wally");
+        MDC.put("tid", "req-230rq9ubou");
         logger.info("Test1");
 
-        MDC.put("object", "comb");
-        MDC.put("owner", "jennifer");
-        logger.info("Test2");
-
         MDC.clear();
-        logger.info("Test3");
+        logger.info("Test2");
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -88,16 +86,15 @@ class LabelsContextSubstitutionTest {
                             .all()
                             .statusCode(200)
                             .body("status", equalTo("success"))
-                            .body("data.result.size()", equalTo(3))
+                            .body("data.result.size()", equalTo(2))
                             .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
-                            .body("data.result.stream.object", contains("prefix_", "prefix_bus_ticket", "prefix_comb"))
-                            .body("data.result.stream.owner", contains("_suffix", "wally_suffix", "jennifer_suffix"))
-                            .body("data.result.stream.default_value_test", contains("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
+                            .body("data.result.stream.class_pattern", everyItem(equalTo("p.t.t.l.l.Log4jPatternsInLabelsTest")))
+                            .body("data.result.stream.sequence_number", contains("2", "1"))
+                            .body("data.result.stream.mdc_tid", contains("", "req-230rq9ubou"))
                             .body("data.result.values",
                                     hasItems(
-                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test3")),
-                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test1")),
-                                            hasItems(hasItems("LabelsContextSubstitutionTest - Test2"))
+                                            hasItems(hasItems("Log4jPatternsInLabelsTest - Test2")),
+                                            hasItems(hasItems("Log4jPatternsInLabelsTest - Test1"))
                                     )
                             );
                 });

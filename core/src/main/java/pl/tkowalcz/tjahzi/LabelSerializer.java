@@ -32,19 +32,25 @@ public class LabelSerializer {
         return this;
     }
 
-    public void startAppendingLabelValue() {
+    public LabelSerializer startAppendingLabelValue() {
         lastSizePosition = cursor;
         cursor += Integer.BYTES;
+
+        return this;
     }
 
-    public void appendPartialLabelValue(String value) {
-        cursor += buffer.putStringWithoutLengthAscii(cursor, value);
+    public LabelSerializer appendPartialLabelValue(CharSequence value) {
+        cursor += buffer.putStringWithoutLengthAscii(cursor, value.toString());
+
+        return this;
     }
 
-    public void finishAppendingLabelValue() {
+    public LabelSerializer finishAppendingLabelValue() {
         buffer.putInt(
                 lastSizePosition,
                 cursor - lastSizePosition - Integer.BYTES);
+
+        return this;
     }
 
     public LabelSerializer appendLabel(String key, String value) {

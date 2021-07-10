@@ -18,7 +18,7 @@ public class AggregateLabelPrinter implements LabelPrinter {
     }
 
     @Override
-    public void append(LogEvent event, Consumer<String> appendable) {
+    public void append(LogEvent event, Consumer<CharSequence> appendable) {
         for (LabelPrinter node : nodes) {
             node.append(event, appendable);
         }

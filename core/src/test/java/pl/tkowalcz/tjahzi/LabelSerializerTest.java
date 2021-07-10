@@ -64,20 +64,19 @@ class LabelSerializerTest {
         // When
         serializer.appendLabel("Foo", "Bar");
 
-        serializer.appendLabelName("Aliens");
-        serializer.startAppendingLabelValue();
-        serializer.appendPartialLabelValue("Kang");
-        serializer.appendPartialLabelValue("Kodos");
-        serializer.appendPartialLabelValue("Johnson");
-        serializer.finishAppendingLabelValue();
-
-        serializer.appendLabelName("Omicronians");
-        serializer.startAppendingLabelValue();
-        serializer.appendPartialLabelValue("Lrrr");
-        serializer.appendPartialLabelValue("RULER OF THE PLANET OMICRON PERSEI EIGHT");
-        serializer.finishAppendingLabelValue();
-
-        serializer.appendLabel("Popplers", "Problem");
+        serializer
+                .appendLabelName("Aliens")
+                    .startAppendingLabelValue()
+                        .appendPartialLabelValue("Kang")
+                        .appendPartialLabelValue("Kodos")
+                        .appendPartialLabelValue("Johnson")
+                    .finishAppendingLabelValue()
+                .appendLabelName("Omicronians")
+                    .startAppendingLabelValue()
+                        .appendPartialLabelValue("Lrrr")
+                        .appendPartialLabelValue("RULER OF THE PLANET OMICRON PERSEI EIGHT")
+                    .finishAppendingLabelValue()
+                .appendLabel("Popplers", "Problem");
 
         // Then
         assertThat(serializer.getLabelsCount()).isEqualTo(4);
