@@ -5,19 +5,19 @@
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.14</version>
+        <version>0.9.15-SNAPSHOT</version>
     </parent>
 
     <name>logback-appender</name>
     <artifactId>logback-appender</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.14</version>
+    <version>0.9.15-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>core</artifactId>
-            <version>0.9.14</version>
+            <version>0.9.15-SNAPSHOT</version>
         </dependency>
 
         <dependency>
