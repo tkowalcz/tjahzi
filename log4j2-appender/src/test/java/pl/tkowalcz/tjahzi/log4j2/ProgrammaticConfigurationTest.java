@@ -23,6 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.greaterThan;
 
 @Testcontainers
 public class ProgrammaticConfigurationTest {
@@ -79,7 +80,7 @@ public class ProgrammaticConfigurationTest {
                                 .body("status", equalTo("success"))
                                 .body("data.result.size()", equalTo(1))
                                 .body("data.result[0].stream.server", equalTo("127.0.0.1"))
-                                .body("data.result[0].values.size()", equalTo(1))
+                                .body("data.result[0].values.size()", greaterThan(0))
                                 .body(
                                         "data.result.values",
                                         hasItems(
@@ -113,14 +114,15 @@ public class ProgrammaticConfigurationTest {
                                 .addAttribute("level", "ALL")
                 )
                 .add(
-                        builder.newLayout("PatternLayout").
-                                addAttribute("pattern", "%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}")
+                        builder.newLayout("PatternLayout")
+                                .addAttribute("pattern", "%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}")
                 )
                 .addComponent(
                         builder.newComponent("Header")
                                 .addAttribute("name", "server")
                                 .addAttribute("value", "127.0.0.1")
-                ).addComponent(
+                )
+                .addComponent(
                         builder.newComponent("Label")
                                 .addAttribute("name", "server")
                                 .addAttribute("value", "127.0.0.1")
