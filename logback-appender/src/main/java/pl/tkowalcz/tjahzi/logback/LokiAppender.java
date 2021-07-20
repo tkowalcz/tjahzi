@@ -11,6 +11,8 @@ import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class LokiAppender extends LokiAppenderConfigurator {
@@ -23,6 +25,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     private TjahziLogger logger;
     private String logLevelLabel;
+    private List<String> mdcLogLabels;
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public EfficientPatternLayout getEfficientLayout() {
@@ -58,17 +61,32 @@ public class LokiAppender extends LokiAppenderConfigurator {
     protected void append(ILoggingEvent event) {
         String logLevel = event.getLevel().toString();
         ByteBuffer logLine = actualEncoder.apply(event);
+        Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
 
         LabelSerializer labelSerializer = LabelSerializers.threadLocal();
-        if (logLevelLabel != null) {
-            labelSerializer.appendLabel(logLevelLabel, logLevel);
-        }
+        appendLogLabel(labelSerializer, logLevel);
+        appendMdcLogLabels(labelSerializer, mdcPropertyMap);
 
         logger.log(
                 event.getTimeStamp(),
                 labelSerializer,
                 logLine
         );
+    }
+
+    private void appendLogLabel(LabelSerializer labelSerializer, String logLevel) {
+        if (logLevelLabel != null) {
+            labelSerializer.appendLabel(logLevelLabel, logLevel);
+        }
+    }
+
+    private void appendMdcLogLabels(LabelSerializer serializer,
+                                    Map<String, String> mdcPropertyMap) {
+        mdcLogLabels.forEach(mdcLogLabel -> {
+            if (mdcPropertyMap.containsKey(mdcLogLabel)) {
+                serializer.appendLabel(mdcLogLabel, mdcPropertyMap.get(mdcLogLabel));
+            }
+        });
     }
 
     @Override
@@ -88,6 +106,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
         LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
         loggingSystem = lokiAppenderFactory.createAppender();
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
+        mdcLogLabels = lokiAppenderFactory.getMdcLogLabels();
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
         logger = loggingSystem.createLogger();

@@ -21,6 +21,7 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private boolean useOffHeapBuffer = true;
 
     private String logLevelLabel;
+    private List<String> mdcLogLabels = new ArrayList<>();
 
     private long batchSize = 10_2400;
     private long batchWait = 5;
@@ -132,5 +133,13 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public List<Label> getLabels() {
         return labels;
+    }
+
+    public List<String> getMdcLogLabels() {
+        return mdcLogLabels;
+    }
+
+    public void addMdcLogLabel(String mdcLogLabel) {
+        this.mdcLogLabels.add(mdcLogLabel);
     }
 }
