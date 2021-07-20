@@ -10,6 +10,7 @@ import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -19,6 +20,7 @@ public class LokiAppenderFactory {
 
     private final HashMap<String, String> lokiLabels;
     private final String logLevelLabel;
+    private final List<String> mdcLogLabels;
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public LokiAppenderFactory(LokiAppenderConfigurator configurator) {
@@ -32,6 +34,7 @@ public class LokiAppenderFactory {
 
         lokiLabels = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelFactory.validateLogLevelLabel(lokiLabels);
+        mdcLogLabels = configurator.getMdcLogLabels();
     }
 
     public LoggingSystem createAppender() {
@@ -87,5 +90,9 @@ public class LokiAppenderFactory {
 
     public MutableMonitoringModuleWrapper getMonitoringModuleWrapper() {
         return monitoringModuleWrapper;
+    }
+
+    public List<String> getMdcLogLabels() {
+        return mdcLogLabels;
     }
 }
