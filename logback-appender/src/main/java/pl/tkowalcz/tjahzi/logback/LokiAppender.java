@@ -26,6 +26,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     private TjahziLogger logger;
     private String logLevelLabel;
     private List<String> mdcLogLabels;
+
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public EfficientPatternLayout getEfficientLayout() {
@@ -80,13 +81,16 @@ public class LokiAppender extends LokiAppenderConfigurator {
         }
     }
 
+    @SuppressWarnings("ForLoopReplaceableByForEach") // Allocator goes brrrr
     private void appendMdcLogLabels(LabelSerializer serializer,
                                     Map<String, String> mdcPropertyMap) {
-        mdcLogLabels.forEach(mdcLogLabel -> {
+        for (int i = 0; i < mdcLogLabels.size(); i++) {
+            String mdcLogLabel = mdcLogLabels.get(i);
+            
             if (mdcPropertyMap.containsKey(mdcLogLabel)) {
                 serializer.appendLabel(mdcLogLabel, mdcPropertyMap.get(mdcLogLabel));
             }
-        });
+        }
     }
 
     @Override

@@ -53,7 +53,8 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
 
 ### Note on Loki HTTP endpoint and host/port configuration
 
-Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying e.g. `<host>loki.mydomain.com</host><port>3100</port>`
+Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying
+e.g. `<host>loki.mydomain.com</host><port>3100</port>`
 will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/api/v1/push`.
 
 ## Custom pattern layout and decreasing allocations
@@ -115,6 +116,47 @@ class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
 Contents of the properties are automatically interpolated by Logback (
 see [here](http://logback.qos.ch/manual/configuration.html#variableSubstitution)). All environment, system etc. variable
 references will be replaced by their values during initialization of the appender.
+
+### MDC support
+
+MDC is supported via `mdcLogLabel` tag. It will dynamically extract MDC value associated with its content and will turn
+it into a label.
+
+<details>
+    <summary>Click to expand example</summary>
+
+```xml
+<configuration debug="true">
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+        <host>${loki.host}</host>
+        <port>${loki.port}</port>
+
+        <efficientLayout>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </efficientLayout>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+
+        <!-- MDC -->
+        <mdcLogLabel>
+            trace_id
+        </mdcLogLabel>
+
+       <!-- MDC -->
+        <mdcLogLabel>
+            span_id
+        </mdcLogLabel>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="Loki"/>
+    </root>
+</configuration>
+```
+</details>
 
 ## Details
 
