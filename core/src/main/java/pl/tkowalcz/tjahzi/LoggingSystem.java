@@ -55,4 +55,8 @@ public class LoggingSystem {
     public int getLogBufferSize() {
         return logBuffer.capacity();
     }
+
+    public int getLogBufferByteRemainsSize() {
+        return logBuffer.size();
+    }
 }
