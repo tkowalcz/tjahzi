@@ -26,6 +26,7 @@ class BufferSizeConfigurationTest {
         // Then
         LokiAppender loki = context.getConfiguration().getAppender("Loki");
         assertThat(loki.getLoggingSystem().getLogBufferSize()).isEqualTo(32 * 1024 * 1024);
+        assertThat(loki.getLoggingSystem().getLogBufferByteRemainsSize() == 0);
     }
 
     @Test
@@ -43,5 +44,6 @@ class BufferSizeConfigurationTest {
         // Then
         LokiAppender loki = context.getConfiguration().getAppender("Loki");
         assertThat(loki.getLoggingSystem().getLogBufferSize()).isEqualTo(64 * 1024 * 1024);
+        assertThat(loki.getLoggingSystem().getLogBufferByteRemainsSize() == 0);
     }
 }
