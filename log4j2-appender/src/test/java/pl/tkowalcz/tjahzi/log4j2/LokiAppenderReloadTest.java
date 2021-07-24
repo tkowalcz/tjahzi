@@ -15,12 +15,15 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 
 @Testcontainers
-class LokiAppenderShutdownTest {
+class LokiAppenderReloadTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -35,15 +38,23 @@ class LokiAppenderShutdownTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldNotLooseDataWhenShuttingDown() throws Exception {
+    void shouldNotLooseDataWhenConfigChanges() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
 
-        URI uri = getClass()
+        URI uriBefore = getClass()
                 .getClassLoader()
-                .getResource("appender-test-shutdown.xml")
+                .getResource("appender-test-reload-before.xml")
                 .toURI();
+
+        URI uriAfter = getClass()
+                .getClassLoader()
+                .getResource("appender-test-reload-after.xml")
+                .toURI();
+
+        URI uri = new URI("file://" + Paths.get(uriBefore).toFile().getParent() + "/appender-test-reload.xml");
+        Files.copy(Paths.get(uriBefore), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
                 .setConfigLocation(uri);
@@ -51,11 +62,11 @@ class LokiAppenderShutdownTest {
         String expectedLogLine = "Test";
 
         long expectedTimestamp = System.currentTimeMillis();
-        Logger logger = LogManager.getLogger(LokiAppenderShutdownTest.class);
+        Logger logger = LogManager.getLogger(LokiAppenderReloadTest.class);
 
         // When
         logger.info(expectedLogLine);
-        LogManager.shutdown();
+        Files.copy(Paths.get(uriAfter), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -86,7 +97,7 @@ class LokiAppenderShutdownTest {
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("INFO LokiAppenderShutdownTest - Test")
+                                                        containsString("INFO LokiAppenderReloadTest - Test")
                                                 )
                                         )
                                 )

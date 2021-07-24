@@ -1,13 +1,15 @@
-package pl.tkowalcz.tjahzi.log4j2;
+package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -15,12 +17,15 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 
 @Testcontainers
-class LokiAppenderShutdownTest {
+class LokiAppenderReloadTest {
 
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:latest")
@@ -35,27 +40,40 @@ class LokiAppenderShutdownTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldNotLooseDataWhenShuttingDown() throws Exception {
+    void shouldNotLooseDataWhenConfigChanges() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
 
-        URI uri = getClass()
+        URI uriBefore = getClass()
                 .getClassLoader()
-                .getResource("appender-test-shutdown.xml")
+                .getResource("appender-test-reload-before.xml")
                 .toURI();
 
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        URI uriAfter = getClass()
+                .getClassLoader()
+                .getResource("appender-test-reload-after.xml")
+                .toURI();
+
+        URI uri = new URI("file://" + Paths.get(uriBefore).toFile().getParent() + "/appender-test-reload.xml");
+        Files.copy(Paths.get(uriBefore), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
+
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
+
+        context.reset();
+        configurator.doConfigure(uri.toURL());
 
         String expectedLogLine = "Test";
 
         long expectedTimestamp = System.currentTimeMillis();
-        Logger logger = LogManager.getLogger(LokiAppenderShutdownTest.class);
+        Logger logger = context.getLogger(LokiAppenderReloadTest.class);
 
         // When
         logger.info(expectedLogLine);
-        LogManager.shutdown();
+        Files.copy(Paths.get(uriAfter), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -86,7 +104,7 @@ class LokiAppenderShutdownTest {
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("INFO LokiAppenderShutdownTest - Test")
+                                                        containsString("INFO LokiAppenderReloadTest - Test")
                                                 )
                                         )
                                 )

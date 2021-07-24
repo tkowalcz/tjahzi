@@ -21,6 +21,7 @@ import java.net.URI;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @Testcontainers
 class LogLevelLabelConfigurationTest {
@@ -133,7 +134,7 @@ class LogLevelLabelConfigurationTest {
                             .all()
                             .statusCode(200)
                             .body("status", equalTo("success"))
-                            .body("data.result.size()", equalTo(1))
+                            .body("data.result.size()", greaterThanOrEqualTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.log_level", equalTo("INFO"));
                 });

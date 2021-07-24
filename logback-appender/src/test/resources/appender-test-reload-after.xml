@@ -10,9 +10,7 @@
     </Loggers>
 
     <appenders>
-        <Loki name="Loki" bufferSizeMegabytes="2" batchWait="10">
-            <batchSize>1048576</batchSize>
-
+        <Loki name="Loki" bufferSizeMegabytes="2" batchWait="1000">
             <host>${sys:loki.host}</host>
             <port>${sys:loki.port}</port>
 

@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 @Testcontainers
 class ResourcesCleanupOnCloseTest {
@@ -38,7 +37,7 @@ class ResourcesCleanupOnCloseTest {
 
         wireMockServer.start();
         initializer = new TjahziInitializer();
-        monitoringModule = mock(StandardMonitoringModule.class);
+        monitoringModule = new StandardMonitoringModule();
     }
 
     @AfterEach

@@ -1,8 +1,13 @@
 package pl.tkowalcz.tjahzi.logback;
 
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import org.awaitility.Awaitility;
+import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
@@ -11,12 +16,10 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 import java.net.URI;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.*;
 
 @Testcontainers
 class LokiAppenderShutdownTest {
@@ -34,14 +37,14 @@ class LokiAppenderShutdownTest {
             .withExposedPorts(3100);
 
     @Test
-    void shouldSendData() throws Exception {
+    void shouldNotLooseDataWhenShuttingDown() throws Exception {
         // Given
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
 
         URI uri = getClass()
                 .getClassLoader()
-                .getResource("basic-appender-test-configuration.xml")
+                .getResource("appender-test-shutdown.xml")
                 .toURI();
 
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -52,33 +55,49 @@ class LokiAppenderShutdownTest {
         context.reset();
         configurator.doConfigure(uri.toURL());
 
-        // Verify our assumptions that we can find threads started by Tjahzi
-        Awaitility.await().untilAsserted(() -> {
-            ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-            ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+        String expectedLogLine = "Test";
 
-            assertThat(threadInfos)
-                    .extracting(ThreadInfo::getThreadName)
-                    .contains(
-                            "ReadingLogBufferAndSendingHttp",
-                            "tjahzi-worker"
-                    );
-        });
+        long expectedTimestamp = System.currentTimeMillis();
+        Logger logger = context.getLogger(LokiAppenderReloadTest.class);
 
         // When
+        logger.info(expectedLogLine);
         context.stop();
 
         // Then
-        Awaitility.await().untilAsserted(() -> {
-            ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
-            ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+        RestAssured.port = loki.getFirstMappedPort();
+        RestAssured.baseURI = "http://" + loki.getHost();
+        RestAssured.registerParser("text/plain", Parser.JSON);
 
-            assertThat(threadInfos)
-                    .extracting(ThreadInfo::getThreadName)
-                    .doesNotContain(
-                            "ReadingLogBufferAndSendingHttp",
-                            "tjahzi-worker"
-                    );
-        });
+        Awaitility
+                .await()
+                .atMost(Durations.ONE_MINUTE)
+                .pollInterval(Durations.ONE_SECOND)
+                .ignoreExceptions()
+                .untilAsserted(() -> given()
+                        .contentType(ContentType.URLENC)
+                        .urlEncodingEnabled(false)
+                        .formParam("&start=" + expectedTimestamp + "&limit=1000&query=%7Bserver%3D%22127.0.0.1%22%7D")
+                        .when()
+                        .get("/loki/api/v1/query_range")
+                        .then()
+                        .log()
+                        .all()
+                        .statusCode(200)
+                        .body("status", equalTo("success"))
+                        .body("data.result.size()", equalTo(1))
+                        .body("data.result[0].stream.server", equalTo("127.0.0.1"))
+                        .body("data.result[0].values.size()", equalTo(1))
+                        .body(
+                                "data.result.values",
+                                hasItems(
+                                        hasItems(
+                                                hasItems(
+                                                        containsString("INFO LokiAppenderShutdownTest - Test")
+                                                )
+                                        )
+                                )
+                        )
+                );
     }
 }

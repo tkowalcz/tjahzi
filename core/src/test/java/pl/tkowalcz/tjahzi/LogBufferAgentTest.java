@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi;
 
+import io.netty.buffer.PooledByteBufAllocator;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
 import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -43,13 +45,24 @@ class LogBufferAgentTest {
         int sentBatchAfter5kb = 5 * 1024;
 
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
+
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         LogBufferAgent agent = new LogBufferAgent(
-                clock,
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        sentBatchAfter5kb,
+                        waitForever,
+                        10_000
+                ),
                 logBuffer,
+                outputBuffer,
                 httpClient,
-                sentBatchAfter5kb,
-                waitForever,
-                Map.of()
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                )
         );
 
         for (int i = 0; i < 100; i++) {
@@ -84,13 +97,23 @@ class LogBufferAgentTest {
         int sentBatchAfter5kb = 5 * 1024;
 
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         LogBufferAgent agent = new LogBufferAgent(
-                clock,
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        sentBatchAfter5kb,
+                        wait5s,
+                        10_000
+                ),
                 logBuffer,
+                outputBuffer,
                 httpClient,
-                sentBatchAfter5kb,
-                wait5s,
-                Map.of()
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                )
         );
 
         logger.log(
@@ -113,13 +136,23 @@ class LogBufferAgentTest {
         int sentBatchAfter5kb = 5 * 1024;
 
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         LogBufferAgent agent = new LogBufferAgent(
-                clock,
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        sentBatchAfter5kb,
+                        wait5s,
+                        10_000
+                ),
                 logBuffer,
+                outputBuffer,
                 httpClient,
-                sentBatchAfter5kb,
-                wait5s,
-                Map.of()
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                )
         );
 
         // When
@@ -152,13 +185,23 @@ class LogBufferAgentTest {
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
         SettableClock clock = new SettableClock();
 
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         LogBufferAgent agent = new LogBufferAgent(
-                clock,
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        sentBatchAfter5kb,
+                        wait5s,
+                        10_000
+                ),
                 logBuffer,
+                outputBuffer,
                 httpClient,
-                sentBatchAfter5kb,
-                wait5s,
-                Map.of()
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                )
         );
 
         // When
@@ -180,5 +223,56 @@ class LogBufferAgentTest {
 
         // Then
         verify(httpClient, times(2)).log((OutputBuffer) any());
+    }
+
+    @Test
+    void shouldDrainAllMessagesOnClose() throws IOException {
+        // Given
+        ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
+                new UnsafeBuffer(
+                        ByteBuffer.wrap(
+                                new byte[64 * 1024 + RingBufferDescriptor.TRAILER_LENGTH]
+                        )
+                )
+        );
+
+        TjahziLogger logger = new TjahziLogger(logBuffer, new StandardMonitoringModule());
+
+        NettyHttpClient httpClient = mock(NettyHttpClient.class);
+        SettableClock clock = new SettableClock();
+
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
+        LogBufferAgent agent = new LogBufferAgent(
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        Integer.MAX_VALUE,
+                        Integer.MAX_VALUE,
+                        10_000
+                ),
+                logBuffer,
+                outputBuffer,
+                httpClient,
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                )
+        );
+
+        for (int i = 0; i < LogBufferAgent.MAX_MESSAGES_TO_RETRIEVE * 2 + 1; i++) {
+            logger.log(
+                    42L,
+                    LabelSerializerCreator.from(Map.of()),
+                    ByteBuffer.wrap("Test".getBytes())
+            );
+        }
+
+        // When
+        agent.onClose();
+
+        // Then
+        verify(httpClient, times(4)).log((OutputBuffer) any());
+        assertThat(logBuffer.size()).isZero();
     }
 }
