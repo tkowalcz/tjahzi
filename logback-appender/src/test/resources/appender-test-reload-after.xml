@@ -1,26 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration packages="pl.tkowalcz.tjahzi.log4j2">
-    <Loggers>
-        <Root level="OFF">
-        </Root>
+<configuration debug="true">
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
 
-        <Logger name="pl.tkowalcz" level="ALL">
-            <AppenderRef ref="Loki"/>
-        </Logger>
-    </Loggers>
+        <bufferSizeMegabytes>2</bufferSizeMegabytes>
+        <batchWait>1000</batchWait>
 
-    <appenders>
-        <Loki name="Loki" bufferSizeMegabytes="2" batchWait="1000">
-            <host>${sys:loki.host}</host>
-            <port>${sys:loki.port}</port>
+        <host>${loki.host}</host>
+        <port>${loki.port}</port>
 
-            <ThresholdFilter level="ALL"/>
-            <PatternLayout>
-                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
-            </PatternLayout>
+        <efficientLayout>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </efficientLayout>
 
-            <Header name="server" value="127.0.0.1"/>
-            <Label name="server" value="127.0.0.1"/>
-        </Loki>
-    </appenders>
+        <header>
+            <name>X-Org-Id</name>
+            <value>Circus</value>
+        </header>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="Loki"/>
+    </root>
 </configuration>

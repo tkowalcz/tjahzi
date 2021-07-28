@@ -58,11 +58,11 @@ class LokiAppenderShutdownTest {
         String expectedLogLine = "Test";
 
         long expectedTimestamp = System.currentTimeMillis();
-        Logger logger = context.getLogger(LokiAppenderReloadTest.class);
+        Logger logger = context.getLogger(LokiAppenderShutdownTest.class);
 
         // When
         logger.info(expectedLogLine);
-        context.stop();
+        ((LoggerContext) LoggerFactory.getILoggerFactory()).stop();
 
         // Then
         RestAssured.port = loki.getFirstMappedPort();
@@ -93,7 +93,7 @@ class LokiAppenderShutdownTest {
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("INFO LokiAppenderShutdownTest - Test")
+                                                        containsString("INFO  p.t.t.l.LokiAppenderShutdownTest - Test")
                                                 )
                                         )
                                 )

@@ -16,6 +16,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -55,7 +56,7 @@ class LokiAppenderReloadTest {
                 .getResource("appender-test-reload-after.xml")
                 .toURI();
 
-        URI uri = new URI("file://" + Paths.get(uriBefore).toFile().getParent() + "/appender-test-reload.xml");
+        URI uri = new File(Paths.get(uriBefore).toFile().getParent(), "appender-test-reload.xml").toURI();
         Files.copy(Paths.get(uriBefore), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -104,7 +105,7 @@ class LokiAppenderReloadTest {
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("INFO LokiAppenderReloadTest - Test")
+                                                        containsString("INFO  p.t.t.l.LokiAppenderReloadTest - Test")
                                                 )
                                         )
                                 )
