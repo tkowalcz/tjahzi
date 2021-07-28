@@ -12,17 +12,20 @@
             <value>Circus</value>
         </header>
 
-        <label>
-            <name>server</name>
-            <value>127.0.0.1</value>
-        </label>
-
         <logLevelLabel>
             log_level
         </logLevelLabel>
+
+        <label>
+            <name>test</name>
+            <value>shouldSendLogLevelAsConfigured</value>
+        </label>
     </appender>
 
-    <root level="debug">
+    <logger name="pl.tkowalcz">
         <appender-ref ref="Loki"/>
+    </logger>
+
+    <root level="debug">
     </root>
 </configuration>

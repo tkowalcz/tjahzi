@@ -68,7 +68,7 @@ class LogLevelLabelConfigurationTest {
                     given()
                             .contentType(ContentType.URLENC)
                             .urlEncodingEnabled(false)
-                            .formParam("query=%7Bserver%3D%22127.0.0.1%22%7D")
+                            .formParam("query=%7Btest%3D%22shouldWorkWithNoLogLevelConfigured%22%7D")
                             .when()
                             .get("/loki/api/v1/query_range")
                             .then()
@@ -77,7 +77,6 @@ class LogLevelLabelConfigurationTest {
                             .statusCode(200)
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(1))
-                            .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.log_level", nullValue());
                 });
     }
@@ -114,7 +113,7 @@ class LogLevelLabelConfigurationTest {
                     given()
                             .contentType(ContentType.URLENC)
                             .urlEncodingEnabled(false)
-                            .formParam("query=%7Bserver%3D%22127.0.0.1%22%7D")
+                            .formParam("query=%7Btest%3D%22shouldSendLogLevelAsConfigured%22%7D")
                             .when()
                             .get("/loki/api/v1/query_range")
                             .then()
@@ -123,7 +122,6 @@ class LogLevelLabelConfigurationTest {
                             .statusCode(200)
                             .body("status", equalTo("success"))
                             .body("data.result.size()", equalTo(1))
-                            .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.log_level", equalTo("INFO"));
                 });
     }

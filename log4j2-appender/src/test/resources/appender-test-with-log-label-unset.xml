@@ -20,7 +20,7 @@
             </PatternLayout>
 
             <Header name="server" value="127.0.0.1"/>
-            <Label name="server" value="127.0.0.1"/>
+            <Label name="test" value="shouldWorkWithNoLogLevelConfigured"/>
         </Loki>
     </appenders>
 </configuration>
