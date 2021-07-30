@@ -13,6 +13,7 @@ import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class LokiAppender extends LokiAppenderConfigurator {
@@ -86,7 +87,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
                                     Map<String, String> mdcPropertyMap) {
         for (int i = 0; i < mdcLogLabels.size(); i++) {
             String mdcLogLabel = mdcLogLabels.get(i);
-            
+
             if (mdcPropertyMap.containsKey(mdcLogLabel)) {
                 serializer.appendLabel(mdcLogLabel, mdcPropertyMap.get(mdcLogLabel));
             }
@@ -121,7 +122,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     @Override
     public void stop() {
         loggingSystem.close(
-                1000,
+                (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
                 thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
         );
 
