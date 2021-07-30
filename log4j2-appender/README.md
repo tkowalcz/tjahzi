@@ -228,3 +228,8 @@ in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtai
 Like
 in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum amount of time to wait before sending a batch, even if that batch isn't full`
 .
+
+#### shutdownTimeoutSeconds (optional, default = 10s)
+
+On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This
+property sets limit on how long to wait for this to complete before proceeding with shutdown.
