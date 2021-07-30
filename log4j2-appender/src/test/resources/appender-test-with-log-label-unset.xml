@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration packages="pl.tkowalcz.tjahzi.log4j2">
     <Loggers>
-        <Root level="INFO">
-            <AppenderRef ref="Loki"/>
+        <Root level="OFF">
         </Root>
+
+        <Logger name="pl.tkowalcz" level="ALL">
+            <AppenderRef ref="Loki"/>
+        </Logger>
     </Loggers>
 
     <appenders>
@@ -17,7 +20,7 @@
             </PatternLayout>
 
             <Header name="server" value="127.0.0.1"/>
-            <Label name="server" value="127.0.0.1"/>
+            <Label name="test" value="shouldWorkWithNoLogLevelConfigured"/>
         </Loki>
     </appenders>
 </configuration>

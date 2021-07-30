@@ -13,12 +13,15 @@
         </header>
 
         <label>
-            <name>server</name>
-            <value>127.0.0.1</value>
+            <name>test</name>
+            <value>shouldWorkWithNoLogLevelConfigured</value>
         </label>
     </appender>
 
-    <root level="debug">
+    <logger name="pl.tkowalcz">
         <appender-ref ref="Loki"/>
+    </logger>
+
+    <root level="debug">
     </root>
 </configuration>

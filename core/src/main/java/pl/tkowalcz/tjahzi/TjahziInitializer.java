@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi;
 
+import io.netty.buffer.PooledByteBufAllocator;
 import org.agrona.concurrent.AgentRunner;
 import org.agrona.concurrent.SleepingMillisIdleStrategy;
 import org.agrona.concurrent.UnsafeBuffer;
@@ -30,13 +31,23 @@ public class TjahziInitializer {
                 new UnsafeBuffer(javaBuffer)
         );
 
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
         LogBufferAgent agent = new LogBufferAgent(
-                monitoringModule.getClock(),
+                new TimeCappedBatchingStrategy(
+                        monitoringModule.getClock(),
+                        outputBuffer,
+                        batchSizeBytes,
+                        batchWaitMillis,
+                        10_000
+                ),
                 logBuffer,
+                outputBuffer,
                 httpClient,
-                batchSizeBytes,
-                batchWaitMillis,
-                staticLabels
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        staticLabels,
+                        outputBuffer
+                )
         );
 
         AgentRunner runner = new AgentRunner(

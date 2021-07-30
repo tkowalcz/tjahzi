@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @Testcontainers
 class MdcLogLabelConfigurationTest {
@@ -90,7 +90,7 @@ class MdcLogLabelConfigurationTest {
                             .all()
                             .statusCode(200)
                             .body("status", equalTo("success"))
-                            .body("data.result.size()", equalTo(1))
+                            .body("data.result.size()", greaterThanOrEqualTo(1))
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.trace_id", equalTo(traceIdValue))
                             .body("data.result[0].stream.span_id", equalTo(spanIdValue));
