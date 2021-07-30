@@ -89,6 +89,7 @@ class HeadersTest {
                 0,
                 0,
                 1024 * 1024,
+                10_000,
                 false
         );
         loggingSystem.start();
@@ -140,6 +141,7 @@ class HeadersTest {
                 0,
                 0,
                 1024 * 1024,
+                10_000,
                 false
         );
         loggingSystem.start();
@@ -193,6 +195,7 @@ class HeadersTest {
                 0,
                 0,
                 1024 * 1024,
+                10_000,
                 false
         );
         loggingSystem.start();

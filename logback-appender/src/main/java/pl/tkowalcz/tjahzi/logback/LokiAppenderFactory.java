@@ -21,7 +21,7 @@ public class LokiAppenderFactory {
     private final HashMap<String, String> lokiLabels;
     private final String logLevelLabel;
     private final List<String> mdcLogLabels;
-    private MutableMonitoringModuleWrapper monitoringModuleWrapper;
+    private final MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
     public LokiAppenderFactory(LokiAppenderConfigurator configurator) {
         this.configurator = configurator;
@@ -35,6 +35,7 @@ public class LokiAppenderFactory {
         lokiLabels = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelFactory.validateLogLevelLabel(lokiLabels);
         mdcLogLabels = configurator.getMdcLogLabels();
+        monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
     }
 
     public LoggingSystem createAppender() {
@@ -51,7 +52,6 @@ public class LokiAppenderFactory {
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
 
-        monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
         monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
 
         NettyHttpClient httpClient = HttpClientFactory
@@ -80,6 +80,7 @@ public class LokiAppenderFactory {
                 configurator.getBatchSize(),
                 TimeUnit.SECONDS.toMillis(configurator.getBatchWait()),
                 bufferSizeBytes,
+                TimeUnit.SECONDS.toMillis(configurator.getShutdownTimeoutSeconds()),
                 configurator.isUseOffHeapBuffer()
         );
     }

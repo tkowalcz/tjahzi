@@ -21,10 +21,11 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private boolean useOffHeapBuffer = true;
 
     private String logLevelLabel;
-    private List<String> mdcLogLabels = new ArrayList<>();
+    private final List<String> mdcLogLabels = new ArrayList<>();
 
     private long batchSize = 10_2400;
     private long batchWait = 5;
+    private long shutdownTimeoutSeconds = 10;
 
     private int maxRequestsInFlight = 100;
 
@@ -109,6 +110,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public long getBatchWait() {
         return batchWait;
+    }
+
+    public long getShutdownTimeoutSeconds() {
+        return shutdownTimeoutSeconds;
+    }
+
+    public void setShutdownTimeoutSeconds(long shutdownTimeoutSeconds) {
+        this.shutdownTimeoutSeconds = shutdownTimeoutSeconds;
     }
 
     public int getMaxRequestsInFlight() {

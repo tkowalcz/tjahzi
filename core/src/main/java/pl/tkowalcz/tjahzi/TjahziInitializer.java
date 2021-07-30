@@ -23,6 +23,7 @@ public class TjahziInitializer {
             long batchSizeBytes,
             long batchWaitMillis,
             int bufferSizeBytes,
+            long shutdownTimeoutMillis,
             boolean offHeap) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
         ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
@@ -38,7 +39,7 @@ public class TjahziInitializer {
                         outputBuffer,
                         batchSizeBytes,
                         batchWaitMillis,
-                        10_000
+                        shutdownTimeoutMillis
                 ),
                 logBuffer,
                 outputBuffer,

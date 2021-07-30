@@ -9,7 +9,7 @@ public class TimeCappedBatchingStrategy {
 
     private final long batchSize;
     private final long batchWaitMillis;
-    private final long shutdownTimeout;
+    private final long shutdownTimeoutMillis;
 
     private long timeoutDeadline;
     private long shutdownDeadline;
@@ -19,13 +19,13 @@ public class TimeCappedBatchingStrategy {
             OutputBuffer outputBuffer,
             long batchSize,
             long batchWaitMillis,
-            long shutdownTimeout
+            long shutdownTimeoutMillis
     ) {
         this.clock = clock;
         this.outputBuffer = outputBuffer;
         this.batchSize = batchSize;
         this.batchWaitMillis = batchWaitMillis;
-        this.shutdownTimeout = shutdownTimeout;
+        this.shutdownTimeoutMillis = shutdownTimeoutMillis;
 
         this.timeoutDeadline = clock.millis() + batchWaitMillis;
     }
@@ -46,7 +46,7 @@ public class TimeCappedBatchingStrategy {
     }
 
     public void initShutdown() {
-        shutdownDeadline = clock.millis() + shutdownTimeout;
+        shutdownDeadline = clock.millis() + shutdownTimeoutMillis;
     }
 
     private boolean exceededWaitTimeThreshold(long currentTimeMillis) {

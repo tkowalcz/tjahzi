@@ -75,6 +75,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private long batchWait = 5;
 
     @PluginBuilderAttribute
+    private int shutdownTimeoutSeconds = 10;
+
+    @PluginBuilderAttribute
     private int maxLogLineSizeKilobytes = 10;
 
     @PluginBuilderAttribute
@@ -138,6 +141,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 batchSize,
                 TimeUnit.SECONDS.toMillis(batchWait),
                 bufferSizeBytes,
+                TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
                 isUseOffHeapBuffer()
         );
 
@@ -241,6 +245,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setBatchWait(long batchWait) {
         this.batchWait = batchWait;
+    }
+
+    public int getShutdownTimeoutSeconds() {
+        return shutdownTimeoutSeconds;
+    }
+
+    public void setShutdownTimeoutSeconds(int shutdownTimeoutSeconds) {
+        this.shutdownTimeoutSeconds = shutdownTimeoutSeconds;
     }
 
     public void setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
