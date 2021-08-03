@@ -1,8 +1,5 @@
 package pl.tkowalcz.tjahzi.log4j2;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,72 +9,29 @@ import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.awaitility.Awaitility;
-import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
+import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThan;
 
-@Testcontainers
-public class ProgrammaticConfigurationTest {
-
-    @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:latest")
-            .withCommand("-config.file=/etc/loki-config.yaml")
-            .withClasspathResourceMapping("loki-config.yaml",
-                    "/etc/loki-config.yaml",
-                    BindMode.READ_ONLY
-            )
-            .waitingFor(
-                    Wait.forHttp("/ready")
-                            .forPort(3100)
-            )
-            .withExposedPorts(3100);
+public class ProgrammaticConfigurationTest extends IntegrationTest {
 
     @Test
-    void shouldInitializeAppenderProgrammatically() throws Exception {
-        // Given
-        System.setProperty("loki.host", loki.getHost());
-        System.setProperty("loki.port", loki.getFirstMappedPort().toString());
-
+    void shouldInitializeAppenderProgrammatically() {
         // When
         ConfigurationBuilder<BuiltConfiguration> builder = createConfiguration();
         Configurator.reconfigure(builder.build());
 
-        // Then
-        long expectedTimestamp = System.currentTimeMillis();
-
         Logger logger = LogManager.getLogger(ProgrammaticConfigurationTest.class);
+
+        // Then
         logger.warn("Here I come!");
 
-        RestAssured.port = loki.getFirstMappedPort();
-        RestAssured.baseURI = "http://" + loki.getHost();
-        RestAssured.registerParser("text/plain", Parser.JSON);
-
-        Awaitility
-                .await()
-                .atMost(Durations.TEN_SECONDS)
-                .pollInterval(Durations.ONE_SECOND)
-                .ignoreExceptions()
-                .untilAsserted(
-                        () -> given()
-                                .contentType(ContentType.URLENC)
-                                .urlEncodingEnabled(false)
-                                .formParam("&start=" + expectedTimestamp + "&limit=1000&query=%7Bserver%3D%22127.0.0.1%22%7D")
-                                .when()
-                                .get("/loki/api/v1/query_range")
-                                .then()
-                                .log()
-                                .all()
-                                .statusCode(200)
-                                .body("status", equalTo("success"))
+        LokiAssert.assertThat(loki)
+                .returns(response ->
+                        response
                                 .body("data.result.size()", equalTo(1))
                                 .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                                 .body("data.result[0].values.size()", greaterThan(0))
