@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 
+import java.io.File;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -28,7 +29,7 @@ class LokiAppenderReloadTest extends IntegrationTest {
                 .getResource("appender-test-reload-after.xml")
                 .toURI();
 
-        URI uri = new URI("file://" + Paths.get(uriBefore).toFile().getParent() + "/appender-test-reload.xml");
+        URI uri = new File(Paths.get(uriBefore).toFile().getParent(), "appender-test-reload.xml").toURI();
         Files.copy(Paths.get(uriBefore), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         loadConfig(uri);

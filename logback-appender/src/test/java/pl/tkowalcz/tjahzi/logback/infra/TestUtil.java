@@ -1,4 +1,4 @@
-package pl.tkowalcz.tjahzi.logback.util;
+package pl.tkowalcz.tjahzi.logback.infra;
 
 import ch.qos.logback.classic.LoggerContext;
 import pl.tkowalcz.tjahzi.logback.LokiAppender;
