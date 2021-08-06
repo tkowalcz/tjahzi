@@ -5,39 +5,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.google.common.util.concurrent.Uninterruptibles;
+import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Testcontainers
-public class AllocationTest {
-
-    @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:latest")
-            .withCommand("-config.file=/etc/loki-config.yaml")
-            .withClasspathResourceMapping("loki-config.yaml",
-                    "/etc/loki-config.yaml",
-                    BindMode.READ_ONLY)
-            .waitingFor(
-                    Wait.forHttp("/ready")
-                            .forPort(3100)
-            )
-            .withExposedPorts(3100);
+public class AllocationTest extends IntegrationTest {
 
     @Test
     @Disabled
-    void shouldSendData() throws URISyntaxException {
+    void shouldSendData() {
         AtomicLong totalAllocatedMemory = new AtomicLong();
         Map<String, AtomicLong> allocatedMemory = new HashMap<>();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -52,16 +33,7 @@ public class AllocationTest {
         }));
 
         // Given
-        System.setProperty("loki.host", loki.getHost());
-        System.setProperty("loki.port", loki.getFirstMappedPort().toString());
-
-        URI uri = getClass()
-                .getClassLoader()
-                .getResource("basic-appender-test-configuration.xml")
-                .toURI();
-
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+        loadConfig("basic-appender-test-configuration.xml");
 
         String logLine = "Cupcake ipsum dolor sit amet cake wafer. " +
                 "Souffle jelly beans biscuit topping. " +

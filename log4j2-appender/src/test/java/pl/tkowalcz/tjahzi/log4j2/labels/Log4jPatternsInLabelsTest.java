@@ -5,12 +5,12 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Every.everyItem;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class Log4jPatternsInLabelsTest extends IntegrationTest {
 
@@ -29,7 +29,7 @@ class Log4jPatternsInLabelsTest extends IntegrationTest {
         logger.info("Test2");
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .returns(response -> response
                         .body("data.result.size()", equalTo(2))
                         .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))

@@ -4,12 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
-
-import java.net.URISyntaxException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LogLevelLabelConfigurationTest extends IntegrationTest {
 
@@ -23,7 +21,7 @@ class LogLevelLabelConfigurationTest extends IntegrationTest {
         logger.info("Test");
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .withFormParam("query=%7Btest%3D%22shouldWorkWithNoLogLevelConfigured%22%7D")
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))
@@ -41,7 +39,7 @@ class LogLevelLabelConfigurationTest extends IntegrationTest {
         logger.info("Test");
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .withFormParam("query=%7Btest%3D%22shouldSendLogLevelAsConfigured%22%7D")
                 .returns(response ->
                         response

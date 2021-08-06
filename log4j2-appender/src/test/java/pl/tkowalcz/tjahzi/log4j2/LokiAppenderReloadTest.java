@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -12,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import static org.hamcrest.CoreMatchers.*;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LokiAppenderReloadTest extends IntegrationTest {
 
@@ -41,7 +41,7 @@ class LokiAppenderReloadTest extends IntegrationTest {
         Files.copy(Paths.get(uriAfter), Paths.get(uri), StandardCopyOption.REPLACE_EXISTING);
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))
                         .body("data.result[0].stream.server", equalTo("127.0.0.1"))

@@ -4,15 +4,15 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import static org.hamcrest.CoreMatchers.*;
 import static pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest.loadConfig;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class GrafanaCloudAppenderTest {
 
     @Test
-    void shouldSendData() throws Exception {
+    void shouldSendData() {
         // Given
         System.setProperty("loki.host", "logs-prod-us-central1.grafana.net");
         System.setProperty("loki.port", "443");
@@ -26,7 +26,7 @@ class GrafanaCloudAppenderTest {
         logger.info(expectedLogLine);
 
         // Then
-        LokiAssert.assertThat()
+        assertThat()
                 .calling("https://logs-prod-us-central1.grafana.net/loki/api/v1/query_range")
                 .withCredentials(
                         System.getenv("grafana_username"),

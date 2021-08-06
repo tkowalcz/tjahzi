@@ -11,10 +11,10 @@ import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFact
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThan;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 public class ProgrammaticConfigurationTest extends IntegrationTest {
 
@@ -29,7 +29,7 @@ public class ProgrammaticConfigurationTest extends IntegrationTest {
         // Then
         logger.warn("Here I come!");
 
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .returns(response ->
                         response
                                 .body("data.result.size()", equalTo(1))

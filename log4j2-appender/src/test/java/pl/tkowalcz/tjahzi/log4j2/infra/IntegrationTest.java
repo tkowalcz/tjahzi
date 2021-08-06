@@ -1,6 +1,7 @@
 package pl.tkowalcz.tjahzi.log4j2.infra;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.BindMode;
@@ -34,21 +35,25 @@ public class IntegrationTest {
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
     }
 
-    public static void loadConfig(String fileName) {
+    public static LoggerContext loadConfig(String fileName) {
         try {
             URI uri = IntegrationTest.class
                     .getClassLoader()
                     .getResource(fileName)
                     .toURI();
 
-            loadConfig(uri);
+            return loadConfig(uri);
         } catch (URISyntaxException e) {
             Assertions.fail(e);
         }
+
+        return null;
     }
 
-    public static void loadConfig(URI uri) {
-        ((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
-                .setConfigLocation(uri);
+    public static LoggerContext loadConfig(URI uri) {
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        context.setConfigLocation(uri);
+
+        return context;
     }
 }
