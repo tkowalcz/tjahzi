@@ -40,7 +40,7 @@ public class LabelSerializer {
     }
 
     public LabelSerializer appendPartialLabelValue(CharSequence value) {
-        cursor += buffer.putStringWithoutLengthAscii(cursor, value.toString());
+        cursor += buffer.putStringWithoutLengthAscii(cursor, value);
 
         return this;
     }
