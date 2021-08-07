@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LokiAppenderLargeBatchesTest extends IntegrationTest {
 
@@ -40,7 +41,7 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
         }
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .withFormParam("&start=" + expectedTimestamp + "&limit=1000&query=%7Bserver%3D%22127.0.0.1%22%7D")
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))

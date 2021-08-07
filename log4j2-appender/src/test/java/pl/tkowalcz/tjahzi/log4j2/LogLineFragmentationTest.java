@@ -9,6 +9,7 @@ import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LogLineFragmentationTest extends IntegrationTest {
 
@@ -26,7 +27,7 @@ class LogLineFragmentationTest extends IntegrationTest {
         logger.info(fragmentedLogLine);
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))
                         .body("data.result[0].stream.server", equalTo("127.0.0.1"))
