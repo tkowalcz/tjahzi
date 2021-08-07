@@ -8,27 +8,19 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.stats.DropwizardMonitoringModule;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest.loadConfig;
 
 class LokiAppenderMonitoringTest {
 
     @Test
-    void shouldInjectMonitoringAndUseIt() throws URISyntaxException {
+    void shouldInjectMonitoringAndUseIt() {
         // Given
         System.setProperty("loki.host", "somewhere");
         System.setProperty("loki.port", "42");
 
-        URI uri = getClass()
-                .getClassLoader()
-                .getResource("basic-appender-test-configuration.xml")
-                .toURI();
-
-        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        context.setConfigLocation(uri);
+        LoggerContext context = loadConfig("basic-appender-test-configuration.xml");
 
         LokiAppender loki = context.getConfiguration().getAppender("Loki");
         MetricRegistry metricRegistry = new MetricRegistry();
