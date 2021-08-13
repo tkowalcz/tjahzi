@@ -11,7 +11,7 @@ Log4j2 appender seemed like a good first.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender-nodep</artifactId>
-     <version>0.9.5</version>
+     <version>0.9.17</version>
    </dependency>
    ```
 
@@ -22,7 +22,7 @@ Log4j2 appender seemed like a good first.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender</artifactId>
-     <version>0.9.5</version>
+     <version>0.9.17</version>
    </dependency>
    ```
 
