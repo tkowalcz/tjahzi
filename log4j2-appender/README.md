@@ -122,9 +122,9 @@ are [automatically interpolated by Log4j2](https://logging.apache.org/log4j/log4
 appender. The exception to this rule is context/MDC (`${ctx:foo}`) value lookup - it is performed for each message at
 runtime (allocation free).
 
-NOTE: This process could have been executed for every lookup type at runtime (for each log message). This approach was
+*NOTE: This process could have been executed for every lookup type at runtime (for each log message). This approach was
 deemed too expensive. If you need a mechanism to replace a variable (other than context/MDC) after logging system
-initialization I would love to hear your use case - please file an issue.
+initialization I would love to hear your use case - please file an issue.*
 
 ## Patterns in Labels
 
@@ -140,9 +140,55 @@ Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#
 internal classes for this implementation. It is generally efficient and allocation free as
 per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbagefree.html#PatternLayout).
 
-## Details
+## Properties file based configuration
 
-Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
+Properties file is a simple configuration format, but it is not always clear how to implement more advanced features
+such as components instantiated more than once. For basic overview of how to configure log4j using properties file
+see [official documentation](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties).
+
+<details>
+    <summary>Click to expand an example that defines multiple labels.</summary>
+
+```properties
+#Loads Tjahzi plugin definition
+packages="pl.tkowalcz.tjahzi.log4j2"
+
+# Allows this configuration to be modified at runtime. The file will be checked every 30 seconds.
+monitorInterval=30
+
+# Standard stuff
+rootLogger.level=INFO
+rootLogger.appenderRefs=loki
+rootLogger.appenderRef.loki.ref=loki-appender
+
+#Loki configuration
+appender.loki.name=loki-appender
+appender.loki.type=Loki
+appender.loki.host=${sys:loki.host}
+appender.loki.port=${sys:loki.port}
+
+appender.loki.logLevelLabel=log_level
+
+# Layout
+appender.loki.layout.type=PatternLayout
+appender.loki.layout.pattern=%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}
+
+# Labels
+appender.loki.labels[0].type=label
+appender.loki.labels[0].name=server
+appender.loki.labels[0].value=127.0.0.1
+
+appender.loki.labels[1].type=label
+appender.loki.labels[1].name=source
+appender.loki.labels[1].value=log4j
+```
+
+</details>
+
+## Configuration reference
+
+Let's go through the example config used in previous sections and analyze configuration options (**Note: Tags are
+case-insensitive**).
 
 #### Host (required)
 
