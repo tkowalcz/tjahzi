@@ -144,7 +144,7 @@ per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbage
 
 Properties file is a simple configuration format, but it is not always clear how to implement more advanced features
 such as components instantiated more than once. For basic overview of how to configure log4j using properties file
-see [here](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties).
+see [official documentation](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties).
 
 <details>
     <summary>Click to expand an example that defines multiple labels.</summary>
