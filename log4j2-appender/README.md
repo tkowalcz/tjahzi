@@ -147,7 +147,7 @@ such as components instantiated more than once. For basic overview of how to con
 see [here](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties).
 
 <details>
-    <summary>Here is an example configuration that defines multiple labels.</summary>
+    <summary>Click to expand an example that defines multiple labels.</summary>
 
 ```properties
 #Loads Tjahzi plugin definition
