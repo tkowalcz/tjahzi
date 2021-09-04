@@ -140,6 +140,51 @@ Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#
 internal classes for this implementation. It is generally efficient and allocation free as
 per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbagefree.html#PatternLayout).
 
+### Properties file based configuration
+
+Properties file is a simple configuration format, but it is not always clear how to implement more advanced features
+such as components instantiated more than once. For basic overview of how to configure log4j using properties file
+see [here](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties). 
+
+<details>
+    <summary>Here is an example configuration that defines multiple labels.</summary>
+
+```properties
+#Loads Tjahzi plugin definition
+packages="pl.tkowalcz.tjahzi.log4j2"
+
+# Allows this configuration to be modified at runtime. The file will be checked every 30 seconds.
+monitorInterval=30
+
+# Standard stuff
+rootLogger.level=INFO
+rootLogger.appenderRefs=loki
+rootLogger.appenderRef.loki.ref=loki-appender
+
+#Loki configuration
+appender.loki.name=loki-appender
+appender.loki.type=Loki
+appender.loki.host=${sys:loki.host}
+appender.loki.port=${sys:loki.port}
+
+appender.loki.logLevelLabel=log_level
+
+# Layout
+appender.loki.layout.type=PatternLayout
+appender.loki.layout.pattern=%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}
+
+# Labels
+appender.loki.labels[0].type=label
+appender.loki.labels[0].name=server
+appender.loki.labels[0].value=127.0.0.1
+
+appender.loki.labels[1].type=label
+appender.loki.labels[1].name=source
+appender.loki.labels[1].value=log4j
+```
+
+</details>
+
 ## Details
 
 Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
