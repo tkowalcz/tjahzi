@@ -20,7 +20,7 @@ public class Log4jAdapterLabelPrinter implements LabelPrinter {
 
     @Override
     public void append(LogEvent event, Consumer<CharSequence> appendable) {
-        outputBuffer.setLength(0);
+        StringBuilder outputBuffer = StringBuilders.threadLocal();
 
         for (int i = 0; i < formatters.size(); i++) {
             formatters.get(i).format(event, outputBuffer);
