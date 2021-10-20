@@ -4,6 +4,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.pattern.LiteralPatternConverter;
 import org.apache.logging.log4j.core.pattern.LogEventPatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
+import pl.tkowalcz.tjahzi.log4j2.utils.StringBuilders;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -11,7 +12,6 @@ import java.util.function.Consumer;
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class Log4jAdapterLabelPrinter implements LabelPrinter {
 
-    private final StringBuilder outputBuffer = new StringBuilder();
     private final List<PatternFormatter> formatters;
 
     public Log4jAdapterLabelPrinter(List<PatternFormatter> formatters) {
