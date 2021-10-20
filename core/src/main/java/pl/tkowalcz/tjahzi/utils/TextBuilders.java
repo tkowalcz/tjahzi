@@ -1,6 +1,4 @@
-package pl.tkowalcz.tjahzi.http;
-
-import pl.tkowalcz.tjahzi.utils.TextBuilder;
+package pl.tkowalcz.tjahzi.utils;
 
 public class TextBuilders {
 
