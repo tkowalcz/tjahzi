@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.agrona.DirectBuffer;
 import org.agrona.concurrent.AtomicBuffer;
-import pl.tkowalcz.tjahzi.http.TextBuilders;
 import pl.tkowalcz.tjahzi.utils.TextBuilder;
+import pl.tkowalcz.tjahzi.utils.TextBuilders;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
