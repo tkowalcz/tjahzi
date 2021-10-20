@@ -6,7 +6,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +32,7 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
                 "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
                 "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
 
-        long expectedTimestamp = System.currentTimeMillis();
+        long expectedTimestamp = TimeUnit.MILLISECONDS.toNanos(System.currentTimeMillis());
 
         // When
         for (int i = 0; i < 1000; i++) {
