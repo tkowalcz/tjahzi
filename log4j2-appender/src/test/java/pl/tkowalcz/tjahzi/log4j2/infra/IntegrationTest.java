@@ -12,6 +12,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 @Testcontainers
 public class IntegrationTest {
@@ -37,9 +38,15 @@ public class IntegrationTest {
 
     public static LoggerContext loadConfig(String fileName) {
         try {
-            URI uri = IntegrationTest.class
+            URL resource = IntegrationTest.class
                     .getClassLoader()
-                    .getResource(fileName)
+                    .getResource(fileName);
+
+            if (resource == null) {
+                Assertions.fail("Resource " + fileName + " not found");
+            }
+
+            URI uri = resource
                     .toURI();
 
             return loadConfig(uri);
