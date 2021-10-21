@@ -32,7 +32,7 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
                 "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
                 "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
 
-        long expectedTimestamp = System.currentTimeMillis();
+        long expectedTimestamp = TimeUnit.MILLISECONDS.toNanos(System.currentTimeMillis());
 
         // When
         for (int i = 0; i < 1000; i++) {

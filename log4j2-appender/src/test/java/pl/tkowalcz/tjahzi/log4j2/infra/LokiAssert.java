@@ -39,7 +39,6 @@ public class LokiAssert {
     }
 
     public LokiAssert withFormParam(String param) {
-        System.out.println("param = " + param);
         this.param = param;
         return this;
     }
