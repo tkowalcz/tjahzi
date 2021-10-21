@@ -81,6 +81,7 @@ public class LokiAppenderFactory {
                 TimeUnit.SECONDS.toMillis(configurator.getBatchWait()),
                 bufferSizeBytes,
                 TimeUnit.SECONDS.toMillis(configurator.getShutdownTimeoutSeconds()),
+                configurator.getLogShipperWakeupIntervalMillis(),
                 configurator.isUseOffHeapBuffer()
         );
     }

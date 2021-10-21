@@ -23,7 +23,7 @@ public class TjahziInitializer {
             long batchSizeBytes,
             long batchWaitMillis,
             int bufferSizeBytes,
-            long logShipperIntervalMillis,
+            long logShipperWakeupIntervalMillis,
             long shutdownTimeoutMillis,
             boolean offHeap
     ) {
@@ -54,7 +54,7 @@ public class TjahziInitializer {
         );
 
         AgentRunner runner = new AgentRunner(
-                new SleepingMillisIdleStrategy(logShipperIntervalMillis),
+                new SleepingMillisIdleStrategy(logShipperWakeupIntervalMillis),
                 monitoringModule::addAgentError,
                 null,
                 agent
