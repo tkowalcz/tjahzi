@@ -75,6 +75,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private long batchWait = 5;
 
     @PluginBuilderAttribute
+    private long logShipperIntervalMillis = 250;
+
+    @PluginBuilderAttribute
     private int shutdownTimeoutSeconds = 10;
 
     @PluginBuilderAttribute
@@ -142,6 +145,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 TimeUnit.SECONDS.toMillis(batchWait),
                 bufferSizeBytes,
                 TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
+                logShipperIntervalMillis,
                 isUseOffHeapBuffer()
         );
 
@@ -245,6 +249,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setBatchWait(long batchWait) {
         this.batchWait = batchWait;
+    }
+
+    public long getLogShipperIntervalMillis() {
+        return logShipperIntervalMillis;
+    }
+
+    public void setLogShipperIntervalMillis(long logShipperIntervalMillis) {
+        this.logShipperIntervalMillis = logShipperIntervalMillis;
     }
 
     public int getShutdownTimeoutSeconds() {
