@@ -6,7 +6,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 
 import java.io.IOException;
 
-public class LogBufferAgent implements Agent {
+public class LogShipperAgent implements Agent {
 
     public static final int MAX_MESSAGES_TO_RETRIEVE = 100;
 
@@ -18,7 +18,7 @@ public class LogBufferAgent implements Agent {
     private final LogBufferMessageHandler messageHandler;
     private final TimeCappedBatchingStrategy batchStrategy;
 
-    public LogBufferAgent(
+    public LogShipperAgent(
             TimeCappedBatchingStrategy batchStrategy,
             ManyToOneRingBuffer logBuffer,
             OutputBuffer outputBuffer,
@@ -69,6 +69,6 @@ public class LogBufferAgent implements Agent {
 
     @Override
     public String roleName() {
-        return "ReadingLogBufferAndSendingHttp";
+        return "LogShipper";
     }
 }

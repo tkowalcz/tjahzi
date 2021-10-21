@@ -84,6 +84,7 @@ public class ReconnectTest {
                 10_000,
                 1000,
                 1024 * 1024,
+                250,
                 10_000,
                 false
         );
@@ -134,6 +135,7 @@ public class ReconnectTest {
                 0,
                 0,
                 1024 * 1024,
+                250,
                 10_000,
                 false
         );

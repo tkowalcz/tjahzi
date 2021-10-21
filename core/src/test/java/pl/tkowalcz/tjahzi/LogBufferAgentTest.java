@@ -47,7 +47,7 @@ class LogBufferAgentTest {
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
 
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         clock,
                         outputBuffer,
@@ -98,7 +98,7 @@ class LogBufferAgentTest {
 
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         clock,
                         outputBuffer,
@@ -137,7 +137,7 @@ class LogBufferAgentTest {
 
         NettyHttpClient httpClient = mock(NettyHttpClient.class);
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         clock,
                         outputBuffer,
@@ -186,7 +186,7 @@ class LogBufferAgentTest {
         SettableClock clock = new SettableClock();
 
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         clock,
                         outputBuffer,
@@ -242,7 +242,7 @@ class LogBufferAgentTest {
         SettableClock clock = new SettableClock();
 
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         clock,
                         outputBuffer,
@@ -260,7 +260,7 @@ class LogBufferAgentTest {
                 )
         );
 
-        for (int i = 0; i < LogBufferAgent.MAX_MESSAGES_TO_RETRIEVE * 2 + 1; i++) {
+        for (int i = 0; i < LogShipperAgent.MAX_MESSAGES_TO_RETRIEVE * 2 + 1; i++) {
             logger.log(
                     42L,
                     LabelSerializerCreator.from(Map.of()),

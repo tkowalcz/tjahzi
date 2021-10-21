@@ -71,6 +71,7 @@ class LoggingSystemTest {
                 1024 * 1024,
                 0,
                 0,
+                250,
                 10_000,
                 false
         );
