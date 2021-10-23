@@ -23,8 +23,10 @@ public class TjahziInitializer {
             long batchSizeBytes,
             long batchWaitMillis,
             int bufferSizeBytes,
+            long logShipperWakeupIntervalMillis,
             long shutdownTimeoutMillis,
-            boolean offHeap) {
+            boolean offHeap
+    ) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
         ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
 
@@ -33,7 +35,7 @@ public class TjahziInitializer {
         );
 
         OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
-        LogBufferAgent agent = new LogBufferAgent(
+        LogShipperAgent agent = new LogShipperAgent(
                 new TimeCappedBatchingStrategy(
                         monitoringModule.getClock(),
                         outputBuffer,
@@ -52,7 +54,7 @@ public class TjahziInitializer {
         );
 
         AgentRunner runner = new AgentRunner(
-                new SleepingMillisIdleStrategy(),
+                new SleepingMillisIdleStrategy(logShipperWakeupIntervalMillis),
                 monitoringModule::addAgentError,
                 null,
                 agent

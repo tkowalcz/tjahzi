@@ -26,6 +26,7 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private long batchSize = 10_2400;
     private long batchWait = 5;
     private long shutdownTimeoutSeconds = 10;
+    private long logShipperWakeupIntervalMillis = 10;
 
     private int maxRequestsInFlight = 100;
 
@@ -118,6 +119,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setShutdownTimeoutSeconds(long shutdownTimeoutSeconds) {
         this.shutdownTimeoutSeconds = shutdownTimeoutSeconds;
+    }
+
+    public long getLogShipperWakeupIntervalMillis() {
+        return logShipperWakeupIntervalMillis;
+    }
+
+    public void setLogShipperWakeupIntervalMillis(long logShipperWakeupIntervalMillis) {
+        this.logShipperWakeupIntervalMillis = logShipperWakeupIntervalMillis;
     }
 
     public int getMaxRequestsInFlight() {

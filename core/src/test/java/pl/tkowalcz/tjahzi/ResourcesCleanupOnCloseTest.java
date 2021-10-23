@@ -70,6 +70,7 @@ class ResourcesCleanupOnCloseTest {
                 0,
                 0,
                 1024 * 1024,
+                250,
                 10_000,
                 false
         );
@@ -83,7 +84,7 @@ class ResourcesCleanupOnCloseTest {
             assertThat(threadInfos)
                     .extracting(ThreadInfo::getThreadName)
                     .contains(
-                            "ReadingLogBufferAndSendingHttp",
+                            "LogShipper",
                             "tjahzi-worker"
                     );
         });
@@ -102,7 +103,7 @@ class ResourcesCleanupOnCloseTest {
             assertThat(threadInfos)
                     .extracting(ThreadInfo::getThreadName)
                     .doesNotContain(
-                            "ReadingLogBufferAndSendingHttp",
+                            "LogShipper",
                             "tjahzi-worker"
                     );
         });

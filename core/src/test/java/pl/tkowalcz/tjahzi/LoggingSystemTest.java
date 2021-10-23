@@ -33,7 +33,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 class LoggingSystemTest {
 
     @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:latest")
+    public GenericContainer loki = new GenericContainer("grafana/loki:2.3.0")
             .withCommand("-config.file=/etc/loki-config.yaml")
             .withClasspathResourceMapping("loki-config.yaml",
                     "/etc/loki-config.yaml",
@@ -71,6 +71,7 @@ class LoggingSystemTest {
                 1024 * 1024,
                 0,
                 0,
+                250,
                 10_000,
                 false
         );

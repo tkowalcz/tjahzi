@@ -5,6 +5,7 @@ import com.codahale.metrics.MetricRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.stats.DropwizardMonitoringModule;
 
@@ -43,9 +44,12 @@ class LokiAppenderMonitoringTest {
                 .get("appender.loki.httpConnectAttempts");
         assertThat(connectAttemptsCounter).isNotNull();
 
-        await().untilAsserted(() -> {
-                    assertThat(connectAttemptsCounter.getCount()).isEqualTo(1);
-                }
-        );
+        await()
+                .atMost(Durations.ONE_MINUTE)
+                .pollInterval(Durations.ONE_SECOND)
+                .untilAsserted(() -> {
+                            assertThat(connectAttemptsCounter.getCount()).isEqualTo(1);
+                        }
+                );
     }
 }
