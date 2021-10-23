@@ -34,7 +34,6 @@ public class LogShipperAgent implements Agent {
     }
 
     private int doWork(boolean isTerminating) throws IOException {
-        System.out.println("DOING WORK...");
         int workDone = logBuffer.read(messageHandler, MAX_MESSAGES_TO_RETRIEVE);
 
         if (isTerminating || batchStrategy.shouldProceed()) {
