@@ -19,6 +19,8 @@
                 <Pattern>[%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
             </PatternLayout>
 
+            <connectTimeoutMillis>100</connectTimeoutMillis>
+
             <Header name="server" value="127.0.0.1"/>
             <Label name="server" value="127.0.0.1"/>
         </Loki>

@@ -28,6 +28,7 @@ public class HttpConnection implements Closeable {
         EventLoopGroupRetry retry = new EventLoopGroupRetry(
                 group,
                 __ -> {
+                    System.out.println("INCREMENT...");
                     monitoringModule.incrementHttpConnectAttempts();
                     recreateConnection(__);
                 }
