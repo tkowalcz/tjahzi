@@ -144,8 +144,8 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 batchSize,
                 TimeUnit.SECONDS.toMillis(batchWait),
                 bufferSizeBytes,
-                TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
                 logShipperWakeupIntervalMillis,
+                TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
                 isUseOffHeapBuffer()
         );
 
