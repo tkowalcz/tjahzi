@@ -80,6 +80,7 @@ public class DropwizardMonitoringModule implements MonitoringModule {
 
     @Override
     public void incrementHttpConnectAttempts() {
+        System.out.println("DROPWIZARD!!!!");
         httpConnectAttempts.inc();
     }
 
