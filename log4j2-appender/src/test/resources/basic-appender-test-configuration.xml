@@ -16,10 +16,8 @@
 
             <ThresholdFilter level="ALL"/>
             <PatternLayout>
-                <Pattern>%X{ctx:tid} [%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
+                <Pattern>[%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
             </PatternLayout>
-
-            <logShipperWakeupIntervalMillis>1</logShipperWakeupIntervalMillis>
 
             <Header name="server" value="127.0.0.1"/>
             <Label name="server" value="127.0.0.1"/>
