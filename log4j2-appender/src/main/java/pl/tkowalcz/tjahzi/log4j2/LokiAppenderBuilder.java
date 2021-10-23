@@ -75,7 +75,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private long batchWait = 5;
 
     @PluginBuilderAttribute
-    private long logShipperWakeupIntervalMillis = 250;
+    private long logShipperWakeupIntervalMillis = 10;
 
     @PluginBuilderAttribute
     private int shutdownTimeoutSeconds = 10;

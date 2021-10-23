@@ -275,6 +275,13 @@ Like
 in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum amount of time to wait before sending a batch, even if that batch isn't full`
 .
 
+#### logShipperWakeupIntervalMillis (optional, default = 10)
+
+The agent that reads data from log buffer, compresses it and sends to Loki via http is called `LogShipper`. This property
+controls how often it wakes up to perform its duties. Other properties control how often the data should be sent to Loki
+(`batchSize`, `batchWait`) this one just control how often to wake up and check for these conditions. In versions before
+`0.9.17` it was left at default 1ms which caused high CPU usage on some setups.
+
 #### shutdownTimeoutSeconds (optional, default = 10s)
 
 On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This

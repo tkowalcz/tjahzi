@@ -26,7 +26,7 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private long batchSize = 10_2400;
     private long batchWait = 5;
     private long shutdownTimeoutSeconds = 10;
-    private long logShipperWakeupIntervalMillis = 250;
+    private long logShipperWakeupIntervalMillis = 10;
 
     private int maxRequestsInFlight = 100;
 
