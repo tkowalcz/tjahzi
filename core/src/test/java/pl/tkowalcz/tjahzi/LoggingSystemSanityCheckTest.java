@@ -30,7 +30,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 class LoggingSystemSanityCheckTest {
 
     @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:latest")
+    public GenericContainer loki = new GenericContainer("grafana/loki:2.3.0")
             .withCommand("-config.file=/etc/loki-config.yaml")
             .withClasspathResourceMapping("loki-config.yaml",
                     "/etc/loki-config.yaml",

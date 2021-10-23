@@ -18,7 +18,7 @@ import java.net.URL;
 public class IntegrationTest {
 
     @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:latest")
+    public GenericContainer loki = new GenericContainer("grafana/loki:2.3.0")
             .withCommand("-config.file=/etc/loki-config.yaml")
             .withClasspathResourceMapping("loki-config.yaml",
                     "/etc/loki-config.yaml",
