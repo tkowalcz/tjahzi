@@ -51,10 +51,8 @@ public class IntegrationTest {
 
             return loadConfig(uri);
         } catch (URISyntaxException e) {
-            Assertions.fail(e);
+            return Assertions.fail(e);
         }
-
-        return null;
     }
 
     public static LoggerContext loadConfig(URI uri) {
