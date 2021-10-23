@@ -22,7 +22,9 @@ class LokiAppenderMonitoringTest {
 
         LoggerContext context = loadConfig("basic-appender-test-configuration.xml");
 
+        System.out.println("appenders = " + context.getConfiguration().getAppenders());
         LokiAppender loki = context.getConfiguration().getAppender("Loki");
+
         MetricRegistry metricRegistry = new MetricRegistry();
         loki.setMonitoringModule(
                 new DropwizardMonitoringModule(
