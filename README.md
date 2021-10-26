@@ -64,7 +64,7 @@ You can compare this with [design principles of Aeron](https://github.com/real-l
        .                       ▼                                          
                           ┌────────────────────┐         ┌─────────┐         ┌─────────┐
        .      Log         │                    │         │ Log     │         │  I/O    │
-          ---------------▶│     Log buffer     ├--→---→--┤ shipper ├--→---→--┤ thread  │      
+         ----------------▶│     Log buffer     ├--→---→--┤ shipper ├--→---→--┤ thread  │      
        .                  │                    │         │ agent   │         │ (Netty) │    
                           └────────────────────┘         └─────────┘         └─────────┘    
        .                             ▲                                    
