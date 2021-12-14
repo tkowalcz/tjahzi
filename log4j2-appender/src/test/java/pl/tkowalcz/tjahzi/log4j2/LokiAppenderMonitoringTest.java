@@ -47,9 +47,6 @@ class LokiAppenderMonitoringTest {
         await()
                 .atMost(Durations.ONE_MINUTE)
                 .pollInterval(Durations.ONE_SECOND)
-                .untilAsserted(() -> {
-                            assertThat(connectAttemptsCounter.getCount()).isEqualTo(1);
-                        }
-                );
+                .untilAsserted(() -> assertThat(connectAttemptsCounter.getCount()).isGreaterThan(0));
     }
 }
