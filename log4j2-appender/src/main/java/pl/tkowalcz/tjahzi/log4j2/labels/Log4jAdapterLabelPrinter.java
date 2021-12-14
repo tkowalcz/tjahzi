@@ -31,17 +31,16 @@ public class Log4jAdapterLabelPrinter implements LabelPrinter {
 
     @Override
     public boolean isStatic() {
-        for (int i = 0; i < formatters.size(); i++) {
+        for (int i = 0; i < formatters.size(); i = i + 1) {
             LogEventPatternConverter converter = formatters.get(i).getConverter();
 
-            if (!(converter instanceof LiteralPatternConverter)) {
-                return false;
+            if (converter instanceof LiteralPatternConverter) {
+                if (((LiteralPatternConverter) converter).getLiteral().contains("$")) {
+                    return false;
+                }
             }
 
-            if (((LiteralPatternConverter) converter).getLiteral().contains("$")) {
-                return false;
-            }
-
+            return !converter.isVariable();
         }
 
         return true;
