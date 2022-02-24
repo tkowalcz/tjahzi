@@ -83,5 +83,5 @@ Check out [this wiki article](https://github.com/tkowalcz/tjahzi/wiki/Monitoring
 
 # LICENSE
 
-This work is released under MIT license. Feel free to use, copy and modify this work as long as you credit original authors. 
+This work is released under MIT license with the provision that any company registered or conducting operations mainly in Russian Federation IS PROHIBITED from using this software. 
 Pull and feature requests are welcome.
