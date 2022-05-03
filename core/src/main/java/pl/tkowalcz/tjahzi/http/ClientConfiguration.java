@@ -5,6 +5,7 @@ public class ClientConfiguration {
     private final String logEndpoint;
     private final String host;
     private final int port;
+    private boolean useSSL;
 
     private final String username;
     private final String password;
@@ -19,6 +20,7 @@ public class ClientConfiguration {
             String logEndpoint,
             String host,
             int port,
+            boolean useSSL,
             String username,
             String password,
             int connectionTimeoutMillis,
@@ -28,6 +30,7 @@ public class ClientConfiguration {
         this.logEndpoint = logEndpoint;
         this.host = host;
         this.port = port;
+        this.useSSL = useSSL;
 
         this.username = username;
         this.password = password;
@@ -49,6 +52,10 @@ public class ClientConfiguration {
 
     public int getPort() {
         return port;
+    }
+
+    public boolean isUseSSL() {
+        return useSSL;
     }
 
     public String getUsername() {

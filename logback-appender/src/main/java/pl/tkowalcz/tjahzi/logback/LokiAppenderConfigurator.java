@@ -10,6 +10,9 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     static final int BYTES_IN_MEGABYTE = 1024 * 1024;
 
+    private String url;
+    private String logEndpoint;
+
     private String host;
     private int port;
 
@@ -32,6 +35,22 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     private final List<Header> headers = new ArrayList<>();
     private final List<Label> labels = new ArrayList<>();
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getLogEndpoint() {
+        return logEndpoint;
+    }
+
+    public void setLogEndpoint(String logEndpoint) {
+        this.logEndpoint = logEndpoint;
+    }
 
     public String getHost() {
         return host;

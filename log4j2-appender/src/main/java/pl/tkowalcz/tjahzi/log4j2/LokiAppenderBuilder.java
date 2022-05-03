@@ -37,11 +37,15 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private static final int BYTES_IN_KILOBYTE = 1024;
 
     @PluginBuilderAttribute
-    @Required(message = "No Loki address provided for LokiAppender")
+    private String url;
+
+    @PluginBuilderAttribute
+    private String logEndpoint;
+
+    @PluginBuilderAttribute
     private String host;
 
     @PluginBuilderAttribute
-    @Required(message = "No Loki port provided for LokiAppender")
     private int port;
 
     @PluginBuilderAttribute
@@ -95,6 +99,8 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @Override
     public LokiAppender build() {
         ClientConfiguration configurationBuilder = ClientConfiguration.builder()
+                .withUrl(url)
+                .withLogEndpoint(logEndpoint)
                 .withHost(host)
                 .withPort(port)
                 .withUsername(username)
