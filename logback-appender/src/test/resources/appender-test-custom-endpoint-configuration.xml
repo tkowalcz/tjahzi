@@ -1,6 +1,10 @@
 <configuration debug="true">
     <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
-        <url>https://${loki.host}:${loki.port}/monitoring/loki/api/v1/push</url>
+        <host>${loki.host}</host>
+        <port>${loki.port}</port>
+
+        <useSSL>true</useSSL>
+        <logEndpoint>/monitoring/loki/api/v1/push</logEndpoint>
 
         <username>tjahzi</username>
         <password>tjahzi</password>

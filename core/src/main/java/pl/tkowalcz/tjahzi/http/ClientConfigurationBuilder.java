@@ -148,6 +148,6 @@ public class ClientConfigurationBuilder {
     }
 
     private void validateAndConfigureConnectionParametersNoUrl() {
-        useSSL = port == HTTPS_PORT;
+        useSSL |= port == HTTPS_PORT;
     }
 }

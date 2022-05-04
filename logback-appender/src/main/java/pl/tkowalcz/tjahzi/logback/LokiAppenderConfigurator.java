@@ -16,6 +16,12 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private String host;
     private int port;
 
+    private boolean useSSL;
+
+    private String username;
+
+    private String password;
+
     private int connectTimeoutMillis = 5000;
     private int readTimeoutMillis = 60_000;
     private int maxRetries = 3;
@@ -66,6 +72,30 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public boolean isUseSSL() {
+        return useSSL;
+    }
+
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getConnectTimeoutMillis() {

@@ -5,7 +5,7 @@ public class ClientConfiguration {
     private final String logEndpoint;
     private final String host;
     private final int port;
-    private boolean useSSL;
+    private final boolean useSSL;
 
     private final String username;
     private final String password;
