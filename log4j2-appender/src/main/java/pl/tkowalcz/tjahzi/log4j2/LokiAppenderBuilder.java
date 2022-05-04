@@ -4,7 +4,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.PluginBuilderAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import org.apache.logging.log4j.status.StatusLogger;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziInitializer;
@@ -47,6 +46,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     @PluginBuilderAttribute
     private int port;
+
+    @PluginBuilderAttribute
+    private boolean useSSL;
 
     @PluginBuilderAttribute
     private String username;
@@ -103,6 +105,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .withLogEndpoint(logEndpoint)
                 .withHost(host)
                 .withPort(port)
+                .withUseSSL(useSSL)
                 .withUsername(username)
                 .withPassword(password)
                 .withConnectionTimeoutMillis(connectTimeoutMillis)
@@ -172,6 +175,46 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public String getHost() {
         return host;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getLogEndpoint() {
+        return logEndpoint;
+    }
+
+    public void setLogEndpoint(String logEndpoint) {
+        this.logEndpoint = logEndpoint;
+    }
+
+    public boolean isUseSSL() {
+        return useSSL;
+    }
+
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getConnectTimeoutMillis() {
