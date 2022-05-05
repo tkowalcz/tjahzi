@@ -97,13 +97,19 @@ public class ClientConfigurationBuilder {
             throw new IllegalArgumentException("Property maxRequestsInFlight must be greater than 0");
         }
 
-        validateAndConfigureConnectionParameters();
-
-        return new ClientConfiguration(
-                logEndpoint,
+        ConnectionParams connectionParams = ConnectionParamsFactory.create(
+                url,
                 host,
                 port,
-                useSSL,
+                logEndpoint,
+                useSSL
+        );
+
+        return new ClientConfiguration(
+                connectionParams.getLogEndpoint(),
+                connectionParams.getHost(),
+                connectionParams.getPort(),
+                connectionParams.isUseSSL(),
                 username,
                 password,
                 connectionTimeoutMillis,
@@ -111,71 +117,5 @@ public class ClientConfigurationBuilder {
                 maxRequestsInFlight,
                 maxRetries
         );
-    }
-
-    private void validateAndConfigureConnectionParameters() {
-        if (url != null && host != null) {
-            throw new IllegalArgumentException("Only one of 'url' or 'host' can be configured. " +
-                    "Current configuration sets url to '" + url + "' and host to '" + host + "'");
-        }
-
-        if (url == null && host == null) {
-            throw new IllegalArgumentException("One of 'url' or 'host' must be configured.");
-        }
-
-        if (host != null) {
-            validateAndConfigureConnectionParametersNoUrl();
-        }
-
-        validateAndConfigureConnectionParametersWithUrl();
-    }
-
-    private void validateAndConfigureConnectionParametersWithUrl() {
-        try {
-            URL parsedUrl = new URL(url);
-
-            String protocolScheme = parsedUrl.getProtocol();
-            if (!HTTPS_STRING.equalsIgnoreCase(protocolScheme) && !HTTP_STRING.equalsIgnoreCase(protocolScheme)) {
-                throw new IllegalArgumentException("Unknown protocol scheme, must be one of 'https' or 'http' (case insensitive). Provided: '" + protocolScheme + "'");
-            }
-
-            host = parsedUrl.getHost();
-            port = parsedUrl.getPort();
-
-            if (port == -1) {
-                if (parsedUrl.getProtocol().equalsIgnoreCase(HTTPS_STRING)) {
-                    port = HTTPS_PORT;
-                } else {
-                    port = HTTP_PORT;
-                }
-            }
-
-            if (parsedUrl.getPath() != null && !parsedUrl.getPath().isEmpty()) {
-                if (logEndpoint != null) {
-                    throw new IllegalArgumentException("If Loki connection URL contains path part then you cannot at the " +
-                            "same time define log endpoint. Url: '" + url + "', log endpoint: '" + logEndpoint + "'");
-                }
-
-                logEndpoint = parsedUrl.getPath();
-            } else {
-                logEndpoint = DEFAULT_LOG_ENDPOINT;
-            }
-
-            if (HTTPS_STRING.equalsIgnoreCase(parsedUrl.getProtocol())) {
-                useSSL = true;
-            }
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Creating configuration with Loki URL failed, url: '" + url + "'", e);
-        }
-    }
-
-    private void validateAndConfigureConnectionParametersNoUrl() {
-        if (logEndpoint == null) {
-            logEndpoint = DEFAULT_LOG_ENDPOINT;
-        }
-
-        if (!useSSL) {
-            useSSL = port == HTTPS_PORT;
-        }
     }
 }
