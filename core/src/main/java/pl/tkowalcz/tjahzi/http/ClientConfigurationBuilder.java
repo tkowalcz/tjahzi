@@ -6,7 +6,9 @@ import java.net.URL;
 public class ClientConfigurationBuilder {
 
     public static final int HTTPS_PORT = 443;
+    public static final int HTTP_PORT = 80;
     public static final String HTTPS_STRING = "https";
+    public static final String HTTP_STRING = "http";
 
     public static final String DEFAULT_LOG_ENDPOINT = "/loki/api/v1/push";
 
@@ -17,7 +19,7 @@ public class ClientConfigurationBuilder {
 
     public static final int DEFAULT_MAX_RETRIES = 0;
 
-    private String logEndpoint = DEFAULT_LOG_ENDPOINT;
+    private String logEndpoint;
 
     private String url;
 
@@ -117,20 +119,38 @@ public class ClientConfigurationBuilder {
                     "Current configuration sets url to '" + url + "' and host to '" + host + "'");
         }
 
+        if (url == null && host == null) {
+            throw new IllegalArgumentException("One of 'url' or 'host' must be configured.");
+        }
+
         if (host != null) {
             validateAndConfigureConnectionParametersNoUrl();
-        } else if (url != null) {
-            validateAndConfigureConnectionParametersWithUrl();
         }
+
+        validateAndConfigureConnectionParametersWithUrl();
     }
 
     private void validateAndConfigureConnectionParametersWithUrl() {
         try {
             URL parsedUrl = new URL(url);
+
+            String protocolScheme = parsedUrl.getProtocol();
+            if (!HTTPS_STRING.equalsIgnoreCase(protocolScheme) && !HTTP_STRING.equalsIgnoreCase(protocolScheme)) {
+                throw new IllegalArgumentException("Unknown protocol scheme, must be one of 'https' or 'http' (case insensitive). Provided: '" + protocolScheme + "'");
+            }
+
             host = parsedUrl.getHost();
             port = parsedUrl.getPort();
 
-            if (parsedUrl.getPath() != null) {
+            if (port == -1) {
+                if (parsedUrl.getProtocol().equalsIgnoreCase(HTTPS_STRING)) {
+                    port = HTTPS_PORT;
+                } else {
+                    port = HTTP_PORT;
+                }
+            }
+
+            if (parsedUrl.getPath() != null && !parsedUrl.getPath().isEmpty()) {
                 if (logEndpoint != null) {
                     throw new IllegalArgumentException("If Loki connection URL contains path part then you cannot at the " +
                             "same time define log endpoint. Url: '" + url + "', log endpoint: '" + logEndpoint + "'");
