@@ -137,6 +137,8 @@ public class ClientConfigurationBuilder {
                 }
 
                 logEndpoint = parsedUrl.getPath();
+            } else {
+                logEndpoint = DEFAULT_LOG_ENDPOINT;
             }
 
             if (HTTPS_STRING.equalsIgnoreCase(parsedUrl.getProtocol())) {
@@ -148,6 +150,12 @@ public class ClientConfigurationBuilder {
     }
 
     private void validateAndConfigureConnectionParametersNoUrl() {
-        useSSL |= port == HTTPS_PORT;
+        if (logEndpoint == null) {
+            logEndpoint = DEFAULT_LOG_ENDPOINT;
+        }
+
+        if (!useSSL) {
+            useSSL = port == HTTPS_PORT;
+        }
     }
 }
