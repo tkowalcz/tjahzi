@@ -1,6 +1,14 @@
 package pl.tkowalcz.tjahzi.http;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class ClientConfigurationBuilder {
+
+    public static final int HTTPS_PORT = 443;
+    public static final int HTTP_PORT = 80;
+    public static final String HTTPS_STRING = "https";
+    public static final String HTTP_STRING = "http";
 
     public static final String DEFAULT_LOG_ENDPOINT = "/loki/api/v1/push";
 
@@ -11,9 +19,14 @@ public class ClientConfigurationBuilder {
 
     public static final int DEFAULT_MAX_RETRIES = 0;
 
-    private String logEndpoint = DEFAULT_LOG_ENDPOINT;
+    private String logEndpoint;
+
+    private String url;
+
     private String host;
     private int port;
+
+    private boolean useSSL;
 
     private String username;
     private String password;
@@ -36,6 +49,11 @@ public class ClientConfigurationBuilder {
 
     public ClientConfigurationBuilder withPort(int port) {
         this.port = port;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
         return this;
     }
 
@@ -69,15 +87,29 @@ public class ClientConfigurationBuilder {
         return this;
     }
 
+    public ClientConfigurationBuilder withUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
     public ClientConfiguration build() {
         if (maxRequestsInFlight <= 0) {
             throw new IllegalArgumentException("Property maxRequestsInFlight must be greater than 0");
         }
 
-        return new ClientConfiguration(
-                logEndpoint,
+        ConnectionParams connectionParams = ConnectionParamsFactory.create(
+                url,
                 host,
                 port,
+                logEndpoint,
+                useSSL
+        );
+
+        return new ClientConfiguration(
+                connectionParams.getLogEndpoint(),
+                connectionParams.getHost(),
+                connectionParams.getPort(),
+                connectionParams.isUseSSL(),
                 username,
                 password,
                 connectionTimeoutMillis,

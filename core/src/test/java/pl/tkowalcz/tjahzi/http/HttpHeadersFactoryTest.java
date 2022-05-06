@@ -12,6 +12,7 @@ class HttpHeadersFactoryTest {
     void shouldAddAuthHeaderIfCredentialsAreProvided_NoAdditionalHeaders() {
         // Given
         ClientConfiguration configuration = ClientConfiguration.builder()
+                .withHost("blah")
                 .withUsername("foob")
                 .withPassword("ar")
                 .build();
@@ -36,6 +37,7 @@ class HttpHeadersFactoryTest {
     void shouldAddAuthHeaderIfCredentialsAreProvided_WithAdditionalHeaders() {
         // Given
         ClientConfiguration configuration = ClientConfiguration.builder()
+                .withHost("blah")
                 .withUsername("foob")
                 .withPassword("ar")
                 .build();
@@ -65,6 +67,7 @@ class HttpHeadersFactoryTest {
     void shouldNotAddAuthHeader_NoAdditionalHeaders() {
         // Given
         ClientConfiguration configuration = ClientConfiguration.builder()
+                .withHost("blah")
                 .build();
 
         String[] additionalHeaders = new String[0];
@@ -84,6 +87,7 @@ class HttpHeadersFactoryTest {
     void shouldNOtAddAuthHeader_WithAdditionalHeaders() {
         // Given
         ClientConfiguration configuration = ClientConfiguration.builder()
+                .withHost("blah")
                 .build();
 
         String[] additionalHeaders = new String[]{

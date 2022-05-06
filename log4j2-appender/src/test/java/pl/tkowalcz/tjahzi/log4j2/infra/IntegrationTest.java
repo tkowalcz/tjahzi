@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -17,8 +18,12 @@ import java.net.URL;
 @Testcontainers
 public class IntegrationTest {
 
+    public static Network network = Network.newNetwork();
+
     @Container
     public GenericContainer loki = new GenericContainer("grafana/loki:2.3.0")
+            .withNetwork(network)
+            .withNetworkAliases("loki")
             .withCommand("-config.file=/etc/loki-config.yaml")
             .withClasspathResourceMapping("loki-config.yaml",
                     "/etc/loki-config.yaml",
@@ -31,7 +36,7 @@ public class IntegrationTest {
             .withExposedPorts(3100);
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
     }

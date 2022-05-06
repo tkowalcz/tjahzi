@@ -111,6 +111,58 @@ class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
 </configuration>
 ``` 
 
+### Configuring connection parameters individually and using URL
+
+At a minimum Tjahzi needs host and port configuration to connect to Loki:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+```
+
+If port is equal to `443` then SSL will be used. You can also configure SSL manually:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+
+<useSSL>true</useSSL>
+```
+
+You can also override the endpoint to which Tjahzi sends data. This can be usefull if Loki is behind reverse proxy and
+additional path mapping is used:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+
+<logEndpoint>/monitoring/loki/api/v1/push</logEndpoint>
+```
+
+All these parameters can be configured in one place using URL:
+
+```xml
+<url>https://example.com:56654/monitoring/loki/api/v1/push</url>
+```
+
+Note that all other tags (host, port, useSSL, logEndpoint) cannot be used when using URL.
+
+| Section  | Default                    | Comment                                                                             |
+|----------|----------------------------|-------------------------------------------------------------------------------------|
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equvalent to setting `useUSSL` |
+| Host     | None (must be provided)    |                                                                                     |
+| Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https         |
+| Path     | '/loki/api/v1/push'        |                                                                                     |
+
+Some examples of correct URLs:
+
+```xml
+<url>http://example.com</url>
+<url>https://example.com:56654</url>
+<url>http://example.com/monitoring/loki/api/v1/push</url>
+<url>https://example.com:3100/monitoring/foo/bar</url>
+```
+
 ### Lookups / variable substitution
 
 Contents of the properties are automatically interpolated by Logback (
@@ -170,6 +222,8 @@ Let's go through the example config above and analyze configuration options (**N
 | Port | Self-explanatory :) |
 | Encoder | You need to specify pattern for the layout. See section below |
 
+Note: Instead of 'host' and 'port' you can specify URL. See [this section](#configuring-connection-parameters-individually-and-using-URL).
+
 #### Pattern definition
 
 You can define layout and pattern in a traditional Logback way:
@@ -190,17 +244,20 @@ or use Tjahzi optimized efficient, low allocation encoder:
 
 #### Optional configuration parameters
 
-| Tag | Default value | Description |
-|-----|---------------|-------------|
-| Header | - | This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/). |
-| Label | - | Specify additional labels attached to each log line sent via this appender instance. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming). |
-| LogLevelLabel | - | If defined then log level label of configured name will be added to each line sent to Loki. It will contain Logback log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming). |
-| BufferSizeMegabytes | 32 MB | Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations. |
-| MaxRetries | 3 | Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then next batches will probably fail too). |
-| ConnectTimeoutMillis | 5s | This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue to retry indefinitely employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3). |
-| ReadTimeoutMillis | 60s | Sets socket read timeout on Loki connection. |
-| UseOffHeapBuffer | true | Whether Tjahzi should allocate native buffer for `Log buffer` component. We can go into a rabbit hole of divagations what are the implications of this. Most important in our view is that having 10s or 100s of MB of space taken out of heap is not very friendly to garbage collector which might have to occasionally copy it around. |
-| BatchSize | 100 KB | Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum batch size (in bytes) of logs to accumulate before sending the batch to Loki`.|
-| BatchWait | 5s | Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum amount of time to wait before sending a batch, even if that batch isn't full`.|
-| logShipperWakeupIntervalMillis | 10 | The agent that reads data from log buffer, compresses it and sends to Loki via http is called `LogShipper`. This property controls how often it wakes up to perform its duties. Other properties control how often the data should be sent to Loki (`batchSize`, `batchWait`) this one just control how often to wake up and check for these conditions. In versions before `0.9.17` it was left at default 1ms which caused high CPU usage on some setups. |
-| shutdownTimeoutSeconds | 10s | On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This property sets limit on how long to wait for this to complete before proceeding with shutdown. |
+| Tag                            | Default value         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|--------------------------------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Url                            | -                     | Configure connection in one place instead of using host, port etc. See [this section](#configuring-connection-parameters-individually-and-using-URL).                                                                                                                                                                                                                                                                                                       |
+| UseSSL                         | true if port == '443' | Enable secure (HTTPS) communication regardless of configured port number.                                                                                                                                                                                                                                                                                                                                                                                   |
+| LogEndpoint                    | `/loki/api/v1/push`   | Overrides the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind reverse proxy and additional path mapping is used.                                                                                                                                                                                                                                                                                                          |
+| Header                         | -                     | This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).                                                                                                                                                                                              |
+| Label                          | -                     | Specify additional labels attached to each log line sent via this appender instance. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).                                                                                                                                                                                                                                                                              |
+| LogLevelLabel                  | -                     | If defined then log level label of configured name will be added to each line sent to Loki. It will contain Logback log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).                                                                                                                                                                                                            |
+| BufferSizeMegabytes            | 32 MB                 | Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations.                                                                                                                                                                                                                                                                               |
+| MaxRetries                     | 3                     | Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then next batches will probably fail too).                                                                                                                                                  |
+| ConnectTimeoutMillis           | 5s                    | This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue to retry indefinitely employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3).                                                                                                                                                                                                                |
+| ReadTimeoutMillis              | 60s                   | Sets socket read timeout on Loki connection.                                                                                                                                                                                                                                                                                                                                                                                                                |
+| UseOffHeapBuffer               | true                  | Whether Tjahzi should allocate native buffer for `Log buffer` component. We can go into a rabbit hole of divagations what are the implications of this. Most important in our view is that having 10s or 100s of MB of space taken out of heap is not very friendly to garbage collector which might have to occasionally copy it around.                                                                                                                   |
+| BatchSize                      | 100 KB                | Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum batch size (in bytes) of logs to accumulate before sending the batch to Loki`.                                                                                                                                                                                                                                                              |
+| BatchWait                      | 5s                    | Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum amount of time to wait before sending a batch, even if that batch isn't full`.                                                                                                                                                                                                                                                              |
+| logShipperWakeupIntervalMillis | 10                    | The agent that reads data from log buffer, compresses it and sends to Loki via http is called `LogShipper`. This property controls how often it wakes up to perform its duties. Other properties control how often the data should be sent to Loki (`batchSize`, `batchWait`) this one just control how often to wake up and check for these conditions. In versions before `0.9.17` it was left at default 1ms which caused high CPU usage on some setups. |
+| shutdownTimeoutSeconds         | 10s                   | On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This property sets limit on how long to wait for this to complete before proceeding with shutdown.                                                                                                                                                                                                                                           |

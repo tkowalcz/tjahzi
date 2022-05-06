@@ -3,15 +3,13 @@ package pl.tkowalcz.tjahzi.log4j2;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Test;
 
-import java.net.URISyntaxException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest.loadConfig;
 
 class BufferSizeConfigurationTest {
 
     @Test
-    void shouldUseDefaultWhenLogBufferSizeIsNotSetViaConfiguration() throws URISyntaxException {
+    void shouldUseDefaultWhenLogBufferSizeIsNotSetViaConfiguration() {
         // When
         LoggerContext context = loadConfig("appender-test-with-buffer-size-megabytes-unset.xml");
 
@@ -22,7 +20,7 @@ class BufferSizeConfigurationTest {
     }
 
     @Test
-    void shouldSetLogBufferSizeViaConfiguration() throws URISyntaxException {
+    void shouldSetLogBufferSizeViaConfiguration() {
         // When
         LoggerContext context = loadConfig("appender-test-with-buffer-size-megabytes-set-to-64.xml");
 

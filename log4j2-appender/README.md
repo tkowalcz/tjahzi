@@ -54,7 +54,7 @@ Log4j2 appender seemed like a good first.
 
 ### Note on Loki HTTP endpoint and host/port configuration
 
-Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying
+Tjahzi by default sends `POST` requests to `/loki/api/v1/push` HTTP endpoint. Specifying
 e.g. `<host>loki.mydomain.com</host><port>3100</port>`
 will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/api/v1/push`.
 
@@ -113,6 +113,58 @@ attribute of configuration so that the appender can be found.
     </appenders>
 </configuration>
 ``` 
+
+### Configuring connection parameters individually and using URL
+
+At a minimum Tjahzi needs host and port configuration to connect to Loki:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+```
+
+If port is equal to `443` then SSL will be used. You can also configure SSL manually:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+
+<useSSL>true</useSSL>
+```
+
+You can also override the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind reverse proxy and
+additional path mapping is used:
+
+```xml
+<host>example.com</host>
+<port>3100</port>
+
+<logEndpoint>/monitoring/loki/api/v1/push</logEndpoint>
+```
+
+All these parameters can be configured in one place using URL:
+
+```xml
+<url>https://example.com:56654/monitoring/loki/api/v1/push</url>
+```
+
+Note that all other tags (host, port, useSSL, logEndpoint) cannot be used when using URL.
+
+| Section  | Default                    | Comment                                                                             |
+|----------|----------------------------|-------------------------------------------------------------------------------------|
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equvalent to setting `useUSSL` |
+| Host     | None (must be provided)    |                                                                                     |
+| Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https         |
+| Path     | '/loki/api/v1/push'        |                                                                                     |
+
+Some examples of correct URLs:
+
+```xml
+<url>http://example.com</url>
+<url>https://example.com:56654</url>
+<url>http://example.com/monitoring/loki/api/v1/push</url>
+<url>https://example.com:3100/monitoring/foo/bar</url>
+```
 
 ### Lookups / variable substitution
 
@@ -190,21 +242,34 @@ appender.loki.labels[1].value=log4j
 Let's go through the example config used in previous sections and analyze configuration options (**Note: Tags are
 case-insensitive**).
 
-#### Host (required)
+#### Host (required unless URL is specified)
 
 Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being
 resolved by call to `InetSocketAddress.createUnresolved`.
 
-#### Port (required)
+#### Port (required unless URL is specified)
 
 Port used for connecting to running Loki. Tjahzi by default uses plain HTTP but if the port is `443` then it will
 automatically switch to HTTPS.
 
-#### Username
+#### useSSL (optional)
+
+Enable secure (HTTPS) communication regardless of configured port number.
+
+#### logEndpoint (optional)
+
+Overrides the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind reverse proxy and
+additional path mapping is used.
+
+#### URL (optional - replaces usage of  host, port, useSSL, logEndpoint)
+
+Configure connection in one place instead of using host, port etc. See [this section](#configuring-connection-parameters-individually-and-using-URL).
+
+#### Username (optional)
 
 Username for HTTP basic auth.
 
-#### Password
+#### Password (optional)
 
 Password for HTTP basic auth.
 

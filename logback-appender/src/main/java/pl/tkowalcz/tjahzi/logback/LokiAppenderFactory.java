@@ -40,9 +40,14 @@ public class LokiAppenderFactory {
 
     public LoggingSystem createAppender() {
         ClientConfiguration configurationBuilder = ClientConfiguration.builder()
+                .withUrl(configurator.getUrl())
+                .withLogEndpoint(configurator.getLogEndpoint())
                 .withHost(configurator.getHost())
-                .withConnectionTimeoutMillis(configurator.getConnectTimeoutMillis())
                 .withPort(configurator.getPort())
+                .withUseSSL(configurator.isUseSSL())
+                .withUsername(configurator.getUsername())
+                .withPassword(configurator.getPassword())
+                .withConnectionTimeoutMillis(configurator.getConnectTimeoutMillis())
                 .withMaxRetries(configurator.getMaxRetries())
                 .withRequestTimeoutMillis(configurator.getReadTimeoutMillis())
                 .withMaxRequestsInFlight(configurator.getMaxRequestsInFlight())

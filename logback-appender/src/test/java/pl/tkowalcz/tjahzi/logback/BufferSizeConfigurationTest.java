@@ -10,7 +10,7 @@ import static pl.tkowalcz.tjahzi.logback.infra.IntegrationTest.loadConfig;
 class BufferSizeConfigurationTest {
 
     @Test
-    void shouldUseDefaultWhenLogBufferSizeIsNotSetViaConfiguration() throws Exception {
+    void shouldUseDefaultWhenLogBufferSizeIsNotSetViaConfiguration() {
         // When
         LoggerContext context = loadConfig("appender-test-with-buffer-size-megabytes-unset.xml");
 
@@ -20,7 +20,7 @@ class BufferSizeConfigurationTest {
     }
 
     @Test
-    void shouldSetLogBufferSizeViaConfiguration() throws Exception {
+    void shouldSetLogBufferSizeViaConfiguration() {
         // When
         LoggerContext context = loadConfig("appender-test-with-buffer-size-megabytes-set-to-64.xml");
 
