@@ -48,6 +48,7 @@ class LogBufferTranscoderTest {
         serializer.writeTo(
                 0,
                 32042L,
+                0,
                 labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
@@ -122,6 +123,7 @@ class LogBufferTranscoderTest {
         serializer.writeTo(
                 0,
                 32042L,
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("[Mando] You have something I want.".getBytes())
         );

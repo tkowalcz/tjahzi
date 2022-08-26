@@ -38,6 +38,7 @@ public class ProtobufDeserializer {
         serializer.writeTo(
                 0,
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
