@@ -99,6 +99,7 @@ class HeadersTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
@@ -152,6 +153,7 @@ class HeadersTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
@@ -207,6 +209,7 @@ class HeadersTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );

@@ -71,6 +71,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
         logger.log(
                 event.getTimeStamp(),
+                0L,
                 labelSerializer,
                 logLine
         );

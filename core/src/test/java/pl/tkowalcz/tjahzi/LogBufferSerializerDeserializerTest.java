@@ -37,7 +37,8 @@ class LogBufferSerializerDeserializerTest {
                                 + 21 // log level
                                 + 45 // labels string sizes
                                 + 6 * 4 // labels string length indicators
-                                + 8 // timestamp
+                                + 8 // timestamp millis
+                                + 8 // timestamp nanos
                                 + 4 // labels count
                 ),
                 Arguments.of(
@@ -48,7 +49,8 @@ class LogBufferSerializerDeserializerTest {
                         "[Mando] You have something I want.",
                         38 // log line
                                 + 21 // log level
-                                + 8 // timestamp
+                                + 8 // timestamp millis
+                                + 8 // timestamp nanos
                                 + 4 // labels count
                 ),
                 Arguments.of(
@@ -63,7 +65,8 @@ class LogBufferSerializerDeserializerTest {
                         38 // log line
                                 + 45 // labels string sizes
                                 + 6 * 4 // labels string length indicators
-                                + 8 // timestamp
+                                + 8 // timestamp millis
+                                + 8 // timestamp nanos
                                 + 4 // labels count
                 )
         );
@@ -93,6 +96,7 @@ class LogBufferSerializerDeserializerTest {
         serializer.writeTo(
                 0,
                 32042L,
+                882L,
                 labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
@@ -120,7 +124,7 @@ class LogBufferSerializerDeserializerTest {
         assertThat(stream.getEntriesList().get(0).getTimestamp()).isEqualTo(
                 Timestamp.newBuilder()
                         .setSeconds(32)
-                        .setNanos(42_000_000)
+                        .setNanos(42_000_882)
                         .build()
         );
         assertThat(stream.getEntriesList().get(0).getLine()).isEqualTo(logLine);
@@ -130,9 +134,9 @@ class LogBufferSerializerDeserializerTest {
 
         assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(
                 Streams.concat(
-                        incomingLabelsStream,
-                        logLevelStream
-                )
+                                incomingLabelsStream,
+                                logLevelStream
+                        )
                         .collect(joining(",", "{", "}"))
         );
     }

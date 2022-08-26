@@ -68,7 +68,8 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
         processDynamicLabelsIfAny(labelSerializer, event);
 
         logger.log(
-                event.getTimeMillis(),
+                event.getInstant().getEpochMillisecond(),
+                event.getInstant().getNanoOfMillisecond(),
                 labelSerializer,
                 byteBuffer
         );

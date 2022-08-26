@@ -48,6 +48,7 @@ class LogBufferTranscoderTest {
         serializer.writeTo(
                 0,
                 32042L,
+                882L,
                 labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
@@ -80,7 +81,7 @@ class LogBufferTranscoderTest {
         assertThat(stream.getEntriesList().get(0).getTimestamp()).isEqualTo(
                 Timestamp.newBuilder()
                         .setSeconds(32)
-                        .setNanos(42_000_000)
+                        .setNanos(42_000_882)
                         .build()
         );
         assertThat(stream.getEntriesList().get(0).getLine()).isEqualTo(logLine);
@@ -122,6 +123,7 @@ class LogBufferTranscoderTest {
         serializer.writeTo(
                 0,
                 32042L,
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("[Mando] You have something I want.".getBytes())
         );

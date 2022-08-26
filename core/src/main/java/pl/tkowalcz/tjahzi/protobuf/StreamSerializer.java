@@ -10,7 +10,8 @@ public class StreamSerializer {
     public static final int ENTRY_FIELD_NUMBER = 2;
 
     public static void serialize(
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             ByteBuf logLine,
             CharSequence labels,
             ByteBuf target
@@ -22,7 +23,7 @@ public class StreamSerializer {
         StringSerializer.serialize(labels, target);
 
         target.writeByte(ENTRY_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
-        EntrySerializer.serialize(timestamp, logLine, target);
+        EntrySerializer.serialize(epochMillisecond, nanoOfMillisecond, logLine, target);
 
         Protobuf.writeSize(target, messageStartIndex);
     }

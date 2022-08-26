@@ -11,7 +11,8 @@ public class EntrySerializer {
     public static final int LOG_LINE_FIELD_NUMBER = 2;
 
     public static void serialize(
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             ByteBuf logLine,
             ByteBuf target
     ) {
@@ -19,7 +20,7 @@ public class EntrySerializer {
         target.writeInt(0);
 
         target.writeByte(TIMESTAMP_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
-        TimestampSerializer.serialize(timestamp, target);
+        TimestampSerializer.serialize(epochMillisecond, nanoOfMillisecond, target);
 
         target.writeByte(LOG_LINE_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
         StringSerializer.serialize(logLine, target);

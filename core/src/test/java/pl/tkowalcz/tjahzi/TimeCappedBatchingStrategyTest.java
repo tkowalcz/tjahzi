@@ -27,6 +27,7 @@ class TimeCappedBatchingStrategyTest {
         outputBufferWthData.addLogLine(
                 "foobar",
                 44L,
+                0,
                 logLine.duplicate()
         );
     }
@@ -119,7 +120,7 @@ class TimeCappedBatchingStrategyTest {
         );
 
         // When
-        outputBufferWithNoData.addLogLine("foobar", 44L, logLine);
+        outputBufferWithNoData.addLogLine("foobar", 44L, 0, logLine);
 
         // Then
         assertThat(strategy.shouldProceed()).isTrue();
@@ -143,7 +144,7 @@ class TimeCappedBatchingStrategyTest {
         );
 
         // When
-        outputBufferWithNoData.addLogLine("foobar", 44L, logLine);
+        outputBufferWithNoData.addLogLine("foobar", 44L, 0, logLine);
         clock.setMillis(clock.millis() + batchWaitMillis);
 
         // Then

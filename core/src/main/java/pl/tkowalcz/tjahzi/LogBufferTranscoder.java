@@ -30,7 +30,10 @@ public class LogBufferTranscoder {
     }
 
     public void deserializeIntoByteBuf(DirectBuffer buffer, int index, OutputBuffer outputBuffer) {
-        long timestamp = buffer.getLong(index);
+        long epochMillisecond = buffer.getLong(index);
+        index += Long.BYTES;
+
+        long nanoOfMillisecond = buffer.getLong(index);
         index += Long.BYTES;
 
         TextBuilder labelsBuilder = TextBuilders.threadLocal();
@@ -49,7 +52,12 @@ public class LogBufferTranscoder {
         );
 
         logLineHolder.readerIndex(index);
-        outputBuffer.addLogLine(actualLabels, timestamp, logLineHolder);
+        outputBuffer.addLogLine(
+                actualLabels,
+                epochMillisecond,
+                nanoOfMillisecond,
+                logLineHolder
+        );
     }
 
     private int readLabels(

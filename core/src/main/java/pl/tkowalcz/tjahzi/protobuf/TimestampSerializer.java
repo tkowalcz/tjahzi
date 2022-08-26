@@ -8,11 +8,12 @@ import static pl.tkowalcz.tjahzi.protobuf.Protobuf.writeUnsignedVarint;
 public class TimestampSerializer {
 
     public static void serialize(
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             ByteBuf target
     ) {
-        long timestampSeconds = timestamp / 1000;
-        int timestampNanos = (int) (timestamp % 1000) * 1000_000;
+        long timestampSeconds = epochMillisecond / 1000;
+        long timestampNanos = (epochMillisecond % 1000) * 1000_000 + nanoOfMillisecond;
 
         int messageStartIndex = target.writerIndex();
 

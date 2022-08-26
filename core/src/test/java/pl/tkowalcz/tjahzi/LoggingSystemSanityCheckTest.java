@@ -96,6 +96,7 @@ class LoggingSystemSanityCheckTest {
         // When
         logger.log(
                 timestamp,
+                882L,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
@@ -124,7 +125,7 @@ class LoggingSystemSanityCheckTest {
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
                             .body("data.result[0].stream.level", equalTo("warn"))
-                            .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000), "Test"));
+                            .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000 +882), "Test"));
                 });
     }
 }
