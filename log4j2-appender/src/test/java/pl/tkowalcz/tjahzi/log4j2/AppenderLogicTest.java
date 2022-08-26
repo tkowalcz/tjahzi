@@ -52,7 +52,7 @@ class AppenderLogicTest {
         // Then
         verify(tjahziLogger).log(
                 eq(timestamp),
-                eq(0),
+                eq(0L),
                 eq(labelSerializer),
                 any()
         );
@@ -111,7 +111,7 @@ class AppenderLogicTest {
         // Then
         verify(tjahziLogger).log(
                 eq(timestamp),
-                eq(0),
+                eq(0L),
                 eq(labelSerializer),
                 any()
         );
