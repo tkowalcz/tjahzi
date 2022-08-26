@@ -18,22 +18,26 @@ public class LogBufferSerializer {
     ) {
         int logLineSize = Integer.BYTES + line.remaining();
 
-        int timestampSize = Long.BYTES;
+        int nanosecondResolutionTimestampSize = 2 * Long.BYTES;
         int labelsCountSize = Integer.BYTES;
-        int headerAndLabelsSize = timestampSize + labelsCountSize + labelSerializer.sizeBytes();
+        int headerAndLabelsSize = nanosecondResolutionTimestampSize
+                + labelsCountSize
+                + labelSerializer.sizeBytes();
 
         return headerAndLabelsSize + logLineSize;
     }
 
     public void writeTo(
             int cursor,
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             LabelSerializer serializedLabels,
             ByteBuffer line
     ) {
         cursor = writeHeader(
                 cursor,
-                timestamp,
+                epochMillisecond,
+                nanoOfMillisecond,
                 serializedLabels
         );
 
@@ -43,10 +47,14 @@ public class LogBufferSerializer {
 
     private int writeHeader(
             int cursor,
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             LabelSerializer serializedLabels
     ) {
-        buffer.putLong(cursor, timestamp);
+        buffer.putLong(cursor, epochMillisecond);
+        cursor += Long.BYTES;
+
+        buffer.putLong(cursor, nanoOfMillisecond);
         cursor += Long.BYTES;
 
         buffer.putInt(cursor, serializedLabels.getLabelsCount());

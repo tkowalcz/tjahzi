@@ -21,9 +21,12 @@ public class TjahziLogger {
         this.serializer = new LogBufferSerializer(logBuffer.buffer());
     }
 
-    public TjahziLogger log(long timestamp,
-                            LabelSerializer serializedLabels,
-                            ByteBuffer line) {
+    public TjahziLogger log(
+            long epochMillisecond,
+            long nanoOfMillisecond,
+            LabelSerializer serializedLabels,
+            ByteBuffer line
+    ) {
         int requiredSize = serializer.calculateRequiredSize(
                 serializedLabels,
                 line
@@ -32,7 +35,8 @@ public class TjahziLogger {
         int claim = logBuffer.tryClaim(LOG_MESSAGE_TYPE_ID, requiredSize);
         if (claim > 0) {
             putMessageOnRing(
-                    timestamp,
+                    epochMillisecond,
+                    nanoOfMillisecond,
                     serializedLabels,
                     line,
                     claim
@@ -45,7 +49,8 @@ public class TjahziLogger {
     }
 
     private void putMessageOnRing(
-            long timestamp,
+            long epochMillisecond,
+            long nanoOfMillisecond,
             LabelSerializer serializedLabels,
             ByteBuffer line,
             int claim
@@ -54,7 +59,8 @@ public class TjahziLogger {
             serializer
                     .writeTo(
                             claim,
-                            timestamp,
+                            epochMillisecond,
+                            nanoOfMillisecond,
                             serializedLabels,
                             line
                     );

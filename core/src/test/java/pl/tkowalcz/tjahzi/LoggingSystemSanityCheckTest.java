@@ -96,6 +96,7 @@ class LoggingSystemSanityCheckTest {
         // When
         logger.log(
                 timestamp,
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );

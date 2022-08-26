@@ -99,6 +99,7 @@ class LoggingSystemTest {
         for (int i = 0; i < 1000; i++) {
             logger.log(
                     timestamp + i,
+                    0,
                     LabelSerializerCreator.from(
                             Map.of("level", "warn")
                     ),

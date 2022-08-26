@@ -94,6 +94,7 @@ public class ReconnectTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
@@ -144,6 +145,7 @@ public class ReconnectTest {
         TjahziLogger logger = loggingSystem.createLogger();
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
@@ -163,6 +165,7 @@ public class ReconnectTest {
         // When
         logger.log(
                 System.currentTimeMillis(),
+                0,
                 labelSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );

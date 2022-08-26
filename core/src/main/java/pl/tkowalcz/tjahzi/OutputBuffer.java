@@ -16,10 +16,16 @@ public class OutputBuffer {
         target.clear();
     }
 
-    public void addLogLine(CharSequence labels, long timestamp, ByteBuf logLine) {
+    public void addLogLine(
+            CharSequence labels,
+            long epochMillisecond,
+            long nanoOfMillisecond,
+            ByteBuf logLine
+    ) {
         PushRequestSerializer.serialize(target);
         StreamSerializer.serialize(
-                timestamp,
+                epochMillisecond,
+                nanoOfMillisecond,
                 logLine,
                 labels,
                 target
