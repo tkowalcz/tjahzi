@@ -99,7 +99,7 @@ class LoggingSystemTest {
         for (int i = 0; i < 1000; i++) {
             logger.log(
                     timestamp + i,
-                    0,
+                    9974,
                     LabelSerializerCreator.from(
                             Map.of("level", "warn")
                     ),
@@ -150,7 +150,7 @@ class LoggingSystemTest {
                                     }
 
                                     long actualTimestamp = Long.parseLong(list.get(0).toString());
-                                    long expectedTimestamp = (timestamp + index) * 1000_000;
+                                    long expectedTimestamp = (timestamp + index) * 1000_000 + 9974;
 
                                     String actualLogLine = list.get(1).toString();
                                     Object expectedLogLine = "Test" + index;

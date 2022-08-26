@@ -13,7 +13,7 @@ public class TimestampSerializer {
             ByteBuf target
     ) {
         long timestampSeconds = epochMillisecond / 1000;
-        long timestampNanos = (int) (epochMillisecond % 1000) * 1000_000 + nanoOfMillisecond;
+        long timestampNanos = (epochMillisecond % 1000) * 1000_000 + nanoOfMillisecond;
 
         int messageStartIndex = target.writerIndex();
 

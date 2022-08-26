@@ -96,7 +96,7 @@ class LogBufferSerializerDeserializerTest {
         serializer.writeTo(
                 0,
                 32042L,
-                0,
+                882L,
                 labelSerializer,
                 ByteBuffer.wrap(logLine.getBytes())
         );
@@ -124,7 +124,7 @@ class LogBufferSerializerDeserializerTest {
         assertThat(stream.getEntriesList().get(0).getTimestamp()).isEqualTo(
                 Timestamp.newBuilder()
                         .setSeconds(32)
-                        .setNanos(42_000_000)
+                        .setNanos(42_000_882)
                         .build()
         );
         assertThat(stream.getEntriesList().get(0).getLine()).isEqualTo(logLine);
