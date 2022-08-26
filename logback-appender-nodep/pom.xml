@@ -5,13 +5,13 @@
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.24</version>
+        <version>0.9.25-SNAPSHOT</version>
     </parent>
 
     <name>logback-appender-nodep</name>
     <artifactId>logback-appender-nodep</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.24</version>
+    <version>0.9.25-SNAPSHOT</version>
 
     <properties>
         <!--add comma separated artifact names from dependencies, to be included in unpacking-->
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>logback-appender</artifactId>
-            <version>0.9.24</version>
+            <version>0.9.25-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
