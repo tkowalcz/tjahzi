@@ -72,6 +72,7 @@ class ResourcesCleanupOnCloseTest {
                 1024 * 1024,
                 250,
                 10_000,
+                false,
                 false
         );
         loggingSystem.start();

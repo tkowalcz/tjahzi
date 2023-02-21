@@ -73,6 +73,7 @@ class LoggingSystemTest {
                 0,
                 250,
                 10_000,
+                false,
                 false
         );
 
