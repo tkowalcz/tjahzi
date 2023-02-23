@@ -86,7 +86,7 @@ class ResourcesCleanupOnCloseTest {
                     .extracting(ThreadInfo::getThreadName)
                     .contains(
                             "LogShipper",
-                            "tjahzi-worker"
+                            "tjahzi-worker-1-1"
                     );
         });
 
