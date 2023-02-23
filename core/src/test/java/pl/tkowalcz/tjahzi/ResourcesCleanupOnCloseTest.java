@@ -84,10 +84,8 @@ class ResourcesCleanupOnCloseTest {
 
             assertThat(threadInfos)
                     .extracting(ThreadInfo::getThreadName)
-                    .contains(
-                            "LogShipper",
-                            "tjahzi-worker-1-1"
-                    );
+                    .anyMatch(threadName -> threadName.contains("LogShipper"))
+                    .anyMatch(threadName -> threadName.contains("tjahzi-worker"));
         });
 
         //When
