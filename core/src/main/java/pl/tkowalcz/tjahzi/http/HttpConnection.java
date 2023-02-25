@@ -3,6 +3,7 @@ package pl.tkowalcz.tjahzi.http;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.io.Closeable;
@@ -20,9 +21,7 @@ public class HttpConnection implements Closeable {
         this.clientConfiguration = clientConfiguration;
         this.monitoringModule = monitoringModule;
 
-        ThreadGroup threadGroup = new ThreadGroup("Tjahzi Loki client");
-        ThreadFactory threadFactory = r -> new Thread(threadGroup, r, "tjahzi-worker");
-
+        ThreadFactory threadFactory = new DefaultThreadFactory("tjahzi-worker", true);
         this.group = new NioEventLoopGroup(1, threadFactory);
 
         EventLoopGroupRetry retry = new EventLoopGroupRetry(

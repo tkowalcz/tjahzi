@@ -356,3 +356,11 @@ controls how often it wakes up to perform its duties. Other properties control h
 
 On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This
 property sets limit on how long to wait for this to complete before proceeding with shutdown.
+
+#### useDaemonThreads (optional, default = false)
+
+If set to true Tjahzi will run all it's threads as daemon threads. 
+
+Use this option if you do not want to explicitly close the logging system and still want to make sure Tjahzi internal 
+threads will not prevent JVM from closing down. Note that this can result in unflushed logs not being delivered when the
+JVM is closed.

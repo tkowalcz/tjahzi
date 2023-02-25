@@ -13,18 +13,21 @@ public class LoggingSystem {
     private final AgentRunner runner;
 
     private final MonitoringModule monitoringModule;
+    private final boolean useDaemonThreads;
     private final Closeable[] resourcesToCleanup;
 
     public LoggingSystem(
             ManyToOneRingBuffer logBuffer,
             AgentRunner runner,
             MonitoringModule monitoringModule,
+            boolean useDaemonThreads,
             Closeable... resourcesToCleanup
     ) {
         this.logBuffer = logBuffer;
         this.runner = runner;
 
         this.monitoringModule = monitoringModule;
+        this.useDaemonThreads = useDaemonThreads;
         this.resourcesToCleanup = resourcesToCleanup;
     }
 
@@ -33,7 +36,15 @@ public class LoggingSystem {
     }
 
     public void start() {
-        AgentRunner.startOnThread(runner);
+        AgentRunner.startOnThread(
+                runner,
+                runnable -> {
+                    Thread result = new Thread(runnable);
+                    result.setDaemon(useDaemonThreads);
+
+                    return result;
+                }
+        );
     }
 
     public void close(

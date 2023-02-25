@@ -51,6 +51,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private boolean useSSL;
 
     @PluginBuilderAttribute
+    private boolean useDaemonThreads;
+
+    @PluginBuilderAttribute
     private String username;
 
     @PluginBuilderAttribute
@@ -155,7 +158,8 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 bufferSizeBytes,
                 logShipperWakeupIntervalMillis,
                 TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
-                isUseOffHeapBuffer()
+                isUseOffHeapBuffer(),
+                useDaemonThreads
         );
 
         int maxLogLineSizeBytes = Math.toIntExact(getMaxLogLineSizeKilobytes() * BYTES_IN_KILOBYTE);
@@ -199,6 +203,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setUseSSL(boolean useSSL) {
         this.useSSL = useSSL;
+    }
+
+    public boolean isUseDaemonThreads() {
+        return useDaemonThreads;
+    }
+
+    public void setUseDaemonThreads(boolean useDaemonThreads) {
+        this.useDaemonThreads = useDaemonThreads;
     }
 
     public String getUsername() {

@@ -14,7 +14,9 @@ import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -26,6 +28,7 @@ class ResourcesCleanupOnCloseTest {
     private WireMockServer wireMockServer;
     private TjahziInitializer initializer;
     private StandardMonitoringModule monitoringModule;
+    private LoggingSystem loggingSystem;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +46,13 @@ class ResourcesCleanupOnCloseTest {
     @AfterEach
     void tearDown() {
         wireMockServer.stop();
+
+        if (loggingSystem != null) {
+            loggingSystem.close(
+                    (int) TimeUnit.SECONDS.toMillis(10),
+                    System.out::println
+            );
+        }
     }
 
     @Test
@@ -72,6 +82,7 @@ class ResourcesCleanupOnCloseTest {
                 1024 * 1024,
                 250,
                 10_000,
+                false,
                 false
         );
         loggingSystem.start();
@@ -83,10 +94,8 @@ class ResourcesCleanupOnCloseTest {
 
             assertThat(threadInfos)
                     .extracting(ThreadInfo::getThreadName)
-                    .contains(
-                            "LogShipper",
-                            "tjahzi-worker"
-                    );
+                    .anyMatch(threadName -> threadName.contains("LogShipper"))
+                    .anyMatch(threadName -> threadName.contains("tjahzi-worker"));
         });
 
         //When
@@ -106,6 +115,60 @@ class ResourcesCleanupOnCloseTest {
                             "LogShipper",
                             "tjahzi-worker"
                     );
+        });
+    }
+
+    @Test
+    void shouldStartThreadsAsDaemon() {
+        // Given
+        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+                .withConnectionTimeoutMillis(10_000)
+                .withHost("localhost")
+                .withPort(wireMockServer.port())
+                .withMaxRetries(1)
+                .build();
+
+        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
+                .getHttpClient(
+                        clientConfiguration,
+                        monitoringModule,
+                        "X-Scope-OrgID", "Circus",
+                        "C", "Control"
+                );
+
+        // When
+        loggingSystem = initializer.createLoggingSystem(
+                httpClient,
+                monitoringModule,
+                Map.of(),
+                0,
+                0,
+                1024 * 1024,
+                250,
+                10_000,
+                false,
+                true
+        );
+        loggingSystem.start();
+
+        // Then
+        Awaitility.await().untilAsserted(() -> {
+            ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+            ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+
+            Optional<ThreadInfo> maybeLogShipper = Arrays.stream(threadInfos)
+                    .filter(thread -> thread.getThreadName().contains("LogShipper"))
+                    .findAny();
+
+            Optional<ThreadInfo> maybeTjahziWorker = Arrays.stream(threadInfos)
+                    .filter(thread -> thread.getThreadName().contains("tjahzi-worker"))
+                    .findAny();
+
+            assertThat(maybeLogShipper)
+                    .hasValueSatisfying(ThreadInfo::isDaemon);
+
+            assertThat(maybeTjahziWorker)
+                    .hasValueSatisfying(ThreadInfo::isDaemon);
         });
     }
 }

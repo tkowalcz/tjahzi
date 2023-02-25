@@ -18,6 +18,8 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     private boolean useSSL;
 
+    private boolean useDaemonThreads;
+
     private String username;
 
     private String password;
@@ -80,6 +82,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setUseSSL(boolean useSSL) {
         this.useSSL = useSSL;
+    }
+
+    public boolean isUseDaemonThreads() {
+        return useDaemonThreads;
+    }
+
+    public void setUseDaemonThreads(boolean useDaemonThreads) {
+        this.useDaemonThreads = useDaemonThreads;
     }
 
     public String getUsername() {

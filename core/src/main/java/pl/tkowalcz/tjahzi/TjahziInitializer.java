@@ -25,7 +25,8 @@ public class TjahziInitializer {
             int bufferSizeBytes,
             long logShipperWakeupIntervalMillis,
             long shutdownTimeoutMillis,
-            boolean offHeap
+            boolean offHeap,
+            boolean useDaemonThreads
     ) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
         ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
@@ -64,6 +65,7 @@ public class TjahziInitializer {
                 logBuffer,
                 runner,
                 monitoringModule,
+                useDaemonThreads,
                 httpClient
         );
     }
