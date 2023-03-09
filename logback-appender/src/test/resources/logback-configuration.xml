@@ -18,6 +18,12 @@
         <logLevelLabel>
             log_level
         </logLevelLabel>
+        <loggerNameLabel>
+            logger_name
+        </loggerNameLabel>
+        <threadNameLabel>
+            thread_name
+        </threadNameLabel>
     </appender>
 
     <root level="debug">

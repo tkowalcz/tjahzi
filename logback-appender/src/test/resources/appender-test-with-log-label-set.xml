@@ -15,7 +15,12 @@
         <logLevelLabel>
             log_level
         </logLevelLabel>
-
+        <loggerNameLabel>
+            logger_name
+        </loggerNameLabel>
+        <threadNameLabel>
+            thread_name
+        </threadNameLabel>
         <label>
             <name>test</name>
             <value>shouldSendLogLevelAsConfigured</value>

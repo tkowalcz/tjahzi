@@ -36,8 +36,11 @@ class LogLevelLabelConfigurationTest extends IntegrationTest {
         LoggerContext context = loadConfig("appender-test-with-log-label-set.xml");
 
         // When
+        String originalThreadName=Thread.currentThread().getName();
+        Thread.currentThread().setName("appender-test-with-log-label-set.xml");
         Logger logger = context.getLogger(LogLevelLabelConfigurationTest.class);
         logger.info("Test");
+        Thread.currentThread().setName(originalThreadName);
 
         // Then
         assertThat(loki)
@@ -46,6 +49,8 @@ class LogLevelLabelConfigurationTest extends IntegrationTest {
                         .body("status", equalTo("success"))
                         .body("data.result.size()", equalTo(1))
                         .body("data.result[0].stream.log_level", equalTo("INFO"))
+                        .body("data.result[0].stream.logger_name", equalTo("pl.tkowalcz.tjahzi.logback.LogLevelLabelConfigurationTest"))
+                        .body("data.result[0].stream.thread_name", equalTo("appender-test-with-log-label-set.xml"))
                 );
     }
 }
