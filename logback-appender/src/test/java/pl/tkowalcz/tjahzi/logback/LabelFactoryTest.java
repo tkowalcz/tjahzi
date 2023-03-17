@@ -20,6 +20,8 @@ class LabelFactoryTest {
         LabelFactory labelFactory = new LabelFactory(
                 new ConsoleAppender<>(),
                 "log_level",
+                "logger_name",
+                "thread_name",
                 thisIsADuplicateAndShouldBeDropped,
                 thisShouldStay,
                 thisTooShouldStay
@@ -45,6 +47,8 @@ class LabelFactoryTest {
         LabelFactory labelFactory = new LabelFactory(
                 new ConsoleAppender<>(),
                 "log_level",
+                "logger_name",
+                "thread_name",
                 thisShouldStayToo,
                 thisShouldStay,
                 invalidNameShouldBeDropped
@@ -61,13 +65,15 @@ class LabelFactoryTest {
     }
 
     @Test
-    void shouldAcceptNullLogLevel() {
+    void shouldAcceptNullPredefinedLabels() {
         // Given
         Label label1 = Label.createLabel("ip", "10.0.2.34");
         Label label2 = Label.createLabel("region", "coruscant-west-2");
 
         LabelFactory labelFactory = new LabelFactory(
                 new ConsoleAppender<>(),
+                null,
+                null,
                 null,
                 label2,
                 label1
@@ -94,6 +100,8 @@ class LabelFactoryTest {
         LabelFactory labelFactory = new LabelFactory(
                 new ConsoleAppender<>(),
                 logLevelLabel,
+                null,
+                null,
                 thisShouldBeRemovedDueToConflict,
                 thisShouldStay
         );
@@ -121,7 +129,7 @@ class LabelFactoryTest {
         // Given
         String logLevelLabel = "log-level";
 
-        LabelFactory labelFactory = new LabelFactory(new ConsoleAppender<>(), logLevelLabel);
+        LabelFactory labelFactory = new LabelFactory(new ConsoleAppender<>(), logLevelLabel, null, null);
 
         // When
         String actual = labelFactory.validateLogLevelLabel(new HashMap<>());
@@ -131,10 +139,115 @@ class LabelFactoryTest {
     }
 
     @Test
-    void shouldHandleDisabledLogLevelLabel() {
+    void loggerNameLabelShouldOverrideConflictingLabel() {
+        // Given
+        String loggerNameLabel = "logger_name";
+
+        Label thisShouldStay = Label.createLabel("ip", "10.0.2.34");
+        Label thisShouldBeRemovedDueToConflict = Label.createLabel(loggerNameLabel, "coruscant-west-2");
+
+        LabelFactory labelFactory = new LabelFactory(
+                new ConsoleAppender<>(),
+                null,
+                loggerNameLabel,
+                null,
+                thisShouldBeRemovedDueToConflict,
+                thisShouldStay
+        );
+
+        HashMap<String, String> labels = new HashMap<>(
+                Map.ofEntries(
+                        asEntry(thisShouldStay),
+                        asEntry(thisShouldBeRemovedDueToConflict)
+                )
+        );
+
+        // When
+        String actual = labelFactory.validateLoggerNameLabel(labels);
+
+        // Then
+        assertThat(labels).containsOnly(
+                asEntry(thisShouldStay)
+        );
+
+        assertThat(actual).isEqualTo(loggerNameLabel);
+    }
+
+    @Test
+    void shouldDisableLoggerNameLabelIfItHasInvalidName() {
+        // Given
+        String loggerNameLabel = "logger-name";
+
+        LabelFactory labelFactory = new LabelFactory(new ConsoleAppender<>(), null, loggerNameLabel, null);
+
+        // When
+        String actual = labelFactory.validateLogLevelLabel(new HashMap<>());
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void threadNameLabelShouldOverrideConflictingLabel() {
+        // Given
+        String threadNameLabel = "thread_name";
+
+        Label thisShouldStay = Label.createLabel("ip", "10.0.2.34");
+        Label thisShouldBeRemovedDueToConflict = Label.createLabel(threadNameLabel, "coruscant-west-2");
+
+        LabelFactory labelFactory = new LabelFactory(
+                new ConsoleAppender<>(),
+                threadNameLabel,
+                null,
+                null,
+                thisShouldBeRemovedDueToConflict,
+                thisShouldStay
+        );
+
+        HashMap<String, String> labels = new HashMap<>(
+                Map.ofEntries(
+                        asEntry(thisShouldStay),
+                        asEntry(thisShouldBeRemovedDueToConflict)
+                )
+        );
+
+        // When
+        String actual = labelFactory.validateLogLevelLabel(labels);
+
+        // Then
+        assertThat(labels).containsOnly(
+                asEntry(thisShouldStay)
+        );
+
+        assertThat(actual).isEqualTo(threadNameLabel);
+    }
+
+    @Test
+    void shouldDisableThreadNameLabelIfItHasInvalidName() {
+        // Given
+        String threadNameLabel = "thread-name";
+
+        LabelFactory labelFactory = new LabelFactory(new ConsoleAppender<>(), threadNameLabel, null, null);
+
+        // When
+        String actual = labelFactory.validateLogLevelLabel(new HashMap<>());
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void shouldHandleDisabledPredefinedLabels() {
         // Given
         String logLevelLabel = null;
-        LabelFactory labelFactory = new LabelFactory(new ConsoleAppender<>(), logLevelLabel);
+        String loggerNameLabel = null;
+        String threadNameLabel = null;
+        LabelFactory labelFactory = new LabelFactory(
+                new ConsoleAppender<>(),
+                logLevelLabel,
+                loggerNameLabel,
+                threadNameLabel
+        );
 
         // When
         String actual = labelFactory.validateLogLevelLabel(new HashMap<>());

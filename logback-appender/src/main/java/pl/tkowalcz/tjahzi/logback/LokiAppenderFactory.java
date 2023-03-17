@@ -20,6 +20,8 @@ public class LokiAppenderFactory {
 
     private final HashMap<String, String> lokiLabels;
     private final String logLevelLabel;
+    private final String loggerNameLabel;
+    private final String threadNameLabel;
     private final List<String> mdcLogLabels;
     private final MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
@@ -29,11 +31,15 @@ public class LokiAppenderFactory {
         LabelFactory labelFactory = new LabelFactory(
                 configurator,
                 configurator.getLogLevelLabel(),
+                configurator.getLoggerNameLabel(),
+                configurator.getThreadNameLabel(),
                 configurator.getLabels().toArray(new Label[0])
         );
 
         lokiLabels = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelFactory.validateLogLevelLabel(lokiLabels);
+        loggerNameLabel = labelFactory.validateLoggerNameLabel(lokiLabels);
+        threadNameLabel = labelFactory.validateThreadNameLabel(lokiLabels);
         mdcLogLabels = configurator.getMdcLogLabels();
         monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
     }
@@ -94,6 +100,14 @@ public class LokiAppenderFactory {
 
     public String getLogLevelLabel() {
         return logLevelLabel;
+    }
+
+    public String getLoggerNameLabel() {
+        return loggerNameLabel;
+    }
+
+    public String getThreadNameLabel() {
+        return threadNameLabel;
     }
 
     public MutableMonitoringModuleWrapper getMonitoringModuleWrapper() {

@@ -26,6 +26,8 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     private TjahziLogger logger;
     private String logLevelLabel;
+    private String loggerNameLabel;
+    private String threadNameLabel;
     private List<String> mdcLogLabels;
 
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
@@ -62,11 +64,15 @@ public class LokiAppender extends LokiAppenderConfigurator {
     @Override
     protected void append(ILoggingEvent event) {
         String logLevel = event.getLevel().toString();
+        String loggerName = event.getLoggerName();
+        String threadName = event.getThreadName();
         ByteBuffer logLine = actualEncoder.apply(event);
         Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
-
+        
         LabelSerializer labelSerializer = LabelSerializers.threadLocal();
         appendLogLabel(labelSerializer, logLevel);
+        appendLoggerLabel(labelSerializer, loggerName);
+        appendThreadLabel(labelSerializer, threadName);
         appendMdcLogLabels(labelSerializer, mdcPropertyMap);
 
         logger.log(
@@ -83,6 +89,17 @@ public class LokiAppender extends LokiAppenderConfigurator {
         }
     }
 
+    private void appendLoggerLabel(LabelSerializer labelSerializer, String loggerName) {
+         if (loggerNameLabel != null) {
+            labelSerializer.appendLabel(loggerNameLabel, loggerName);
+        }
+    }
+
+    private void appendThreadLabel(LabelSerializer labelSerializer, String threadName) {
+        if (threadNameLabel != null) {
+            labelSerializer.appendLabel(threadNameLabel, threadName);
+        }
+    }
     @SuppressWarnings("ForLoopReplaceableByForEach") // Allocator goes brrrr
     private void appendMdcLogLabels(LabelSerializer serializer,
                                     Map<String, String> mdcPropertyMap) {
@@ -112,6 +129,8 @@ public class LokiAppender extends LokiAppenderConfigurator {
         LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
         loggingSystem = lokiAppenderFactory.createAppender();
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
+        loggerNameLabel = lokiAppenderFactory.getLoggerNameLabel();
+        threadNameLabel = lokiAppenderFactory.getThreadNameLabel();
         mdcLogLabels = lokiAppenderFactory.getMdcLogLabels();
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
