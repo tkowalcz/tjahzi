@@ -215,6 +215,26 @@ it into a label.
 ```
 </details>
 
+### Logger name and thread name in labels
+
+You can include logger name and logging thread name as labels by using dedicated configuration tags. It will dynamically extract these values and will turn
+them into a label.
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+   
+       ...
+   
+    <loggerNameLabel>
+       logger_name
+    </loggerNameLabel>
+   
+    <threadNameLabel>
+       thread_name
+    </threadNameLabel>
+</appender>
+```
+
 ## Details
 
 Let's go through the example config above and analyze configuration options (**Note: Tags are case-insensitive**).
