@@ -52,6 +52,7 @@ public class BootstrapUtil {
     private static SslContext createSslContext() {
         try {
             return SslContextBuilder.forClient()
+                    .trustManager(InsecureTrustManagerFactory.INSTANCE)
                     .build();
         } catch (SSLException e) {
             throw new RuntimeException(e);
