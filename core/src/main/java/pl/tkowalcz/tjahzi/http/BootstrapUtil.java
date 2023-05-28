@@ -37,6 +37,8 @@ public class BootstrapUtil {
                         new HttpClientInitializer(
                                 monitoringModule,
                                 sslContext,
+                                clientConfiguration.getHost(),
+                                clientConfiguration.getPort(),
                                 clientConfiguration.getRequestTimeoutMillis(),
                                 clientConfiguration.getMaxRequestsInFlight()
                         )
@@ -50,7 +52,6 @@ public class BootstrapUtil {
     private static SslContext createSslContext() {
         try {
             return SslContextBuilder.forClient()
-                    .trustManager(InsecureTrustManagerFactory.INSTANCE)
                     .build();
         } catch (SSLException e) {
             throw new RuntimeException(e);

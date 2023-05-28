@@ -20,18 +20,24 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
 
     private final SslContext sslContext;
 
+    private final String host;
+    private final int port;
     private final int requestTimeoutMillis;
     private final int maxRequestsInFlight;
 
     HttpClientInitializer(
             MonitoringModule monitoringModule,
             SslContext sslContext,
+            String host,
+            int port,
             int requestTimeoutMillis,
             int maxRequestsInFlight
     ) {
         this.monitoringModule = monitoringModule;
         this.responseHandler = new RequestAndResponseHandler(monitoringModule);
         this.sslContext = sslContext;
+        this.host = host;
+        this.port = port;
 
         this.requestTimeoutMillis = requestTimeoutMillis;
         this.maxRequestsInFlight = maxRequestsInFlight;
@@ -48,7 +54,7 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
         );
 
         if (sslContext != null) {
-            p.addLast(sslContext.newHandler(ch.alloc()));
+            p.addLast(sslContext.newHandler(ch.alloc(), host, port));
         }
 
         p.addLast(new HttpClientCodec());

@@ -31,6 +31,8 @@ class PipelinedHttpRequestTimerTest {
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
                 mock(SslContext.class),
+                "localhost",
+                3100,
                 10_000,
                 42
         );
@@ -80,6 +82,8 @@ class PipelinedHttpRequestTimerTest {
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
                 mock(SslContext.class),
+                "localhost",
+                3100,
                 10_000,
                 42
         );
@@ -135,6 +139,8 @@ class PipelinedHttpRequestTimerTest {
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
                 mock(SslContext.class),
+                "localhost",
+                3100,
                 10_000,
                 42
         );
@@ -194,6 +200,8 @@ class PipelinedHttpRequestTimerTest {
         HttpClientInitializer initializer = new HttpClientInitializer(
                 monitoringModule,
                 mock(SslContext.class),
+                "localhost",
+                3100,
                 10_000,
                 42
         );
