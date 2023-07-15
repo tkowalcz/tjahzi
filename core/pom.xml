@@ -21,7 +21,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-            <version>4.1.77.Final</version>
+            <version>4.1.94.Final</version>
         </dependency>
 
         <!-- For the example metric consumer -->
