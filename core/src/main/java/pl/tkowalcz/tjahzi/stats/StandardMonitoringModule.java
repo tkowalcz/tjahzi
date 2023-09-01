@@ -4,6 +4,7 @@ import org.agrona.concurrent.SystemEpochClock;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.agrona.concurrent.errors.DistinctErrorLog;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StandardMonitoringModule implements MonitoringModule {
@@ -31,7 +32,7 @@ public class StandardMonitoringModule implements MonitoringModule {
         }
 
         distinctErrorLog = new DistinctErrorLog(
-                new UnsafeBuffer(new byte[ERROR_LOG_CAPACITY]),
+                new UnsafeBuffer(ByteBuffer.allocateDirect(ERROR_LOG_CAPACITY)),
                 new SystemEpochClock()
         );
 
@@ -130,15 +131,15 @@ public class StandardMonitoringModule implements MonitoringModule {
     @Override
     public String toString() {
         return "StandardMonitoringModule{" +
-                "droppedPuts=" + droppedPuts +
-                ", httpConnectAttempts=" + httpConnectAttempts +
-                ", sentHttpRequests=" + sentHttpRequests +
-                ", sentKilobytes=" + (sentBytes.longValue() / 1024) +
-                ", failedHttpRequests=" + failedHttpRequests +
-                ", retriedHttpRequests=" + retriedHttpRequests +
-                ", httpResponses=" + httpResponses +
-                ", channelInactive=" + channelInactive +
-                ", agentErrors=" + agentErrors +
-                '}';
+               "droppedPuts=" + droppedPuts +
+               ", httpConnectAttempts=" + httpConnectAttempts +
+               ", sentHttpRequests=" + sentHttpRequests +
+               ", sentKilobytes=" + (sentBytes.longValue() / 1024) +
+               ", failedHttpRequests=" + failedHttpRequests +
+               ", retriedHttpRequests=" + retriedHttpRequests +
+               ", httpResponses=" + httpResponses +
+               ", channelInactive=" + channelInactive +
+               ", agentErrors=" + agentErrors +
+               '}';
     }
 }
