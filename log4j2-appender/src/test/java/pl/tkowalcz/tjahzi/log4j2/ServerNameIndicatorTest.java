@@ -31,7 +31,7 @@ public class ServerNameIndicatorTest {
     public static Network network = Network.newNetwork();
 
     @Container
-    public GenericContainer loki1 = new GenericContainer("grafana/loki:2.3.0")
+    public GenericContainer loki1 = new GenericContainer("grafana/loki:3.1.0")
             .withNetwork(network)
             .withNetworkAliases("loki1")
             .withCommand("-config.file=/etc/loki-config.yaml")
@@ -46,7 +46,7 @@ public class ServerNameIndicatorTest {
             .withExposedPorts(3100);
 
     @Container
-    public GenericContainer loki2 = new GenericContainer("grafana/loki:2.3.0")
+    public GenericContainer loki2 = new GenericContainer("grafana/loki:3.1.0")
             .withNetwork(network)
             .withNetworkAliases("loki2")
             .withCommand("-config.file=/etc/loki-config.yaml")
