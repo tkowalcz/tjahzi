@@ -23,7 +23,7 @@ public class IntegrationTest {
     public static Network network = Network.newNetwork();
 
     @Container
-    public GenericContainer loki = new GenericContainer("grafana/loki:2.3.0")
+    public GenericContainer loki = new GenericContainer("grafana/loki:3.1.0")
             .withNetwork(network)
             .withNetworkAliases("loki")
             .withCommand("-config.file=/etc/loki-config.yaml")

@@ -35,7 +35,7 @@ class Log4jPatternsInLabelsTest extends IntegrationTest {
                         .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
                         .body("data.result.stream.class_pattern", everyItem(equalTo("p.t.t.l.l.Log4jPatternsInLabelsTest")))
                         .body("data.result.stream.sequence_number", contains("2", "1"))
-                        .body("data.result.stream.mdc_tid", contains("", "req-230rq9ubou"))
+                        .body("data.result.stream.mdc_tid", contains(null, "req-230rq9ubou"))
                         .body("data.result.values",
                                 hasItems(
                                         hasItems(hasItems("Log4jPatternsInLabelsTest - Test2")),

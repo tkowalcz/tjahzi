@@ -20,7 +20,6 @@
             <username>tjahzi</username>
             <password>tjahzi</password>
 
-
             <ThresholdFilter level="ALL"/>
             <PatternLayout>
                 <Pattern>[%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
