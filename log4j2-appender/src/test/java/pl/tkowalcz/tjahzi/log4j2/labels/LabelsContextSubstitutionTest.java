@@ -7,7 +7,7 @@ import org.slf4j.MDC;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.core.Every.everyItem;
 import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
@@ -38,9 +38,9 @@ class LabelsContextSubstitutionTest extends IntegrationTest {
                 .returns(response -> response
                         .body("data.result.size()", equalTo(3))
                         .body("data.result.stream.server", everyItem(equalTo("127.0.0.1")))
-                        .body("data.result.stream.object", contains("prefix_", "prefix_bus_ticket", "prefix_comb"))
-                        .body("data.result.stream.owner", contains("_suffix", "wally_suffix", "jennifer_suffix"))
-                        .body("data.result.stream.default_value_test", contains("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
+                        .body("data.result.stream.object", containsInAnyOrder("prefix_", "prefix_bus_ticket", "prefix_comb"))
+                        .body("data.result.stream.owner", containsInAnyOrder("_suffix", "wally_suffix", "jennifer_suffix"))
+                        .body("data.result.stream.default_value_test", containsInAnyOrder("use_this_if_missing", "use_this_if_missing", "use_this_if_missing"))
                         .body("data.result.values",
                                 hasItems(
                                         hasItems(hasItems("LabelsContextSubstitutionTest - Test3")),
