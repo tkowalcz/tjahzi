@@ -9,7 +9,6 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.NginxContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -60,9 +59,8 @@ public class ServerNameIndicatorTest {
             )
             .withExposedPorts(3100);
 
-
     @Container
-    public NginxContainer<?> nginx = new NginxContainer<>("nginx:latest")
+    public NginxContainer<?> nginx = new NginxContainer<>("nginx:1.25")
             .withNetwork(network)
             .dependsOn(loki1, loki2)
             .withClasspathResourceMapping("loki.sni.nginx.conf",
@@ -81,7 +79,11 @@ public class ServerNameIndicatorTest {
                     "/etc/nginx/passwords",
                     BindMode.READ_ONLY
             )
-            .waitingFor(new HttpWaitStrategy())
+            .waitingFor(Wait
+                    .forHttp("/")
+                    .forStatusCode(200)
+                    .forStatusCode(400)
+            )
             .withExposedPorts(81);
 
     @BeforeEach
