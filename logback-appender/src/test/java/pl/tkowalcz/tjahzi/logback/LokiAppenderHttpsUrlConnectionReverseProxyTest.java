@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.NginxContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import pl.tkowalcz.tjahzi.logback.infra.IntegrationTest;
 
@@ -16,7 +16,7 @@ import static pl.tkowalcz.tjahzi.logback.infra.LokiAssert.assertThat;
 class LokiAppenderHttpsUrlConnectionReverseProxyTest extends IntegrationTest {
 
     @Container
-    public NginxContainer<?> nginx = new NginxContainer<>("nginx:latest")
+    public NginxContainer<?> nginx = new NginxContainer<>("nginx:1.25")
             .withNetwork(network)
             .withClasspathResourceMapping("loki.reverse.nginx.conf",
                     "/etc/nginx/conf.d/loki.reverse.conf",
@@ -34,7 +34,11 @@ class LokiAppenderHttpsUrlConnectionReverseProxyTest extends IntegrationTest {
                     "/etc/nginx/passwords",
                     BindMode.READ_ONLY
             )
-            .waitingFor(new HttpWaitStrategy())
+            .waitingFor(Wait
+                    .forHttp("/")
+                    .forStatusCode(200)
+                    .forStatusCode(400)
+            )
             .withExposedPorts(81);
 
     @Override
