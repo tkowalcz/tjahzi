@@ -114,13 +114,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <release>${maven.compiler.target}</release>
-                    <testRelease>${maven.compiler.testTarget}</testRelease>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <releaseProfiles>gpg-sign</releaseProfiles>
