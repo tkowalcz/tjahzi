@@ -23,11 +23,11 @@ public class LabelFactory {
     private static final Logger LOGGER = StatusLogger.getLogger();
 
     private final String logLevelLabel;
-    private final Label[] labels;
+    private final LabelBase[] labels;
 
     private final PatternParser patternParser;
 
-    public LabelFactory(Configuration configuration, String logLevelLabel, Label... labels) {
+    public LabelFactory(Configuration configuration, String logLevelLabel, LabelBase... labels) {
         this.logLevelLabel = logLevelLabel;
         this.labels = labels;
 
@@ -68,7 +68,7 @@ public class LabelFactory {
 
     private void detectAndLogDuplicateLabels() {
         List<String> duplicatedLabels = stream(labels)
-                .collect(Collectors.groupingBy(Label::getName, counting()))
+                .collect(Collectors.groupingBy(LabelBase::getName, counting()))
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue() > 1)
@@ -101,13 +101,13 @@ public class LabelFactory {
                         }
                 )
                 .collect(toMap(
-                        Label::getName,
+                        LabelBase::getName,
                         this::toLabelOrLog4jPattern,
                         (original, duplicate) -> duplicate)
                 );
     }
 
-    private LabelPrinter toLabelOrLog4jPattern(Label label) {
+    private LabelPrinter toLabelOrLog4jPattern(LabelBase label) {
         if (label.getPattern() != null) {
             return Log4jAdapterLabelPrinter.of(patternParser.parse(label.getPattern()));
         }
