@@ -39,7 +39,7 @@ Log4j2 appender seemed like a good first.
         <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
     </PatternLayout>
 
-    <Label name="server" value="${sys:hostname}"/>
+    <Label name="server" value="${hostName}"/>
 </Loki>
 ```
 
