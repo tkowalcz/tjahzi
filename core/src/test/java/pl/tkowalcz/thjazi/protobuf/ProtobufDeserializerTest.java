@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-public class ProtobufDeserializer {
+public class ProtobufDeserializerTest {
 
     @Test
     void shouldDeserialize() throws IOException {
