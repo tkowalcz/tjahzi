@@ -9,7 +9,6 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.NginxContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -19,7 +18,9 @@ import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 
 @SuppressWarnings({"rawtypes", "resource"})
 @Testcontainers
@@ -81,7 +82,6 @@ public class ServerNameIndicatorTest {
                     "/etc/nginx/passwords",
                     BindMode.READ_ONLY
             )
-            .waitingFor(new HttpWaitStrategy())
             .withExposedPorts(81);
 
     @BeforeEach
