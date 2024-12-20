@@ -3,6 +3,7 @@ package pl.tkowalcz.tjahzi;
 import org.agrona.concurrent.AtomicBuffer;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class LogBufferSerializer {
 
@@ -51,13 +52,13 @@ public class LogBufferSerializer {
             long nanoOfMillisecond,
             LabelSerializer serializedLabels
     ) {
-        buffer.putLong(cursor, epochMillisecond);
+        buffer.putLong(cursor, epochMillisecond, ByteOrder.LITTLE_ENDIAN);
         cursor += Long.BYTES;
 
-        buffer.putLong(cursor, nanoOfMillisecond);
+        buffer.putLong(cursor, nanoOfMillisecond, ByteOrder.LITTLE_ENDIAN);
         cursor += Long.BYTES;
 
-        buffer.putInt(cursor, serializedLabels.getLabelsCount());
+        buffer.putInt(cursor, serializedLabels.getLabelsCount(), ByteOrder.LITTLE_ENDIAN);
         cursor += Integer.BYTES;
         return cursor;
     }
@@ -70,7 +71,7 @@ public class LogBufferSerializer {
     }
 
     private void writeLogLine(int cursor, ByteBuffer line) {
-        buffer.putInt(cursor, line.remaining());
+        buffer.putInt(cursor, line.remaining(), ByteOrder.LITTLE_ENDIAN);
         cursor += Integer.BYTES;
 
         buffer.putBytes(

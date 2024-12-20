@@ -17,7 +17,7 @@ public class StreamSerializer {
             ByteBuf target
     ) {
         int messageStartIndex = target.writerIndex();
-        target.writeInt(0);
+        target.writeIntLE(0);
 
         target.writeByte(LABELS_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
         StringSerializer.serialize(labels, target);

@@ -10,6 +10,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Map;
 
 public class TjahziInitializer {
@@ -98,9 +99,11 @@ public class TjahziInitializer {
         int totalSize = bufferSize + RingBufferDescriptor.TRAILER_LENGTH;
 
         if (offHeap) {
-            return ByteBuffer.allocateDirect(totalSize);
+            return ByteBuffer.allocateDirect(totalSize)
+                    .order(ByteOrder.LITTLE_ENDIAN);
         }
 
-        return ByteBuffer.allocate(totalSize);
+        return ByteBuffer.allocate(totalSize)
+                .order(ByteOrder.LITTLE_ENDIAN);
     }
 }

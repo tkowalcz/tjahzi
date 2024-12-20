@@ -4,8 +4,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
+import org.agrona.collections.MutableLong;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.lang.mutable.MutableLong;
 import pl.tkowalcz.tjahzi.stats.SettableClock;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
@@ -132,7 +132,7 @@ class PipelinedHttpRequestTimerTest {
 
             @Override
             public void recordResponseTime(long time) {
-                requestRTT.setValue(time);
+                requestRTT.set(time);
             }
         };
 
@@ -193,7 +193,7 @@ class PipelinedHttpRequestTimerTest {
 
             @Override
             public void recordResponseTime(long time) {
-                requestRTT.setValue(time);
+                requestRTT.set(time);
             }
         };
 
