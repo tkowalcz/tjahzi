@@ -6,7 +6,7 @@ orbs:
 jobs:
   build-and-test:
     machine:
-      image: ubuntu-2004:202008-01
+      image: ubuntu-2204:2024.11.1
     steps:
       - checkout
 
