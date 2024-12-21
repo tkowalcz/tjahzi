@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.16
+  circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.20
 
 jobs:
   build-and-test:
@@ -59,6 +59,14 @@ executors:
   new-java-maven-executor:
     machine:
       image: ubuntu-2204:2024.11.1
+    steps:
+      - run:
+          name: Install OpenJDK 11
+          command: |
+            sudo apt-get update && sudo apt-get install openjdk-11-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
+            java -version
 
 parameters:
   run_workflow_release:
