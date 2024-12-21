@@ -17,7 +17,7 @@ public class TimestampSerializer {
 
         int messageStartIndex = target.writerIndex();
 
-        target.writeInt(0);
+        target.writeIntLE(0);
         target.writeByte(1 << 3 | VARINT_TYPE);
         writeUnsignedVarint(timestampSeconds, target);
         target.writeByte(2 << 3 | VARINT_TYPE);

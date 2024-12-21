@@ -3,6 +3,8 @@ package pl.tkowalcz.tjahzi;
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
 
+import java.nio.ByteOrder;
+
 public class LabelSerializer {
 
     private final ExpandableArrayBuffer buffer = new ExpandableArrayBuffer();
@@ -48,7 +50,9 @@ public class LabelSerializer {
     public LabelSerializer finishAppendingLabelValue() {
         buffer.putInt(
                 lastSizePosition,
-                cursor - lastSizePosition - Integer.BYTES);
+                cursor - lastSizePosition - Integer.BYTES,
+                ByteOrder.LITTLE_ENDIAN
+        );
 
         return this;
     }

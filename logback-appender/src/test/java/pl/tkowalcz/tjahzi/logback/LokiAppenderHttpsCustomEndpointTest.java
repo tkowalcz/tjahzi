@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.NginxContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import pl.tkowalcz.tjahzi.logback.infra.IntegrationTest;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static pl.tkowalcz.tjahzi.logback.infra.LokiAssert.assertThat;
 
 class LokiAppenderHttpsCustomEndpointTest extends IntegrationTest {
@@ -34,7 +36,6 @@ class LokiAppenderHttpsCustomEndpointTest extends IntegrationTest {
                     "/etc/nginx/passwords",
                     BindMode.READ_ONLY
             )
-            .waitingFor(new HttpWaitStrategy())
             .withExposedPorts(81);
 
     @Override

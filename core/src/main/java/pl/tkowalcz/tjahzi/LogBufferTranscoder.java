@@ -8,6 +8,7 @@ import pl.tkowalcz.tjahzi.utils.TextBuilder;
 import pl.tkowalcz.tjahzi.utils.TextBuilders;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Map;
 
 public class LogBufferTranscoder {
@@ -30,10 +31,10 @@ public class LogBufferTranscoder {
     }
 
     public void deserializeIntoByteBuf(DirectBuffer buffer, int index, OutputBuffer outputBuffer) {
-        long epochMillisecond = buffer.getLong(index);
+        long epochMillisecond = buffer.getLong(index, ByteOrder.LITTLE_ENDIAN);
         index += Long.BYTES;
 
-        long nanoOfMillisecond = buffer.getLong(index);
+        long nanoOfMillisecond = buffer.getLong(index, ByteOrder.LITTLE_ENDIAN);
         index += Long.BYTES;
 
         TextBuilder labelsBuilder = TextBuilders.threadLocal();
@@ -65,13 +66,13 @@ public class LogBufferTranscoder {
             int index,
             TextBuilder labelsBuilder
     ) {
-        int labelsCount = buffer.getInt(index);
+        int labelsCount = buffer.getInt(index, ByteOrder.LITTLE_ENDIAN);
         index += Integer.BYTES;
 
         for (int i = 0; i < labelsCount; i++) {
-            index += buffer.getStringAscii(index, labelsBuilder) + Integer.BYTES;
+            index += buffer.getStringAscii(index, labelsBuilder, ByteOrder.LITTLE_ENDIAN) + Integer.BYTES;
             labelsBuilder.append("=").append("\"");
-            index += buffer.getStringAscii(index, labelsBuilder) + Integer.BYTES;
+            index += buffer.getStringAscii(index, labelsBuilder, ByteOrder.LITTLE_ENDIAN) + Integer.BYTES;
             labelsBuilder.append("\",");
         }
 
