@@ -3,10 +3,14 @@ version: 2.1
 orbs:
   circleci-maven-release-orb: sonatype-nexus-community/circleci-maven-release-orb@0.0.20
 
-jobs:
-  build-and-test:
+executors:
+  new-java-maven-executor:
     machine:
       image: ubuntu-2204:2024.11.1
+
+jobs:
+  build-and-test:
+    executor: new-java-maven-executor
     steps:
       - run:
           name: Install OpenJDK 11
@@ -55,10 +59,8 @@ jobs:
       - store_test_results:
           path: ~/test-results
 
-executors:
-  new-java-maven-executor:
-    machine:
-      image: ubuntu-2204:2024.11.1
+  release:
+    executor: new-java-maven-executor
     steps:
       - run:
           name: Install OpenJDK 11
@@ -67,6 +69,9 @@ executors:
             sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
             sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
             java -version
+      - circleci-maven-release-orb/run-maven-release:
+          mvn-release-perform-command: >-
+            mvn --batch-mode release:perform -DskipTests -s .circleci/.maven.xml
 
 parameters:
   run_workflow_release:
@@ -82,9 +87,4 @@ workflows:
     when: << pipeline.parameters.run_workflow_release >>
     jobs:
       - build-and-test
-      - circleci-maven-release-orb/run-maven-release:
-          requires:
-            - build-and-test
-          executor: new-java-maven-executor
-          mvn-release-perform-command: >-
-            mvn --batch-mode release:perform -DskipTests -s .circleci/.maven.xml
+      - release
