@@ -77,5 +77,7 @@ workflows:
           requires:
             - build-and-test
           executor: new-java-maven-executor
+          mvn-release-prepare-command: >-
+            mvn --batch-mode release:prepare -DskipTests -DscmCommentPrefix="[skip ci] [maven-release-plugin] "
           mvn-release-perform-command: >-
             mvn --batch-mode release:perform -DskipTests -s .circleci/.maven.xml
