@@ -193,7 +193,7 @@ Alternative way of specifying label contents is via pattern attribute:
 ```
 
 This pattern is compatible with
-Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout). In fact, we reuse lgo4j
+Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout). In fact, we reuse log4j
 internal classes for this implementation. It is generally efficient and allocation free as
 per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbagefree.html#PatternLayout).
 
