@@ -38,6 +38,8 @@ public class EfficientPatternLayoutTest extends AbstractPatternLayoutBaseTest<IL
     public void setUp() {
         patternLayout = getPatternLayoutBase();
         patternLayout.setContext(loggerContext);
+
+        loggerContext.setMDCAdapter(MDC.getMDCAdapter());
     }
 
     @Override
