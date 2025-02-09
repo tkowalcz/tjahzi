@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi;
 
-import com.google.common.collect.Streams;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -91,11 +91,12 @@ class LogBufferTranscoderTest {
         Stream<String> staticLabelsStream = toPropertyStream(staticLabels);
 
         assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(
-                Streams.concat(
-                        incomingLabelsStream,
-                        logLevelStream,
-                        staticLabelsStream
-                )
+                Stream.of(
+                                incomingLabelsStream,
+                                logLevelStream,
+                                staticLabelsStream
+                        )
+                        .flatMap(Function.identity())
                         .collect(joining(",", "{", "}"))
         );
     }
