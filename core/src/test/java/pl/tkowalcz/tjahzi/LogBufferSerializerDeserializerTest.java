@@ -1,6 +1,5 @@
 package pl.tkowalcz.tjahzi;
 
-import com.google.common.collect.Streams;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
 import io.netty.buffer.ByteBuf;
@@ -34,12 +33,12 @@ class LogBufferSerializerDeserializerTest {
                         "WARN",
                         "[Mando] You have something I want.",
                         38 // log line
-                                + 21 // log level
-                                + 45 // labels string sizes
-                                + 6 * 4 // labels string length indicators
-                                + 8 // timestamp millis
-                                + 8 // timestamp nanos
-                                + 4 // labels count
+                        + 21 // log level
+                        + 45 // labels string sizes
+                        + 6 * 4 // labels string length indicators
+                        + 8 // timestamp millis
+                        + 8 // timestamp nanos
+                        + 4 // labels count
                 ),
                 Arguments.of(
                         "Message with empty labels",
@@ -48,10 +47,10 @@ class LogBufferSerializerDeserializerTest {
                         "WARN",
                         "[Mando] You have something I want.",
                         38 // log line
-                                + 21 // log level
-                                + 8 // timestamp millis
-                                + 8 // timestamp nanos
-                                + 4 // labels count
+                        + 21 // log level
+                        + 8 // timestamp millis
+                        + 8 // timestamp nanos
+                        + 4 // labels count
                 ),
                 Arguments.of(
                         "Message with null log level",
@@ -63,11 +62,11 @@ class LogBufferSerializerDeserializerTest {
                         null,
                         "[Mando] You have something I want.",
                         38 // log line
-                                + 45 // labels string sizes
-                                + 6 * 4 // labels string length indicators
-                                + 8 // timestamp millis
-                                + 8 // timestamp nanos
-                                + 4 // labels count
+                        + 45 // labels string sizes
+                        + 6 * 4 // labels string length indicators
+                        + 8 // timestamp millis
+                        + 8 // timestamp nanos
+                        + 4 // labels count
                 )
         );
     }
@@ -133,10 +132,7 @@ class LogBufferSerializerDeserializerTest {
         Stream<String> incomingLabelsStream = toPropertyStream(labels);
 
         assertThat(stream.getLabels()).isEqualToIgnoringWhitespace(
-                Streams.concat(
-                                incomingLabelsStream,
-                                logLevelStream
-                        )
+                Stream.concat(incomingLabelsStream, logLevelStream)
                         .collect(joining(",", "{", "}"))
         );
     }

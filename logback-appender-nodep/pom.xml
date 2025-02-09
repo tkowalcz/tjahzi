@@ -22,7 +22,7 @@
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>logback-appender</artifactId>
-            <version>0.9.33-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

@@ -16,7 +16,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 class LogBufferAgentTest {
 
@@ -28,9 +31,7 @@ class LogBufferAgentTest {
     void setUp() {
         logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(
-                        ByteBuffer.wrap(
-                                new byte[1024 * 1024 + RingBufferDescriptor.TRAILER_LENGTH]
-                        )
+                        ByteBuffer.allocateDirect(1024 * 1024 + RingBufferDescriptor.TRAILER_LENGTH)
                 )
         );
 
@@ -72,14 +73,14 @@ class LogBufferAgentTest {
                     LabelSerializerCreator.from(Map.of()),
                     ByteBuffer.wrap((
                             "Cupcake ipsum dolor sit amet cake wafer. " +
-                                    "Soufflé jelly beans biscuit topping. " +
-                                    "Danish bonbon gummies powder caramels. " +
-                                    "Danish jelly beans sweet roll topping jelly beans oat cake toffee. " +
-                                    "Chocolate cake sesame snaps brownie biscuit cheesecake. " +
-                                    "Ice cream dessert sweet donut marshmallow. " +
-                                    "Muffin bear claw cookie jelly-o sugar plum jelly beans apple pie fruitcake cookie. " +
-                                    "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
-                                    "Soufflé cake muffin liquorice tart soufflé pie sesame snaps."
+                            "Soufflé jelly beans biscuit topping. " +
+                            "Danish bonbon gummies powder caramels. " +
+                            "Danish jelly beans sweet roll topping jelly beans oat cake toffee. " +
+                            "Chocolate cake sesame snaps brownie biscuit cheesecake. " +
+                            "Ice cream dessert sweet donut marshmallow. " +
+                            "Muffin bear claw cookie jelly-o sugar plum jelly beans apple pie fruitcake cookie. " +
+                            "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
+                            "Soufflé cake muffin liquorice tart soufflé pie sesame snaps."
                     ).getBytes())
             );
         }
@@ -176,9 +177,7 @@ class LogBufferAgentTest {
 
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(
-                        ByteBuffer.wrap(
-                                new byte[1024 + RingBufferDescriptor.TRAILER_LENGTH]
-                        )
+                        ByteBuffer.allocateDirect(1024 + RingBufferDescriptor.TRAILER_LENGTH)
                 )
         );
 
@@ -234,9 +233,7 @@ class LogBufferAgentTest {
         // Given
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(
-                        ByteBuffer.wrap(
-                                new byte[64 * 1024 + RingBufferDescriptor.TRAILER_LENGTH]
-                        )
+                        ByteBuffer.allocateDirect(64 * 1024 + RingBufferDescriptor.TRAILER_LENGTH)
                 )
         );
 
