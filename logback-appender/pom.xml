@@ -49,35 +49,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>allocation-profiling</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
-                        <configuration>
-                            <argLine>
-                                -javaagent:"${settings.localRepository}/com/google/code/java-allocation-instrumenter/java-allocation-instrumenter/3.3.0/java-allocation-instrumenter-3.3.0.jar"
-                            </argLine>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>
-                                    com.google.code.java-allocation-instrumenter
-                                </groupId>
-                                <artifactId>
-                                    java-allocation-instrumenter
-                                </artifactId>
-                                <version>3.3.0</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

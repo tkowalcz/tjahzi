@@ -327,12 +327,6 @@ to retry indefinitely employing exponential backoff (initial backoff = 250ms, ma
 
 Sets socket read timeout on Loki connection.
 
-#### useOffHeapBuffer (optional, default = true)
-
-Whether Tjahzi should allocate native buffer for `Log buffer` component. We can go into a rabbit hole of divagations
-what are the implications of this. Most important in our view is that having 10s or 100s of MB of space taken out of
-heap is not very friendly to garbage collector which might have to occasionally copy it around.
-
 #### batchSize (optional, default = 10_2400)
 
 Like

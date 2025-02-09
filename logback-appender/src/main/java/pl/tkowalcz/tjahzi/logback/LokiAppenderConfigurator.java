@@ -29,7 +29,6 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private int maxRetries = 3;
 
     private int bufferSizeMegabytes = 32;
-    private boolean useOffHeapBuffer = true;
 
     private String logLevelLabel;
     private String loggerNameLabel;
@@ -140,14 +139,6 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setBufferSizeMegabytes(int bufferSizeMegabytes) {
         this.bufferSizeMegabytes = bufferSizeMegabytes;
-    }
-
-    public boolean isUseOffHeapBuffer() {
-        return useOffHeapBuffer;
-    }
-
-    public void setUseOffHeapBuffer(boolean useOffHeapBuffer) {
-        this.useOffHeapBuffer = useOffHeapBuffer;
     }
 
     public String getLogLevelLabel() {
