@@ -42,7 +42,7 @@ Logging should be lightweight and not interfere with main business tasks of thre
 Asking the logging subsystem to log a message should be as CPU efficient as possible. 
 That's a truism. Apart from computation itself there are many other causes of jitter (varying speed of code execution). 
 Thread can be slowed down by excessive allocations, by initialization code running in constructors of unnecessarily allocated objects, 
-by garbage collector activity that is triggered by it. There can by configuration refresh checks on logging path, inter thread signaling etc.
+by garbage collector activity that is triggered by it. There can be configuration refresh checks on logging path, inter thread signaling etc.
 
 To avoid these effects we strive to adhere to the following principles (and document any violations):
 

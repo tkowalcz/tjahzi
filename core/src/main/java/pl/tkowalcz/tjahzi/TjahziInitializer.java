@@ -26,11 +26,10 @@ public class TjahziInitializer {
             int bufferSizeBytes,
             long logShipperWakeupIntervalMillis,
             long shutdownTimeoutMillis,
-            boolean offHeap,
             boolean useDaemonThreads
     ) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
-        ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
+        ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes);
 
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(javaBuffer)
@@ -93,17 +92,8 @@ public class TjahziInitializer {
         return bufferSize;
     }
 
-    private ByteBuffer allocateJavaBuffer(
-            int bufferSize,
-            boolean offHeap) {
+    private ByteBuffer allocateJavaBuffer(int bufferSize) {
         int totalSize = bufferSize + RingBufferDescriptor.TRAILER_LENGTH;
-
-        if (offHeap) {
-            return ByteBuffer.allocateDirect(totalSize)
-                    .order(ByteOrder.LITTLE_ENDIAN);
-        }
-
-        return ByteBuffer.allocate(totalSize)
-                .order(ByteOrder.LITTLE_ENDIAN);
+        return ByteBuffer.allocateDirect(totalSize).order(ByteOrder.LITTLE_ENDIAN);
     }
 }

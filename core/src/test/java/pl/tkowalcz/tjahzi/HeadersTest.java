@@ -14,7 +14,13 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.awaitility.Awaitility.await;
 
@@ -91,7 +97,6 @@ class HeadersTest {
                 1024 * 1024,
                 250,
                 10_000,
-                false,
                 false
         );
         loggingSystem.start();
@@ -146,7 +151,6 @@ class HeadersTest {
                 1024 * 1024,
                 250,
                 10_000,
-                false,
                 false
         );
         loggingSystem.start();
@@ -203,7 +207,6 @@ class HeadersTest {
                 1024 * 1024,
                 250,
                 10_000,
-                false,
                 false
         );
         loggingSystem.start();

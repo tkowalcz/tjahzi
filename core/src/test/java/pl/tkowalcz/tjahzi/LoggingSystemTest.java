@@ -73,7 +73,6 @@ class LoggingSystemTest {
                 0,
                 250,
                 10_000,
-                false,
                 false
         );
 
@@ -159,7 +158,7 @@ class LoggingSystemTest {
                                     index--;
 
                                     return actualTimestamp == expectedTimestamp
-                                            && actualLogLine.equals(expectedLogLine);
+                                           && actualLogLine.equals(expectedLogLine);
                                 }
                             }));
                 });

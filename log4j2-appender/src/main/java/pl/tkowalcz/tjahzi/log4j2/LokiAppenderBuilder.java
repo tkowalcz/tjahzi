@@ -72,9 +72,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private int bufferSizeMegabytes = 32;
 
     @PluginBuilderAttribute
-    private boolean useOffHeapBuffer = true;
-
-    @PluginBuilderAttribute
     private String logLevelLabel;
 
     @PluginBuilderAttribute
@@ -158,7 +155,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 bufferSizeBytes,
                 logShipperWakeupIntervalMillis,
                 TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
-                isUseOffHeapBuffer(),
                 useDaemonThreads
         );
 
@@ -278,14 +274,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setBufferSizeMegabytes(int bufferSizeMegabytes) {
         this.bufferSizeMegabytes = bufferSizeMegabytes;
-    }
-
-    public boolean isUseOffHeapBuffer() {
-        return useOffHeapBuffer;
-    }
-
-    public void setUseOffHeapBuffer(boolean useOffHeapBuffer) {
-        this.useOffHeapBuffer = useOffHeapBuffer;
     }
 
     public String getLogLevelLabel() {
