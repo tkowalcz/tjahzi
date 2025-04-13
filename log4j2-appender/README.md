@@ -31,7 +31,7 @@ Log4j2 appender seemed like a good first.
 
 ```xml
 
-<Loki name="loki-appender">
+<Loki name="Loki">
     <host>${sys:loki.host}</host>
     <port>${sys:loki.port}</port>
 
@@ -70,7 +70,7 @@ is just for illustrative purposes.
 
 ```xml
 
-<Loki name="loki-appender">
+<Loki name="Loki">
     <!-- example host -->
     <host>logs-prod-us-central1.grafana.net</host>
     <port>443</port>
@@ -216,10 +216,10 @@ monitorInterval=30
 # Standard stuff
 rootLogger.level=INFO
 rootLogger.appenderRefs=loki
-rootLogger.appenderRef.loki.ref=loki-appender
+rootLogger.appenderRef.loki.ref=Loki
 
 #Loki configuration
-appender.loki.name=loki-appender
+appender.loki.name=Loki
 appender.loki.type=Loki
 appender.loki.host=${sys:loki.host}
 appender.loki.port=${sys:loki.port}
