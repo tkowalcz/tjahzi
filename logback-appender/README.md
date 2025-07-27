@@ -10,7 +10,7 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender-nodep</artifactId>
-     <version>0.1.0</version>
+     <version>0.9.33</version>
    </dependency>
    ```
 
@@ -21,7 +21,7 @@ On top of the `Core` component that sends logs to Loki this project gives you Lo
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender</artifactId>
-     <version>0.1.0</version>
+     <version>0.9.33</version>
    </dependency>
    ```
 
