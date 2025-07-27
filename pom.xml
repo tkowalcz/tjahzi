@@ -16,7 +16,7 @@
 
     <modules>
         <module>core</module>
-        <!--        <module>loki-protobuf</module>-->
+        <module>loki-protobuf</module>
 
         <module>log4j2-appender</module>
         <module>log4j2-appender-nodep</module>
