@@ -16,7 +16,7 @@
 
     <modules>
         <module>core</module>
-        <!--        <module>loki-protobuf</module>-->
+        <module>loki-protobuf</module>
 
         <module>log4j2-appender</module>
         <module>log4j2-appender-nodep</module>
@@ -93,13 +93,6 @@
 
     <!-- Only tests -->
     <dependencies>
-        <dependency>
-            <groupId>pl.tkowalcz.tjahzi</groupId>
-            <artifactId>loki-protobuf</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>io.rest-assured</groupId>

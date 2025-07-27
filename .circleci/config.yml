@@ -26,7 +26,7 @@ jobs:
 
       - run:
           name: Install module deps
-          command: mvn package install -Dmaven.test.skip=true
+          command: mvn package install -Dmaven.test.skip=true -ntp
 
       # Download maven dependencies so that we can cache them
       # ########################
@@ -43,7 +43,7 @@ jobs:
       # ########################
       - run:
           name: Verify
-          command: mvn clean verify
+          command: mvn clean verify -ntp
 
       - run:
           name: Save test results
