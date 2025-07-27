@@ -73,7 +73,6 @@ workflows:
   release:
     when: << pipeline.parameters.run_workflow_release >>
     jobs:
-      - build-and-test
       - circleci-maven-release-orb/run-maven-release:
           executor: new-java-maven-executor
           mvn-release-prepare-command: >-
