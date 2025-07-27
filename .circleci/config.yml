@@ -75,13 +75,12 @@ workflows:
     jobs:
       - build-and-test
       - circleci-maven-release-orb/run-maven-release:
-          requires:
-            - build-and-test
           executor: new-java-maven-executor
           mvn-release-prepare-command: >-
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
+            sudo apt-get update && \
+            sudo apt-get install openjdk-11-jdk && \
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java && \
+            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac && \
             mvn --batch-mode release:prepare -ntp -DscmCommentPrefix="[skip ci] [maven-release-plugin] "
           mvn-release-perform-command: >-
             mvn --batch-mode release:perform -ntp -DskipTests -s .circleci/.maven.xml
