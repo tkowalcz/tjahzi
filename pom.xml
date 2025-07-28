@@ -5,7 +5,7 @@
     <groupId>pl.tkowalcz.tjahzi</groupId>
     <artifactId>tjahzi-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.36</version>
+    <version>0.9.37-SNAPSHOT</version>
 
     <name>Tjahzi</name>
     <description>Tjahzi is a low overhead logging client for Loki
@@ -28,7 +28,7 @@
             scm:git:git@github.com:tkowalcz/tjahzi.git
         </developerConnection>
         <url>https://github.com/tkowalcz/tjahzi</url>
-        <tag>tjahzi-parent-0.9.36</tag>
+        <tag>tjahzi-0.7</tag>
     </scm>
 
     <distributionManagement>
