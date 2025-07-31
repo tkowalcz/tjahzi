@@ -5,7 +5,6 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
-import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
 public class DropwizardMonitoringModule implements MonitoringModule {
@@ -40,11 +39,6 @@ public class DropwizardMonitoringModule implements MonitoringModule {
         channelInactive = metricRegistry.counter(prefix + ".channelInactive");
         agentErrors = metricRegistry.counter(prefix + ".agentErrors");
         responseErrors = metricRegistry.counter(prefix + ".responseErrors");
-    }
-
-    @Override
-    public Clock getClock() {
-        return Clock.systemUTC();
     }
 
     @Override
