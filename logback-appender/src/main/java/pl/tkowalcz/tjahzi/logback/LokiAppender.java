@@ -68,7 +68,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
         String threadName = event.getThreadName();
         ByteBuffer logLine = actualEncoder.apply(event);
         Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
-        
+
         LabelSerializer labelSerializer = LabelSerializers.threadLocal();
         appendLogLabel(labelSerializer, logLevel);
         appendLoggerLabel(labelSerializer, loggerName);
@@ -90,7 +90,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     }
 
     private void appendLoggerLabel(LabelSerializer labelSerializer, String loggerName) {
-         if (loggerNameLabel != null) {
+        if (loggerNameLabel != null) {
             labelSerializer.appendLabel(loggerNameLabel, loggerName);
         }
     }
@@ -100,6 +100,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
             labelSerializer.appendLabel(threadNameLabel, threadName);
         }
     }
+
     @SuppressWarnings("ForLoopReplaceableByForEach") // Allocator goes brrrr
     private void appendMdcLogLabels(LabelSerializer serializer,
                                     Map<String, String> mdcPropertyMap) {
@@ -141,6 +142,10 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     @Override
     public void stop() {
+        if (monitoringModuleWrapper != null) {
+            monitoringModuleWrapper.onClose();
+        }
+
         loggingSystem.close(
                 (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
                 thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)

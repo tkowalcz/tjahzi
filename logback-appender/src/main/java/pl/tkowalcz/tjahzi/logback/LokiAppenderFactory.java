@@ -6,6 +6,7 @@ import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.http.ClientConfiguration;
 import pl.tkowalcz.tjahzi.http.HttpClientFactory;
 import pl.tkowalcz.tjahzi.http.NettyHttpClient;
+import pl.tkowalcz.tjahzi.stats.LoggingMonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
@@ -63,7 +64,11 @@ public class LokiAppenderFactory {
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
 
-        monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+        if (configurator.isVerbose()) {
+            monitoringModuleWrapper.setMonitoringModule(new LoggingMonitoringModule(configurator::addError));
+        } else {
+            monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+        }
 
         NettyHttpClient httpClient = HttpClientFactory
                 .defaultFactory()

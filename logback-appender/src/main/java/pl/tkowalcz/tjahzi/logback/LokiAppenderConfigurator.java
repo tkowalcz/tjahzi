@@ -20,6 +20,8 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     private boolean useDaemonThreads;
 
+    private boolean verbose;
+
     private String username;
 
     private String password;
@@ -91,6 +93,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setUseDaemonThreads(boolean useDaemonThreads) {
         this.useDaemonThreads = useDaemonThreads;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     public String getUsername() {

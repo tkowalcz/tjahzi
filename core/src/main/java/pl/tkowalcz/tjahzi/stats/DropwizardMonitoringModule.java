@@ -111,15 +111,15 @@ public class DropwizardMonitoringModule implements MonitoringModule {
     @Override
     public String toString() {
         return "StandardMonitoringModule{" +
-                "droppedPuts=" + droppedPuts.getCount() +
-                ", httpConnectAttempts=" + httpConnectAttempts +
-                ", sentHttpRequests=" + sentHttpRequests +
-                ", sentKilobytes=" + (sentBytes.getCount() / 1024) +
-                ", failedHttpRequests=" + failedHttpRequests +
-                ", retriedHttpRequests=" + retriedHttpRequests +
-                ", httpResponses=" + httpResponses +
-                ", channelInactive=" + channelInactive +
-                ", agentErrors=" + agentErrors +
-                '}';
+               "droppedPuts=" + droppedPuts.getCount() +
+               ", httpConnectAttempts=" + httpConnectAttempts +
+               ", sentHttpRequests=" + sentHttpRequests +
+               ", sentKilobytes=" + (sentBytes.getCount() / 1024) +
+               ", failedHttpRequests=" + failedHttpRequests +
+               ", retriedHttpRequests=" + retriedHttpRequests +
+               ", httpResponses=" + httpResponses +
+               ", channelInactive=" + channelInactive +
+               ", agentErrors=" + agentErrors +
+               '}';
     }
 }

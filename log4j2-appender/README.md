@@ -358,3 +358,9 @@ If set to true Tjahzi will run all it's threads as daemon threads.
 Use this option if you do not want to explicitly close the logging system and still want to make sure Tjahzi internal 
 threads will not prevent JVM from closing down. Note that this can result in unflushed logs not being delivered when the
 JVM is closed.
+
+#### verbose (optional, default = false)
+
+If set to true, Tjahzi will log internal errors and connection errors to Log4j2's internal status logger. This includes agent errors, 
+pipeline errors, dropped log entries, HTTP errors, failed HTTP requests, and connection issues. When enabled, these errors 
+will be logged using Log4j2's StatusLogger, which typically outputs to the console or configured status destination.
