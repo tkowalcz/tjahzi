@@ -76,6 +76,6 @@ workflows:
       - circleci-maven-release-orb/run-maven-release:
           executor: new-java-maven-executor
           mvn-release-prepare-command: >-
-            mvn --batch-mode release:prepare -ntp -DscmCommentPrefix="[skip ci] [maven-release-plugin] "
+            mvn --batch-mode release:prepare -ntp -DskipTests -DscmCommentPrefix="[skip ci] [maven-release-plugin] "
           mvn-release-perform-command: >-
             mvn --batch-mode release:perform -ntp -DskipTests -s .circleci/.maven.xml

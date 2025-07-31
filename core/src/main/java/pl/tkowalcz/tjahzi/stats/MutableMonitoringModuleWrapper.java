@@ -67,4 +67,9 @@ public class MutableMonitoringModuleWrapper implements MonitoringModule {
     public void recordResponseTime(long time) {
         monitoringModule.recordResponseTime(time);
     }
+
+    @Override
+    public void onClose() {
+        monitoringModule.onClose();
+    }
 }

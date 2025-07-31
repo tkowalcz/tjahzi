@@ -31,4 +31,6 @@ public interface MonitoringModule {
     void incrementHttpErrors(int status, String content);
 
     void recordResponseTime(long time);
+
+    default void onClose() {}
 }

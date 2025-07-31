@@ -99,6 +99,8 @@ public class LokiAppender extends AbstractAppender {
     ) {
         setStopping();
 
+        monitoringModuleWrapper.onClose();
+
         boolean stopped = super.stop(
                 timeout,
                 timeUnit,
