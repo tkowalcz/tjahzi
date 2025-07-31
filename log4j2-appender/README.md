@@ -15,7 +15,7 @@ Log4j2 appender seemed like a good first.
    </dependency>
    ```
 
-   If you already use a compatible version of Netty in your project then to reduce the size of your dependencies include
+   If you already use a compatible version of Netty in your project, then to reduce the size of your dependencies, include
    regular appender distribution:
 
    ```xml
@@ -62,7 +62,7 @@ will configure the appender to call to URL: `http://loki.mydomain.com:3100/loki/
 
 Tjahzi can send logs to Grafana Cloud. It needs two things to be configured:
 
-- Set port number to `443` which switches HTTP client into HTTPS mode.
+- Set port number to `443` which switches an HTTP client into HTTPS mode.
 - Specify `username` and `password` for HTTP basic authentication that Grafana uses.
 
 Password is your "Grafana.com API Key" and can be generated in "Grafana datasource settings". The host in below example
@@ -117,10 +117,11 @@ attribute of configuration so that the appender can be found.
 ### Configuring connection parameters individually and using URL
 
 Connection is configured by providing parameters like host or port explicitly in dedicated tags or by using a URL 
-that has them all "inline". First we will show how the individual parameters work. At a minimum Tjahzi needs host and 
+that has them all embedded. First, we will show how the individual parameters work. At a minimum, Tjahzi needs host and 
 port configuration to connect to Loki, e.g.:
 
 ```xml
+
 <host>example.com</host>
 <port>3100</port>
 ```
@@ -134,7 +135,7 @@ If port is equal to `443` then SSL will be used. You can also configure SSL manu
 <useSSL>true</useSSL>
 ```
 
-You can also override the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind reverse proxy and
+You can also override the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind the reverse proxy and
 additional path mapping is used:
 
 ```xml
@@ -152,8 +153,8 @@ All these parameters can be configured in one place using a URL:
 
 Note that all previously mentioned tags (host, port, useSSL, logEndpoint) cannot be used when using URL.
 
-URL consists of four parts: protocol, host, port, path. Some of them may be omitted and there are defaults that depend 
-on contents of other parts of the URL. This table has a rundown of all viable configurations:
+URL consists of four parts: protocol, host, port, and path. Some of them may be omitted, and there are defaults that depend 
+on the contents of other parts of the URL. This table has a rundown of all viable configurations:
 
 | Section  | Default                    | Comment                                                                             |
 |----------|----------------------------|-------------------------------------------------------------------------------------|
@@ -181,11 +182,11 @@ runtime (allocation free).
 
 *NOTE: This process could have been executed for every lookup type at runtime (for each log message). This approach was
 deemed too expensive. If you need a mechanism to replace a variable (other than context/MDC) after logging system
-initialization I would love to hear your use case - please file an issue.*
+initialization, I would love to hear your use case - please file an issue.*
 
 ## Patterns in Labels
 
-Alternative way of specifying label contents is via pattern attribute:
+An alternative way of specifying label contents is via a pattern attribute:
 
 ```xml
 
@@ -194,13 +195,13 @@ Alternative way of specifying label contents is via pattern attribute:
 
 This pattern is compatible with
 Log4j [pattern layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout). In fact, we reuse log4j
-internal classes for this implementation. It is generally efficient and allocation free as
+internal classes for this implementation. It is generally efficient and allocation-free as
 per [documentation](https://logging.apache.org/log4j/log4j-2.12.1/manual/garbagefree.html#PatternLayout).
 
-## Properties file based configuration
+## Properties-file-based configuration
 
 Properties file is a simple configuration format, but it is not always clear how to implement more advanced features
-such as components instantiated more than once. For basic overview of how to configure log4j using properties file
+such as components instantiated more than once. For a basic overview of how to configure log4j using a properties file
 see [official documentation](https://logging.apache.org/log4j/2.x/manual/configuration.html#Properties).
 
 <details>
@@ -250,7 +251,7 @@ case-insensitive**).
 #### Host (required unless URL is specified)
 
 Network host address of Loki instance. Either IP address or host name. It will be passed to Netty and end up being
-resolved by call to `InetSocketAddress.createUnresolved`.
+resolved by call to `InetSocketAddress::createUnresolved`.
 
 #### Port (required unless URL is specified)
 
@@ -259,16 +260,16 @@ automatically switch to HTTPS.
 
 #### useSSL (optional)
 
-Enable secure (HTTPS) communication regardless of configured port number.
+Enable secure (HTTPS) communication regardless of the configured port number.
 
 #### logEndpoint (optional)
 
-Overrides the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind reverse proxy and
+Overrides the default endpoint to which Tjahzi sends data. This can be useful if Loki is behind a reverse proxy and
 additional path mapping is used.
 
-#### URL (optional - replaces usage of  host, port, useSSL, logEndpoint)
+#### URL (optional - replaces usage of host, port, useSSL, logEndpoint)
 
-Configure connection in one place instead of using host, port etc. See [this section](#configuring-connection-parameters-individually-and-using-URL).
+Configure connection in one place instead of using host, port, etc. See [this section](#configuring-connection-parameters-individually-and-using-URL).
 
 #### Username (optional)
 
@@ -280,17 +281,17 @@ Password for HTTP basic auth.
 
 #### Header (optional)
 
-This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to
+This tag can be used multiple times to specify additional headers that are passed to the Loki instance. One example is to
 pass a `X-Scope-OrgID` header
 when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).
 
 #### Label (optional)
 
-Specify additional labels attached to each log line sent via this appender instance. See also note
+Specify additional labels attached to each log line sent via this appender instance. See also a note 
 about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
 
 You can use value attribute to specify static text. You can use `${}` variable substitution inside that text and Tjahzi
-will resolve variables once at startup. If the varaible is a context/MDC lookup it will be resolved dynamically for each
+will resolve variables once at startup. If the variable is a context/MDC lookup, it will be resolved dynamically for each
 log line.
 
 This tag also supports `pattern` attribute where you can use pattern layout expressions that will be resolved at
@@ -298,7 +299,7 @@ runtime.
 
 #### LogLevelLabel (optional)
 
-If defined then log level label of configured name will be added to each line sent to Loki. It will contain Log4j log
+If defined, then a log level label of the configured name will be added to each line sent to Loki. It will contain Log4j log
 level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
 
 #### bufferSizeMegabytes (optional, default = 32)
@@ -308,19 +309,18 @@ See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizin
 
 #### maxLogLineSizeKilobytes (optional, default = 10)
 
-Size of an intermediate thread local buffer that is used by log4j to serialise single log message into. Log lines larger
-than that will be split into multiple log entries (
-see [wiki](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing#note-on-thread-local-buffer) for discussion).
+Size of an intermediate thread local buffer that log4j uses to serialise a single log message into. Log lines larger
+than that will be split into multiple log entries (see [wiki](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing#note-on-thread-local-buffer) for discussion).
 
 #### maxRetries (optional, default = 3)
 
-Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one
-batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need
-to retry many times then next batches will probably fail too).
+Maximum number of retries to perform when delivering a log message to Loki. Log buffer data is delivered in order, one
+batch after the other, so too many retries will block delivery of subsequent log batches (on the other hand if we need
+to retry many times, then next batches will probably fail too).
 
 #### connectTimeoutMillis (optional, default = 5000)
 
-This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue
+This configures socket connect timeout when connecting to Loki. After an unsuccessful connection attempt, it will continue
 to retry indefinitely employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3).
 
 #### readTimeoutMillis (optional, default = 60 000)
@@ -341,19 +341,19 @@ in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtai
 
 #### logShipperWakeupIntervalMillis (optional, default = 10)
 
-The agent that reads data from log buffer, compresses it and sends to Loki via http is called `LogShipper`. This property
+The agent that reads data from log buffer, compresses it, and sends to Loki via http is called `LogShipper`. This property
 controls how often it wakes up to perform its duties. Other properties control how often the data should be sent to Loki
-(`batchSize`, `batchWait`) this one just control how often to wake up and check for these conditions. In versions before
+(`batchSize`, `batchWait`) this one just controls how often to wake up and check for these conditions. In versions before
 `0.9.17` it was left at default 1ms which caused high CPU usage on some setups.
 
 #### shutdownTimeoutSeconds (optional, default = 10s)
 
 On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This
-property sets limit on how long to wait for this to complete before proceeding with shutdown.
+property sets a limit on how long to wait for this to complete before proceeding with shutdown.
 
 #### useDaemonThreads (optional, default = false)
 
-If set to true Tjahzi will run all it's threads as daemon threads. 
+If set to true, Tjahzi will run all its threads as daemon threads. 
 
 Use this option if you do not want to explicitly close the logging system and still want to make sure Tjahzi internal 
 threads will not prevent JVM from closing down. Note that this can result in unflushed logs not being delivered when the
@@ -361,6 +361,12 @@ JVM is closed.
 
 #### verbose (optional, default = false)
 
-If set to true, Tjahzi will log internal errors and connection errors to Log4j2's internal status logger. This includes agent errors, 
-pipeline errors, dropped log entries, HTTP errors, failed HTTP requests, and connection issues. When enabled, these errors 
-will be logged using Log4j2's StatusLogger, which typically outputs to the console or configured status destination.
+If set to true, Tjahzi will log internal errors and connection errors to Log4j2's internal 
+[status logger](https://logging.apache.org/log4j/2.x/manual/status-logger.html). This includes agent errors, 
+pipeline errors, dropped log entries, HTTP errors, failed HTTP requests, and connection issues.
+
+It's best used in conjunction with `-Dlog4j2.debug` setting, 
+see [log4j2 docs](https://logging.apache.org/log4j/2.x/manual/status-logger.html#config) for more information.
+
+This functionality is provided using `LokiAppender::setMonitoringModule`. It will not work if you set your own 
+custom monitoring module, which should be fine—you already have set up your own way to monitor errors.
