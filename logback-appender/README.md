@@ -11,7 +11,7 @@ gives you Logback appender.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender-nodep</artifactId>
-     <version>0.9.33</version>
+     <version>0.9.38</version>
    </dependency>
    ```
 
@@ -23,7 +23,7 @@ gives you Logback appender.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender</artifactId>
-     <version>0.9.33</version>
+     <version>0.9.38</version>
    </dependency>
    ```
 
