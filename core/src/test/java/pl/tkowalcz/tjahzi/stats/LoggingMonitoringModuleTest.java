@@ -58,6 +58,6 @@ class LoggingMonitoringModuleTest {
         assertDoesNotThrow(module::onClose);
 
         // Then
-        assertThat(actual).contains("Tjahzi appender is being closed");
+        assertThat(actual).contains("[Tjahzi] Appender is being closed");
     }
 }
