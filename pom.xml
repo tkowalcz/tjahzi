@@ -21,6 +21,9 @@
 
         <module>logback-appender</module>
         <module>logback-appender-nodep</module>
+
+        <module>reload4j-appender</module>
+        <module>reload4j-appender-nodep</module>
     </modules>
 
     <scm>

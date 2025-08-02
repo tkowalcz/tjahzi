@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pl.tkowalcz.tjahzi</groupId>
+        <artifactId>tjahzi-parent</artifactId>
+        <version>0.9.39-SNAPSHOT</version>
+    </parent>
+
+    <name>reload4j-appender-nodep</name>
+    <artifactId>reload4j-appender-nodep</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <!--add comma separated artifact names from dependencies, to be included in unpacking-->
+        <project.build.unpack_includes>reload4j-appender</project.build.unpack_includes>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>pl.tkowalcz.tjahzi</groupId>
+            <artifactId>reload4j-appender</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classifier>sources</classifier>
+                    <type>jar</type>
+                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                    <includeArtifactIds>${project.build.unpack_includes}</includeArtifactIds>
+                    <includes>**\/*.java</includes>
+                    <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>ch.qos.reload4j</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.agrona</pattern>
+                                    <shadedPattern>pl.tkowalcz.tjahzi.org.agrona</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>pl.tkowalcz.tjahzi.io.netty</shadedPattern>
+                                </relocation>
+                            </relocations>
+
+                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <minimizeJar>true</minimizeJar>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
