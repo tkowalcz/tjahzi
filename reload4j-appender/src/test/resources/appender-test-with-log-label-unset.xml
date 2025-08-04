@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
     <appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
         <param name="host" value="${loki.host}"/>
         <param name="port" value="${loki.port}"/>
