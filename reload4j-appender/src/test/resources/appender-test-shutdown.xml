@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+        <param name="host" value="${loki.host}"/>
+        <param name="port" value="${loki.port}"/>
+
+        <param name="bufferSizeMegabytes" value="2"/>
+        <param name="batchWait" value="1000"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p %c - %m%n"/>
+        </layout>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+    </appender>
+
+    <root>
+        <priority value="INFO"/>
+        <appender-ref ref="loki"/>
+    </root>
+</log4j:configuration>

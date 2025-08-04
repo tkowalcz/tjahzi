@@ -156,12 +156,12 @@ Note that all previously mentioned tags (host, port, useSSL, logEndpoint) cannot
 URL consists of four parts: protocol, host, port, and path. Some of them may be omitted, and there are defaults that depend 
 on the contents of other parts of the URL. This table has a rundown of all viable configurations:
 
-| Section  | Default                    | Comment                                                                             |
-|----------|----------------------------|-------------------------------------------------------------------------------------|
-| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivlent to setting `useUSSL` |
-| Host     | None (must be provided)    |                                                                                     |
-| Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https         |
-| Path     | '/loki/api/v1/push'        |                                                                                     |
+| Section  | Default                    | Comment                                                                              |
+|----------|----------------------------|--------------------------------------------------------------------------------------|
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useUSSL` |
+| Host     | None (must be provided)    |                                                                                      |
+| Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https          |
+| Path     | '/loki/api/v1/push'        |                                                                                      |
 
 Some examples of correct URLs:
 
