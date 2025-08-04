@@ -5,7 +5,7 @@
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.39</version>
+        <version>0.9.40-SNAPSHOT</version>
     </parent>
 
     <name>core</name>
