@@ -17,7 +17,7 @@ both frameworks.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>reload4j-appender-nodep</artifactId>
-     <version>0.9.38</version>
+     <version>0.9.39</version>
    </dependency>
    ```
 
@@ -29,7 +29,7 @@ both frameworks.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>reload4j-appender</artifactId>
-     <version>0.9.38</version>
+     <version>0.9.39</version>
    </dependency>
    ```
 
@@ -241,7 +241,7 @@ excluding the `reload4j` dependency manually. In maven:
 <dependency>
     <groupId>pl.tkowalcz.tjahzi</groupId>
     <artifactId>reload4j-appender</artifactId>
-    <version>0.9.38</version>
+    <version>0.9.39</version>
     <exclusions>
         <exclusion>
             <groupId>ch.qos.reload4j</groupId>
