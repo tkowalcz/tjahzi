@@ -33,6 +33,12 @@ public class LoggingMonitoringModule extends StandardMonitoringModule {
     }
 
     @Override
+    public void incrementRetriedHttpRequests() {
+        super.incrementRetriedHttpRequests();
+        logger.accept("[Tjahzi] Retrying failed http request.");
+    }
+
+    @Override
     public void incrementHttpErrors(int status, String message) {
         super.incrementHttpErrors(status, message);
         logger.accept("[Tjahzi] HTTP error occurred - status: " + status + ", message: " + message + ".");
