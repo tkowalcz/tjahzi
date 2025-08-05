@@ -69,7 +69,7 @@ class LokiAppenderHttpsUrlConnectionReverseProxyTest extends IntegrationTest {
                         .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                         .body(
                                 "data.result.values",
-                                hasItem(
+                                hasItems(
                                         hasItems(
                                                 hasItems(
                                                         containsString("p.t.t.l.LokiAppenderHttpsUrlConnectionReverseProxyTest - " + expectedLogLine)

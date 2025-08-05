@@ -9,11 +9,11 @@ import org.testcontainers.containers.NginxContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
-import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LokiAppenderHttpsUrlConnectionReverseProxyTest extends IntegrationTest {
 
@@ -62,7 +62,7 @@ class LokiAppenderHttpsUrlConnectionReverseProxyTest extends IntegrationTest {
         logger.info(expectedLogLine);
 
         // Then
-        LokiAssert.assertThat(loki)
+        assertThat(loki)
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))
                         .body("data.result[0].stream.server", equalTo("127.0.0.1"))

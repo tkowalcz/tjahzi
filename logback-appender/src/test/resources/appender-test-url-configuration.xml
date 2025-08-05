@@ -20,7 +20,9 @@
         </label>
     </appender>
 
-    <root level="debug">
-        <appender-ref ref="Loki"/>
+    <root level="off">
     </root>
+    <logger name="pl.tkowalcz" level="ALL">
+        <appender-ref ref="Loki"/>
+    </logger>
 </configuration>
