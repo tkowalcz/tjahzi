@@ -17,7 +17,7 @@ public class EntrySerializer {
             ByteBuf target
     ) {
         int messageStartIndex = target.writerIndex();
-        target.writeInt(0);
+        target.writeIntLE(0);
 
         target.writeByte(TIMESTAMP_FIELD_NUMBER << 3 | LENGTH_DELIMITED_TYPE);
         TimestampSerializer.serialize(epochMillisecond, nanoOfMillisecond, target);

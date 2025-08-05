@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+        <param name="host" value="${loki.host}"/>
+        <param name="port" value="${loki.port}"/>
+
+        <param name="logLevelLabel" value="log_level"/>
+
+        <header>
+            <name>X-Org-Id</name>
+            <value>Circus</value>
+        </header>
+
+        <label>
+            <name>test</name>
+            <value>shouldSendLogLevelAsConfigured</value>
+        </label>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n"/>
+        </layout>
+    </appender>
+
+    <root>
+        <priority value="INFO"/>
+        <appender-ref ref="loki"/>
+    </root>
+</log4j:configuration>

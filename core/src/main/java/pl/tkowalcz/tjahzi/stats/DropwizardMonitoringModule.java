@@ -5,7 +5,6 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
-import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
 public class DropwizardMonitoringModule implements MonitoringModule {
@@ -40,11 +39,6 @@ public class DropwizardMonitoringModule implements MonitoringModule {
         channelInactive = metricRegistry.counter(prefix + ".channelInactive");
         agentErrors = metricRegistry.counter(prefix + ".agentErrors");
         responseErrors = metricRegistry.counter(prefix + ".responseErrors");
-    }
-
-    @Override
-    public Clock getClock() {
-        return Clock.systemUTC();
     }
 
     @Override
@@ -111,15 +105,15 @@ public class DropwizardMonitoringModule implements MonitoringModule {
     @Override
     public String toString() {
         return "StandardMonitoringModule{" +
-                "droppedPuts=" + droppedPuts.getCount() +
-                ", httpConnectAttempts=" + httpConnectAttempts +
-                ", sentHttpRequests=" + sentHttpRequests +
-                ", sentKilobytes=" + (sentBytes.getCount() / 1024) +
-                ", failedHttpRequests=" + failedHttpRequests +
-                ", retriedHttpRequests=" + retriedHttpRequests +
-                ", httpResponses=" + httpResponses +
-                ", channelInactive=" + channelInactive +
-                ", agentErrors=" + agentErrors +
-                '}';
+               "droppedPuts=" + droppedPuts.getCount() +
+               ", httpConnectAttempts=" + httpConnectAttempts +
+               ", sentHttpRequests=" + sentHttpRequests +
+               ", sentKilobytes=" + (sentBytes.getCount() / 1024) +
+               ", failedHttpRequests=" + failedHttpRequests +
+               ", retriedHttpRequests=" + retriedHttpRequests +
+               ", httpResponses=" + httpResponses +
+               ", channelInactive=" + channelInactive +
+               ", agentErrors=" + agentErrors +
+               '}';
     }
 }

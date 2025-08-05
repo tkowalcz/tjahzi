@@ -20,6 +20,8 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     private boolean useDaemonThreads;
 
+    private boolean verbose;
+
     private String username;
 
     private String password;
@@ -29,7 +31,6 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
     private int maxRetries = 3;
 
     private int bufferSizeMegabytes = 32;
-    private boolean useOffHeapBuffer = true;
 
     private String logLevelLabel;
     private String loggerNameLabel;
@@ -94,6 +95,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
         this.useDaemonThreads = useDaemonThreads;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -140,14 +149,6 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public void setBufferSizeMegabytes(int bufferSizeMegabytes) {
         this.bufferSizeMegabytes = bufferSizeMegabytes;
-    }
-
-    public boolean isUseOffHeapBuffer() {
-        return useOffHeapBuffer;
-    }
-
-    public void setUseOffHeapBuffer(boolean useOffHeapBuffer) {
-        this.useOffHeapBuffer = useOffHeapBuffer;
     }
 
     public String getLogLevelLabel() {

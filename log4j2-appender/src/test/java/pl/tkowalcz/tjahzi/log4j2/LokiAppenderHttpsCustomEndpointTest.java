@@ -11,7 +11,9 @@ import org.testcontainers.junit.jupiter.Container;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 
 class LokiAppenderHttpsCustomEndpointTest extends IntegrationTest {
 

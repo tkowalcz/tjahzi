@@ -10,7 +10,10 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import pl.tkowalcz.tjahzi.logback.infra.IntegrationTest;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static pl.tkowalcz.tjahzi.logback.infra.LokiAssert.assertThat;
 
 class LokiAppenderHttpsCustomEndpointTest extends IntegrationTest {

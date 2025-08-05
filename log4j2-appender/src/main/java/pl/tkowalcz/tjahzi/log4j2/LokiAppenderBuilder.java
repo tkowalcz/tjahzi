@@ -14,6 +14,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.log4j2.labels.Label;
 import pl.tkowalcz.tjahzi.log4j2.labels.LabelFactory;
 import pl.tkowalcz.tjahzi.log4j2.labels.LabelsDescriptor;
+import pl.tkowalcz.tjahzi.stats.LoggingMonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
@@ -72,9 +73,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private int bufferSizeMegabytes = 32;
 
     @PluginBuilderAttribute
-    private boolean useOffHeapBuffer = true;
-
-    @PluginBuilderAttribute
     private String logLevelLabel;
 
     @PluginBuilderAttribute
@@ -94,6 +92,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     @PluginBuilderAttribute
     private int maxRequestsInFlight = 100;
+
+    @PluginBuilderAttribute
+    private boolean verbose;
 
     @PluginElement("Headers")
     private Header[] headers;
@@ -122,7 +123,11 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .toArray(String[]::new);
 
         MutableMonitoringModuleWrapper monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
-        monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+        if (verbose) {
+            monitoringModuleWrapper.setMonitoringModule(new LoggingMonitoringModule(LOGGER::error));
+        } else {
+            monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+        }
 
         NettyHttpClient httpClient = HttpClientFactory
                 .defaultFactory()
@@ -158,7 +163,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 bufferSizeBytes,
                 logShipperWakeupIntervalMillis,
                 TimeUnit.SECONDS.toMillis(shutdownTimeoutSeconds),
-                isUseOffHeapBuffer(),
                 useDaemonThreads
         );
 
@@ -280,14 +284,6 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         this.bufferSizeMegabytes = bufferSizeMegabytes;
     }
 
-    public boolean isUseOffHeapBuffer() {
-        return useOffHeapBuffer;
-    }
-
-    public void setUseOffHeapBuffer(boolean useOffHeapBuffer) {
-        this.useOffHeapBuffer = useOffHeapBuffer;
-    }
-
     public String getLogLevelLabel() {
         return logLevelLabel;
     }
@@ -354,5 +350,13 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setLabels(Label[] labels) {
         this.labels = labels;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 }

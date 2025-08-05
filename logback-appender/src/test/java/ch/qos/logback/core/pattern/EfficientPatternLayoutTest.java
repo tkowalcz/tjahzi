@@ -11,6 +11,7 @@ import ch.qos.logback.classic.testUtil.SampleConverter;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.pattern.parser.AbstractPatternLayoutBaseTest;
+import ch.qos.logback.core.spi.ScanException;
 import ch.qos.logback.core.testUtil.StringListAppender;
 import ch.qos.logback.core.util.OptionHelper;
 import org.junit.Before;
@@ -37,6 +38,8 @@ public class EfficientPatternLayoutTest extends AbstractPatternLayoutBaseTest<IL
     public void setUp() {
         patternLayout = getPatternLayoutBase();
         patternLayout.setContext(loggerContext);
+
+        loggerContext.setMDCAdapter(MDC.getMDCAdapter());
     }
 
     @Override
@@ -191,7 +194,7 @@ public class EfficientPatternLayoutTest extends AbstractPatternLayoutBaseTest<IL
     }
 
     @Test
-    public void mdcWithDefaultValue() {
+    public void mdcWithDefaultValue() throws ScanException {
         // Given
         String pattern = "%msg %mdc{foo} %mdc{bar:-[null]}";
         MDC.put("foo", "foo");
@@ -268,7 +271,7 @@ public class EfficientPatternLayoutTest extends AbstractPatternLayoutBaseTest<IL
     }
 
     @Test
-    public void replaceNewline() {
+    public void replaceNewline() throws ScanException {
         // Given
         String pattern = "%replace(A\nB){'\n', '\n\t'}";
         ILoggingEvent loggingEvent = new LoggingEvent(

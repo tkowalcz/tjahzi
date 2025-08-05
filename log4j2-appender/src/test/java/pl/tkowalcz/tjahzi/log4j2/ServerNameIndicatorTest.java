@@ -18,7 +18,9 @@ import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 
 @SuppressWarnings({"rawtypes", "resource"})
 @Testcontainers

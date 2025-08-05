@@ -69,7 +69,6 @@ class LoggingSystemSanityCheckTest {
                 1024 * 1024,
                 250,
                 10_000,
-                false,
                 false
         );
 
@@ -126,7 +125,7 @@ class LoggingSystemSanityCheckTest {
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
                             .body("data.result[0].stream.level", equalTo("warn"))
-                            .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000 +882), "Test"));
+                            .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000 + 882), "Test"));
                 });
     }
 }

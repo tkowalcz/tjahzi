@@ -6,8 +6,15 @@ orbs:
 jobs:
   build-and-test:
     machine:
-      image: ubuntu-2004:202008-01
+      image: ubuntu-2204:2024.11.1
     steps:
+      - run:
+          name: Install OpenJDK 11
+          command: |
+            sudo apt-get update && sudo apt-get install openjdk-11-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
+            java -version
       - checkout
 
       # Download and cache dependencies
@@ -19,7 +26,7 @@ jobs:
 
       - run:
           name: Install module deps
-          command: mvn package install -Dmaven.test.skip=true
+          command: mvn package install -Dmaven.test.skip=true -ntp
 
       # Download maven dependencies so that we can cache them
       # ########################
@@ -36,7 +43,7 @@ jobs:
       # ########################
       - run:
           name: Verify
-          command: mvn clean verify
+          command: mvn clean verify -ntp
 
       - run:
           name: Save test results
@@ -51,7 +58,7 @@ jobs:
 executors:
   new-java-maven-executor:
     machine:
-      image: ubuntu-2004:202008-01
+      image: ubuntu-2204:2024.11.1
 
 parameters:
   run_workflow_release:
@@ -66,10 +73,9 @@ workflows:
   release:
     when: << pipeline.parameters.run_workflow_release >>
     jobs:
-      - build-and-test
       - circleci-maven-release-orb/run-maven-release:
-          requires:
-              - build-and-test
           executor: new-java-maven-executor
+          mvn-release-prepare-command: >-
+            mvn --batch-mode release:prepare -ntp -DskipTests -DscmCommentPrefix="[skip ci] [maven-release-plugin] "
           mvn-release-perform-command: >-
-            mvn --batch-mode release:perform -DskipTests -s .circleci/.maven.xml
+            mvn --batch-mode release:perform -ntp -DskipTests -s .circleci/.maven.xml

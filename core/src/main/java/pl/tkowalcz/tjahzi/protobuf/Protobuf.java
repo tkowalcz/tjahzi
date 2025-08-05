@@ -9,7 +9,7 @@ public class Protobuf {
 
     public static void writeSize(ByteBuf target, int messageStartIndex) {
         int messageSize = target.writerIndex() - messageStartIndex - Integer.BYTES;
-        target.setInt(
+        target.setIntLE(
                 messageStartIndex,
                 getFixed32Varint(messageSize)
         );
@@ -21,7 +21,7 @@ public class Protobuf {
         int byte3 = ((value >>> 14) & 0x07F) | 0x80;
         int byte4 = ((value >>> 21) & 0x07F);
 
-        return intFromBytes(
+        return intFromBytesLE(
                 (byte) byte1,
                 (byte) byte2,
                 (byte) byte3,
@@ -41,10 +41,10 @@ public class Protobuf {
         }
     }
 
-    public static int intFromBytes(byte byte1, byte byte2, byte byte3, byte byte4) {
-        return (byte1 & 0xFF) << 24
-                | (byte2 & 0xFF) << 16
-                | (byte3 & 0xFF) << 8
-                | (byte4 & 0xFF);
+    public static int intFromBytesLE(byte byte1, byte byte2, byte byte3, byte byte4) {
+        return (byte1 & 0xFF)
+               | (byte2 & 0xFF) << 8
+               | (byte3 & 0xFF) << 16
+               | (byte4 & 0xFF) << 24;
     }
 }

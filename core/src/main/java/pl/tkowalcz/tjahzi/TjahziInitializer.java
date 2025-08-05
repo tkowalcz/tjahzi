@@ -10,6 +10,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Map;
 
 public class TjahziInitializer {
@@ -25,11 +26,10 @@ public class TjahziInitializer {
             int bufferSizeBytes,
             long logShipperWakeupIntervalMillis,
             long shutdownTimeoutMillis,
-            boolean offHeap,
             boolean useDaemonThreads
     ) {
         bufferSizeBytes = findNearestPowerOfTwo(bufferSizeBytes);
-        ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes, offHeap);
+        ByteBuffer javaBuffer = allocateJavaBuffer(bufferSizeBytes);
 
         ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
                 new UnsafeBuffer(javaBuffer)
@@ -92,15 +92,8 @@ public class TjahziInitializer {
         return bufferSize;
     }
 
-    private ByteBuffer allocateJavaBuffer(
-            int bufferSize,
-            boolean offHeap) {
+    private ByteBuffer allocateJavaBuffer(int bufferSize) {
         int totalSize = bufferSize + RingBufferDescriptor.TRAILER_LENGTH;
-
-        if (offHeap) {
-            return ByteBuffer.allocateDirect(totalSize);
-        }
-
-        return ByteBuffer.allocate(totalSize);
+        return ByteBuffer.allocateDirect(totalSize).order(ByteOrder.LITTLE_ENDIAN);
     }
 }
