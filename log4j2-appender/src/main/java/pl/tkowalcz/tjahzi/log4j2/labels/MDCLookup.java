@@ -2,6 +2,7 @@ package pl.tkowalcz.tjahzi.log4j2.labels;
 
 import org.apache.logging.log4j.core.LogEvent;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class MDCLookup implements LabelPrinter {
@@ -26,5 +27,21 @@ public class MDCLookup implements LabelPrinter {
         } else {
             appendable.accept(defaultValue);
         }
+    }
+
+    @Override
+    public final boolean equals(Object other) {
+        if (other instanceof MDCLookup) {
+            MDCLookup that = (MDCLookup) other;
+            return Objects.equals(this.variableName, that.variableName)
+                   && Objects.equals(this.defaultValue, that.defaultValue);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(variableName, defaultValue);
     }
 }

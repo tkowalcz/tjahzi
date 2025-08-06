@@ -9,7 +9,7 @@ public class LabelPrinterFactory {
 
     private static final Pattern CONTEXT_PATTERN = Pattern.compile("\\$\\{ctx:([^}:]+)(?::-([^}]+))?}");
 
-    public static LabelPrinter parse(Label label) {
+    public static LabelPrinter parse(LabelBase label) {
         return parse(label.getValue());
     }
 

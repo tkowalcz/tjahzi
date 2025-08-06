@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -43,7 +45,8 @@
                     <classifier>sources</classifier>
                     <type>jar</type>
                     <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
-                    <includeArtifactIds>${project.build.unpack_includes}</includeArtifactIds>
+                    <includeArtifactIds>${project.build.unpack_includes}
+                    </includeArtifactIds>
                     <includes>**\/*.java</includes>
                     <overWriteSnapshots>true</overWriteSnapshots>
                 </configuration>
@@ -60,9 +63,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -78,15 +79,18 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.agrona</pattern>
-                                    <shadedPattern>pl.tkowalcz.tjahzi.org.agrona</shadedPattern>
+                                    <shadedPattern>pl.tkowalcz.tjahzi.org.agrona
+                                    </shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.netty</pattern>
-                                    <shadedPattern>pl.tkowalcz.tjahzi.io.netty</shadedPattern>
+                                    <shadedPattern>pl.tkowalcz.tjahzi.io.netty
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
 
-                            <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            <promoteTransitiveDependencies>true
+                            </promoteTransitiveDependencies>
                             <minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>

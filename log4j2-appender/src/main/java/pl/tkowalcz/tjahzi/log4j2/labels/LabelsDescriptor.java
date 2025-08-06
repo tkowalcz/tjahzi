@@ -1,5 +1,6 @@
 package pl.tkowalcz.tjahzi.log4j2.labels;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class LabelsDescriptor {
@@ -30,5 +31,11 @@ public class LabelsDescriptor {
     public Map<String, LabelPrinter> getDynamicLabels() {
         return dynamicLabels;
     }
-}
 
+    public Map<String, LabelPrinter> getAllLabels() {
+        Map<String, LabelPrinter> labels = new HashMap<>(dynamicLabels);
+        staticLabels.forEach((name, value) -> labels.put(name, Literal.of(value)));
+
+        return labels;
+    }
+}

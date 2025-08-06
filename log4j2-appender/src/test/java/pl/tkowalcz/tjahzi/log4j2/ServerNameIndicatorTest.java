@@ -61,9 +61,8 @@ public class ServerNameIndicatorTest {
             )
             .withExposedPorts(3100);
 
-
     @Container
-    public NginxContainer<?> nginx = new NginxContainer<>("nginx:latest")
+    public NginxContainer<?> nginx = new NginxContainer<>("nginx:1.25")
             .withNetwork(network)
             .dependsOn(loki1, loki2)
             .withClasspathResourceMapping("loki.sni.nginx.conf",
@@ -81,6 +80,11 @@ public class ServerNameIndicatorTest {
             .withClasspathResourceMapping("nginx/passwords",
                     "/etc/nginx/passwords",
                     BindMode.READ_ONLY
+            )
+            .waitingFor(Wait
+                    .forHttp("/")
+                    .forStatusCode(200)
+                    .forStatusCode(400)
             )
             .withExposedPorts(81);
 
