@@ -2,6 +2,7 @@ package pl.tkowalcz.tjahzi;
 
 import org.agrona.DirectBuffer;
 import org.agrona.ExpandableArrayBuffer;
+import org.agrona.concurrent.AtomicBuffer;
 
 import java.nio.ByteOrder;
 
@@ -28,7 +29,7 @@ public class LabelSerializer {
     }
 
     public LabelSerializer appendLabelName(String key) {
-        cursor += buffer.putStringAscii(cursor, key);
+        cursor += buffer.putStringAscii(cursor, key, ByteOrder.LITTLE_ENDIAN);
         labelsCount++;
 
         return this;
@@ -95,13 +96,26 @@ public class LabelSerializer {
         return false;
     }
 
+    public int writeLabels(AtomicBuffer target, int targetCursor) {
+        int remaining = sizeBytes();
+        target.putInt(targetCursor, remaining, ByteOrder.LITTLE_ENDIAN);
+        targetCursor += Integer.BYTES;
+
+        target.putInt(targetCursor, labelsCount, ByteOrder.LITTLE_ENDIAN);
+        targetCursor += Integer.BYTES;
+
+        target.putBytes(targetCursor, buffer, 0, remaining);
+
+        return targetCursor + remaining;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
 
         int index = 0;
         while (index < cursor) {
-            index += buffer.getStringAscii(index, result) + Integer.BYTES;
+            index += buffer.getStringAscii(index, result, ByteOrder.LITTLE_ENDIAN) + Integer.BYTES;
         }
 
         return result.toString();

@@ -38,7 +38,8 @@ class LogBufferSerializerDeserializerTest {
                         + 6 * 4 // labels string length indicators
                         + 8 // timestamp millis
                         + 8 // timestamp nanos
-                        + 4 // labels count
+                        + 8 // labels count  + sizeof(int)
+                        + 8 // structured metadata count + sizeof(int)
                 ),
                 Arguments.of(
                         "Message with empty labels",
@@ -50,7 +51,8 @@ class LogBufferSerializerDeserializerTest {
                         + 21 // log level
                         + 8 // timestamp millis
                         + 8 // timestamp nanos
-                        + 4 // labels count
+                        + 8 // labels count + sizeof(int)
+                        + 8 // structured metadata count + sizeof(int)
                 ),
                 Arguments.of(
                         "Message with null log level",
@@ -66,7 +68,8 @@ class LogBufferSerializerDeserializerTest {
                         + 6 * 4 // labels string length indicators
                         + 8 // timestamp millis
                         + 8 // timestamp nanos
-                        + 4 // labels count
+                        + 8 // labels count + sizeof(int)
+                        + 8 // structured metadata count + sizeof(int)
                 )
         );
     }
@@ -97,6 +100,7 @@ class LogBufferSerializerDeserializerTest {
                 32042L,
                 882L,
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap(logLine.getBytes())
         );
 

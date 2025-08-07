@@ -1,5 +1,6 @@
 package pl.tkowalcz.thjazi.protobuf;
 
+import com.google.protobuf.CodedOutputStream;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -10,6 +11,7 @@ import org.agrona.concurrent.ringbuffer.RingBufferDescriptor;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class ProtobufDeserializer {
                 buffer
         );
 
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal().getFirst();
         labelSerializer
                 .appendLabel("faaaoo", "baqwefewr")
                 .appendLabel("a232aa", "bbbrgwew")
@@ -40,6 +42,7 @@ public class ProtobufDeserializer {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -53,11 +56,31 @@ public class ProtobufDeserializer {
 
         ByteBuf target = outputBuffer.close();
 
-        Logproto.PushRequest pushRequest = Logproto.PushRequest.parser().parsePartialFrom(new ByteBufInputStream(target));
+        Logproto.LabelPairAdapter.Builder structuredMetadata = Logproto.LabelPairAdapter.newBuilder();
+        structuredMetadata.setName("aaa");
+        structuredMetadata.setValue("bbb");
+        Logproto.LabelPairAdapter labelPairAdapter = structuredMetadata.build();
+
+        Logproto.EntryAdapter.Builder entryBuilder = Logproto.EntryAdapter.newBuilder();
+        entryBuilder.addStructuredMetadata(labelPairAdapter);
+        entryBuilder.addStructuredMetadata(labelPairAdapter);
+
+        Logproto.StreamAdapter.Builder builder = Logproto.StreamAdapter.newBuilder();
+        builder.addEntries(entryBuilder.build());
+
+        Logproto.StreamAdapter streamA = builder.build();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        streamA.writeTo(CodedOutputStream.newInstance(output));
+
+        Logproto.PushRequest pushRequest = Logproto.PushRequest
+                .parser()
+                .parsePartialFrom(new ByteBufInputStream(target));
+
         Logproto.StreamAdapter stream = pushRequest.getStreams(0);
         System.out.println("labels = " + stream.getLabels());
         System.out.println("timestamp1Seconds = " + stream.getEntries(0).getTimestamp().getSeconds());
         System.out.println("timestamp1Nano = " + stream.getEntries(0).getTimestamp().getNanos());
         System.out.println("logline = " + stream.getEntries(0).getLine());
+        System.out.println("structuredMetadata = " + stream.getEntries(0).getStructuredMetadataList());
     }
 }

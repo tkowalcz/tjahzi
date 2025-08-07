@@ -20,6 +20,7 @@ public class OutputBuffer {
             CharSequence labels,
             long epochMillisecond,
             long nanoOfMillisecond,
+            StructuredMetadataPointer structuredMetadata,
             ByteBuf logLine
     ) {
         PushRequestSerializer.serialize(target);
@@ -28,6 +29,7 @@ public class OutputBuffer {
                 nanoOfMillisecond,
                 logLine,
                 labels,
+                structuredMetadata,
                 target
         );
     }

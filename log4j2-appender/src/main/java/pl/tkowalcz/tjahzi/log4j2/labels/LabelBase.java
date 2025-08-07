@@ -25,7 +25,7 @@ public abstract class LabelBase {
         }
 
         if (pattern == null && value == null) {
-            LOGGER.error("Property must have pattern or value specified");
+            LOGGER.error("Property '{}' must have pattern or value specified", name);
         }
     }
 

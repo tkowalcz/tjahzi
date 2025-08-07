@@ -3,7 +3,6 @@ package pl.tkowalcz.tjahzi.reload4j;
 import org.apache.log4j.Logger;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.reload4j.infra.IntegrationTest;
 

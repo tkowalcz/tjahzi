@@ -48,7 +48,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
         @SuppressWarnings("unchecked")
         Map<String, Object> mdcPropertyMap = event.getProperties();
 
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal().getFirst();
         appendLogLabel(labelSerializer, logLevel);
         appendLoggerLabel(labelSerializer, loggerName);
         appendThreadLabel(labelSerializer, threadName);
@@ -58,6 +58,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
                 event.getTimeStamp(),
                 0L,
                 labelSerializer,
+                new LabelSerializer(),
                 logLine
         );
     }

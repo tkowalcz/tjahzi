@@ -1,6 +1,10 @@
 package pl.tkowalcz.tjahzi;
 
+import org.agrona.concurrent.UnsafeBuffer;
 import org.junit.jupiter.api.Test;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,16 +70,16 @@ class LabelSerializerTest {
 
         serializer
                 .appendLabelName("Aliens")
-                    .startAppendingLabelValue()
-                        .appendPartialLabelValue("Kang")
-                        .appendPartialLabelValue("Kodos")
-                        .appendPartialLabelValue("Johnson")
-                    .finishAppendingLabelValue()
+                .startAppendingLabelValue()
+                .appendPartialLabelValue("Kang")
+                .appendPartialLabelValue("Kodos")
+                .appendPartialLabelValue("Johnson")
+                .finishAppendingLabelValue()
                 .appendLabelName("Omicronians")
-                    .startAppendingLabelValue()
-                        .appendPartialLabelValue("Lrrr")
-                        .appendPartialLabelValue("RULER OF THE PLANET OMICRON PERSEI EIGHT")
-                    .finishAppendingLabelValue()
+                .startAppendingLabelValue()
+                .appendPartialLabelValue("Lrrr")
+                .appendPartialLabelValue("RULER OF THE PLANET OMICRON PERSEI EIGHT")
+                .finishAppendingLabelValue()
                 .appendLabel("Popplers", "Problem");
 
         // Then
@@ -159,5 +163,34 @@ class LabelSerializerTest {
 
         // Then
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    void shouldWriteLabelsToBuffer() {
+        // Given
+        LabelSerializer labelSerializer = new LabelSerializer()
+                .appendLabel("Foo", "Bar")
+                .appendLabelName("Aliens")
+                .startAppendingLabelValue()
+                .appendPartialLabelValue("Kang")
+                .appendPartialLabelValue("Kodos")
+                .appendPartialLabelValue("Johnson")
+                .finishAppendingLabelValue();
+
+        int bufferSize = labelSerializer.sizeBytes() + Integer.BYTES * 2;
+        int offset = 16;
+        ByteBuffer target = ByteBuffer.allocate(bufferSize + offset)
+                .order(ByteOrder.LITTLE_ENDIAN);
+
+        // When
+        labelSerializer.writeLabels(new UnsafeBuffer(target), offset);
+
+        // Then
+        for (int i = 0; i < offset; i++) {
+            assertThat(target.get()).isZero();
+        }
+
+        assertThat(target.getInt()).isEqualTo(labelSerializer.sizeBytes());
+        assertThat(target.getInt()).isEqualTo(labelSerializer.getLabelsCount());
     }
 }

@@ -2,10 +2,10 @@ package pl.tkowalcz.tjahzi;
 
 public class LabelSerializers {
 
-    private static final ThreadLocal<LabelSerializer> THREAD_LOCAL = ThreadLocal.withInitial(LabelSerializer::new);
+    private static final ThreadLocal<LabelSerializerPair> THREAD_LOCAL = ThreadLocal.withInitial(LabelSerializerPair::new);
 
-    public static LabelSerializer threadLocal() {
-        LabelSerializer result = THREAD_LOCAL.get();
+    public static LabelSerializerPair threadLocal() {
+        LabelSerializerPair result = THREAD_LOCAL.get();
         result.clear();
 
         return result;

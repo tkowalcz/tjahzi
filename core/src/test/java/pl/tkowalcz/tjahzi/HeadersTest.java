@@ -107,6 +107,7 @@ class HeadersTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -161,6 +162,7 @@ class HeadersTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -217,6 +219,7 @@ class HeadersTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
 

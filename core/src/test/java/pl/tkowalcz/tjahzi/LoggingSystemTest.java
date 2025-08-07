@@ -103,6 +103,9 @@ class LoggingSystemTest {
                     LabelSerializerCreator.from(
                             Map.of("level", "warn")
                     ),
+                    LabelSerializerCreator.from(
+                            Map.of("this", "that")
+                    ),
                     ByteBuffer.wrap(("Test" + i).getBytes())
             );
         }
@@ -133,6 +136,7 @@ class LoggingSystemTest {
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
                             .body("data.result[0].stream.level", equalTo("warn"))
+                            .body("data.result[0].stream.this", equalTo("that"))
                             .body("data.result[0].values", hasItems(new BaseMatcher<>() {
 
                                 int index = 999;

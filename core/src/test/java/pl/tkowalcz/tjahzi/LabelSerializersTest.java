@@ -11,31 +11,35 @@ class LabelSerializersTest {
     @Test
     void shouldClearBufferBeforeUse() {
         // Given
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
-        labelSerializer.appendLabel("key", "abc");
+        LabelSerializerPair labelSerializer = LabelSerializers.threadLocal();
+        labelSerializer.getFirst().appendLabel("key", "abc");
+        labelSerializer.getSecond().appendLabel("key", "abc");
 
         // When
-        LabelSerializer actual = LabelSerializers.threadLocal();
+        LabelSerializerPair actual = LabelSerializers.threadLocal();
 
         // Then
-        assertThat(actual.getLabelsCount()).isZero();
+        assertThat(actual.getFirst().getLabelsCount()).isZero();
+        assertThat(actual.getSecond().getLabelsCount()).isZero();
     }
 
     @Test
     void shouldReturnSameBufferInsideSameThread() {
         // When
-        LabelSerializer labelSerializer1 = LabelSerializers.threadLocal();
-        LabelSerializer labelSerializer2 = LabelSerializers.threadLocal();
+        LabelSerializerPair labelSerializer1 = LabelSerializers.threadLocal();
+        LabelSerializerPair labelSerializer2 = LabelSerializers.threadLocal();
 
         // Then
         assertThat(labelSerializer1).isSameAs(labelSerializer2);
+        assertThat(labelSerializer1.getFirst()).isSameAs(labelSerializer2.getFirst());
+        assertThat(labelSerializer1.getSecond()).isSameAs(labelSerializer2.getSecond());
     }
 
     @Test
     void shouldReturnDifferentSerializerInsideDifferentThreads() throws InterruptedException {
         // Given
-        AtomicReference<LabelSerializer> captor1 = new AtomicReference<>();
-        AtomicReference<LabelSerializer> captor2 = new AtomicReference<>();
+        AtomicReference<LabelSerializerPair> captor1 = new AtomicReference<>();
+        AtomicReference<LabelSerializerPair> captor2 = new AtomicReference<>();
 
         // When
         Thread thread1 = new Thread(() -> captor1.set(LabelSerializers.threadLocal()));

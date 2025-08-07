@@ -92,12 +92,14 @@ class LoggingSystemSanityCheckTest {
         TjahziLogger logger = loggingSystem.createLogger();
 
         LabelSerializer labelSerializer = LabelSerializerCreator.from("level", "warn");
+        LabelSerializer metadataSerializer = LabelSerializerCreator.from("this", "that");
 
         // When
         logger.log(
                 timestamp,
                 882L,
                 labelSerializer,
+                metadataSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -125,6 +127,7 @@ class LoggingSystemSanityCheckTest {
                             .body("data.result[0].stream.server", equalTo("127.0.0.1"))
                             .body("data.result[0].stream.version", equalTo("0.43"))
                             .body("data.result[0].stream.level", equalTo("warn"))
+                            .body("data.result[0].stream.this", equalTo("that"))
                             .body("data.result[0].values[0]", hasItems("" + (timestamp * 1000_000 + 882), "Test"));
                 });
     }

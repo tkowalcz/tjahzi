@@ -15,17 +15,19 @@ public class LogBufferSerializer {
 
     public int calculateRequiredSize(
             LabelSerializer labelSerializer,
+            LabelSerializer structuredMetadata,
             ByteBuffer line
     ) {
         int logLineSize = Integer.BYTES + line.remaining();
 
         int nanosecondResolutionTimestampSize = 2 * Long.BYTES;
-        int labelsCountSize = Integer.BYTES;
+        int labelsCountSize = Integer.BYTES + Integer.BYTES;
         int headerAndLabelsSize = nanosecondResolutionTimestampSize
-                + labelsCountSize
-                + labelSerializer.sizeBytes();
+                                  + labelsCountSize
+                                  + labelSerializer.sizeBytes();
 
-        return headerAndLabelsSize + logLineSize;
+        int structuredMetadataSize = structuredMetadata.sizeBytes() + Integer.BYTES + Integer.BYTES;
+        return headerAndLabelsSize + logLineSize + structuredMetadataSize;
     }
 
     public void writeTo(
@@ -33,24 +35,24 @@ public class LogBufferSerializer {
             long epochMillisecond,
             long nanoOfMillisecond,
             LabelSerializer serializedLabels,
+            LabelSerializer structuredMetadata,
             ByteBuffer line
     ) {
         cursor = writeHeader(
                 cursor,
                 epochMillisecond,
-                nanoOfMillisecond,
-                serializedLabels
+                nanoOfMillisecond
         );
 
-        cursor = writeLabels(cursor, serializedLabels);
+        cursor = serializedLabels.writeLabels(buffer, cursor);
+        cursor = structuredMetadata.writeLabels(buffer, cursor);
         writeLogLine(cursor, line);
     }
 
     private int writeHeader(
             int cursor,
             long epochMillisecond,
-            long nanoOfMillisecond,
-            LabelSerializer serializedLabels
+            long nanoOfMillisecond
     ) {
         buffer.putLong(cursor, epochMillisecond, ByteOrder.LITTLE_ENDIAN);
         cursor += Long.BYTES;
@@ -58,16 +60,7 @@ public class LogBufferSerializer {
         buffer.putLong(cursor, nanoOfMillisecond, ByteOrder.LITTLE_ENDIAN);
         cursor += Long.BYTES;
 
-        buffer.putInt(cursor, serializedLabels.getLabelsCount(), ByteOrder.LITTLE_ENDIAN);
-        cursor += Integer.BYTES;
         return cursor;
-    }
-
-    private int writeLabels(int cursor, LabelSerializer serializedLabels) {
-        int remaining = serializedLabels.sizeBytes();
-        buffer.putBytes(cursor, serializedLabels.getBuffer(), 0, remaining);
-
-        return cursor + remaining;
     }
 
     private void writeLogLine(int cursor, ByteBuffer line) {

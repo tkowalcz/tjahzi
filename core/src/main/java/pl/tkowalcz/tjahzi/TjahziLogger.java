@@ -25,10 +25,12 @@ public class TjahziLogger {
             long epochMillisecond,
             long nanoOfMillisecond,
             LabelSerializer serializedLabels,
+            LabelSerializer structuredMetadata,
             ByteBuffer line
     ) {
         int requiredSize = serializer.calculateRequiredSize(
                 serializedLabels,
+                structuredMetadata,
                 line
         );
 
@@ -38,6 +40,7 @@ public class TjahziLogger {
                     epochMillisecond,
                     nanoOfMillisecond,
                     serializedLabels,
+                    structuredMetadata,
                     line,
                     claim
             );
@@ -52,6 +55,7 @@ public class TjahziLogger {
             long epochMillisecond,
             long nanoOfMillisecond,
             LabelSerializer serializedLabels,
+            LabelSerializer structuredMetadata,
             ByteBuffer line,
             int claim
     ) {
@@ -62,6 +66,7 @@ public class TjahziLogger {
                             epochMillisecond,
                             nanoOfMillisecond,
                             serializedLabels,
+                            structuredMetadata,
                             line
                     );
 

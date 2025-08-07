@@ -5,7 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LokiAppenderShutdownTest extends IntegrationTest {

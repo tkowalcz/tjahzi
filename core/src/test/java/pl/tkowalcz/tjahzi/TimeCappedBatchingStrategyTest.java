@@ -28,6 +28,7 @@ class TimeCappedBatchingStrategyTest {
                 "foobar",
                 44L,
                 0,
+                StructuredMetadataCreator.emptyPointer(),
                 logLine.duplicate()
         );
     }
@@ -120,7 +121,13 @@ class TimeCappedBatchingStrategyTest {
         );
 
         // When
-        outputBufferWithNoData.addLogLine("foobar", 44L, 0, logLine);
+        outputBufferWithNoData.addLogLine(
+                "foobar",
+                44L,
+                0,
+                StructuredMetadataCreator.emptyPointer(),
+                logLine
+        );
 
         // Then
         assertThat(strategy.shouldProceed()).isTrue();
@@ -144,7 +151,13 @@ class TimeCappedBatchingStrategyTest {
         );
 
         // When
-        outputBufferWithNoData.addLogLine("foobar", 44L, 0, logLine);
+        outputBufferWithNoData.addLogLine(
+                "foobar",
+                44L,
+                0,
+                StructuredMetadataCreator.emptyPointer(),
+                logLine
+        );
         clock.setMillis(clock.millis() + batchWaitMillis);
 
         // Then

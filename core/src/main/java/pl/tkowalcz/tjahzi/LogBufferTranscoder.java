@@ -17,8 +17,10 @@ public class LogBufferTranscoder {
     private final String staticLabelsString;
 
     private final ByteBuf logLineHolder;
+    private final StructuredMetadataPointer structuredMetadataPointer = new StructuredMetadataPointer();
 
-    public LogBufferTranscoder(Map<String, String> staticLabels, AtomicBuffer buffer) {
+    public LogBufferTranscoder(Map<String, String> staticLabels,
+                               AtomicBuffer buffer) {
         this.staticLabels = staticLabels;
         this.staticLabelsString = buildLabelsStringIncludingStatic(
                 staticLabels,
@@ -52,20 +54,36 @@ public class LogBufferTranscoder {
                 labelsBuilder
         );
 
+        int size = buffer.getInt(index, ByteOrder.LITTLE_ENDIAN);
+        index += Integer.BYTES;
+
+        int structuredMetadataPosition = index;
+        index += size + Integer.BYTES;
+
+        structuredMetadataPointer.wrap(
+                buffer,
+                structuredMetadataPosition,
+                size
+        );
+
         logLineHolder.readerIndex(index);
         outputBuffer.addLogLine(
                 actualLabels,
                 epochMillisecond,
                 nanoOfMillisecond,
+                structuredMetadataPointer,
                 logLineHolder
         );
     }
 
-    private int readLabels(
+    private static int readLabels(
             DirectBuffer buffer,
             int index,
             TextBuilder labelsBuilder
     ) {
+        int labelsSizeIgnored = buffer.getInt(index, ByteOrder.LITTLE_ENDIAN);
+        index += Integer.BYTES;
+
         int labelsCount = buffer.getInt(index, ByteOrder.LITTLE_ENDIAN);
         index += Integer.BYTES;
 
@@ -100,3 +118,4 @@ public class LogBufferTranscoder {
         return labels;
     }
 }
+
