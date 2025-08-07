@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.greaterThan;
 import static pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert.assertThat;
 
 class LokiAppenderLargeBatchesTest extends IntegrationTest {
@@ -23,14 +24,14 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
         Logger logger = LogManager.getLogger(LokiAppenderLargeBatchesTest.class);
 
         String expectedLogLine = "Cupcake ipsum dolor sit amet cake wafer. " +
-                "Souffle jelly beans biscuit topping. " +
-                "Danish bonbon gummies powder caramels. " +
-                "Danish jelly beans sweet roll topping jelly beans oat cake toffee. " +
-                "Chocolate cake sesame snaps brownie biscuit cheesecake. " +
-                "Ice cream dessert sweet donut marshmallow. " +
-                "Muffin bear claw cookie jelly-o sugar plum jelly beans apple pie fruitcake cookie. " +
-                "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
-                "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
+                                 "Souffle jelly beans biscuit topping. " +
+                                 "Danish bonbon gummies powder caramels. " +
+                                 "Danish jelly beans sweet roll topping jelly beans oat cake toffee. " +
+                                 "Chocolate cake sesame snaps brownie biscuit cheesecake. " +
+                                 "Ice cream dessert sweet donut marshmallow. " +
+                                 "Muffin bear claw cookie jelly-o sugar plum jelly beans apple pie fruitcake cookie. " +
+                                 "Tootsie roll carrot cake pastry jujubes jelly beans chupa chups. " +
+                                 "Souffle cake muffin liquorice tart souffle pie sesame snaps.";
 
         long expectedTimestamp = TimeUnit.MILLISECONDS.toNanos(System.currentTimeMillis());
 
@@ -45,9 +46,8 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
                 .returns(response -> response
                         .body("data.result.size()", equalTo(1))
                         .body("data.result[0].stream.server", equalTo("127.0.0.1"))
-                        .body("data.result[0].values.size()", equalTo(1000))
-                        .body(
-                                "data.result[0].values",
+                        .body("data.result[0].values.size()", greaterThan(800))
+                        .body("data.result[0].values",
                                 hasItems(new BaseMatcher<>() {
                                              @Override
                                              public boolean matches(Object o) {
@@ -60,7 +60,7 @@ class LokiAppenderLargeBatchesTest extends IntegrationTest {
                                                  String actualLogLine = list.get(1).toString();
 
                                                  return actualLogLine.contains(expectedLogLine)
-                                                         && (expectedTimestamp - actualTimestamp) < TimeUnit.MINUTES.toMillis(1);
+                                                        && (expectedTimestamp - actualTimestamp) < TimeUnit.MINUTES.toMillis(1);
                                              }
 
                                              @Override

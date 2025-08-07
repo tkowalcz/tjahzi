@@ -14,6 +14,7 @@ import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.log4j2.labels.Label;
 import pl.tkowalcz.tjahzi.log4j2.labels.LabelFactory;
 import pl.tkowalcz.tjahzi.log4j2.labels.LabelsDescriptor;
+import pl.tkowalcz.tjahzi.log4j2.labels.StructuredMetadata;
 import pl.tkowalcz.tjahzi.stats.LoggingMonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
@@ -102,6 +103,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginElement("Labels")
     private Label[] labels;
 
+    @PluginElement("Metadata")
+    private StructuredMetadata[] metadata;
+
     @Override
     public LokiAppender build() {
         ClientConfiguration configurationBuilder = ClientConfiguration.builder()
@@ -154,6 +158,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         LabelsDescriptor labelsDescriptor = labelFactory.convertLabelsDroppingInvalid();
         logLevelLabel = labelsDescriptor.getLogLevelLabel();
 
+        LabelFactory metadataFactory = new LabelFactory(
+                getConfiguration(),
+                logLevelLabel,
+                metadata
+        );
+
+        LabelsDescriptor metadataDescriptor = metadataFactory.convertLabelsDroppingInvalid();
+
         LoggingSystem loggingSystem = new TjahziInitializer().createLoggingSystem(
                 httpClient,
                 monitoringModuleWrapper,
@@ -175,6 +187,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 getPropertyArray(),
                 logLevelLabel,
                 labelsDescriptor.getDynamicLabels(),
+                metadataDescriptor.getAllLabels(),
                 maxLogLineSizeBytes,
                 loggingSystem,
                 monitoringModuleWrapper
@@ -350,6 +363,14 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     public void setLabels(Label[] labels) {
         this.labels = labels;
+    }
+
+    public StructuredMetadata[] getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(StructuredMetadata[] metadata) {
+        this.metadata = metadata;
     }
 
     public boolean isVerbose() {

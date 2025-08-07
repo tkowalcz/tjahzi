@@ -39,7 +39,7 @@ class LabelPrinterFactoryTest {
         MutableLogEvent event = new MutableLogEvent();
         event.setContextData(new JdkMapAdapterStringMap(mdcMap));
 
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        LabelSerializer labelSerializer = LabelSerializers.threadLocal().getFirst();
 
         // When
         LabelPrinter printer = LabelPrinterFactory.parse(pattern);

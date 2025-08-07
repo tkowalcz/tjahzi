@@ -4,10 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.status.StatusLogger;
-import pl.tkowalcz.tjahzi.LabelSerializer;
-import pl.tkowalcz.tjahzi.LabelSerializers;
-import pl.tkowalcz.tjahzi.LoggingSystem;
-import pl.tkowalcz.tjahzi.TjahziLogger;
+import pl.tkowalcz.tjahzi.*;
 import pl.tkowalcz.tjahzi.log4j2.labels.LabelPrinter;
 
 import java.io.Serializable;
@@ -26,19 +23,24 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
     private final TjahziLogger logger;
 
     private final Map<String, LabelPrinter> lokiLabels;
+    private final Map<String, LabelPrinter> structuredMetadata;
+
     private final ByteBufferDestinationRepository destinationRepository;
 
     public AppenderLogic(
             LoggingSystem loggingSystem,
             String logLevelLabel,
             Map<String, LabelPrinter> lokiLabels,
+            Map<String, LabelPrinter> structuredMetadata,
             int maxLogLineSizeBytes
     ) {
         this.loggingSystem = loggingSystem;
         this.logLevelLabel = logLevelLabel;
-
         this.logger = loggingSystem.createLogger();
+
         this.lokiLabels = lokiLabels;
+        this.structuredMetadata = structuredMetadata;
+
         this.destinationRepository = new ByteBufferDestinationRepository(maxLogLineSizeBytes);
     }
 
@@ -58,19 +60,24 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
     public void close(long timeout, TimeUnit timeUnit) {
         loggingSystem.close(
                 (int) timeUnit.toMillis(timeout),
-                thread -> LOGGER.error("Loki appender was unable to stop thread on shutdown: " + thread)
+                thread -> LOGGER.error("Loki appender was unable to stop thread on shutdown: {}", thread)
         );
     }
 
     @Override
     public void accept(LogEvent event, ByteBuffer byteBuffer) {
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal();
+        LabelSerializerPair labelSerializerPair = LabelSerializers.threadLocal();
+        LabelSerializer labelSerializer = labelSerializerPair.getFirst();
+        LabelSerializer metadataSerializer = labelSerializerPair.getSecond();
+
         processDynamicLabelsIfAny(labelSerializer, event);
+        processStructuredMetadata(metadataSerializer, event);
 
         logger.log(
                 event.getInstant().getEpochMillisecond(),
                 event.getInstant().getNanoOfMillisecond(),
                 labelSerializer,
+                metadataSerializer,
                 byteBuffer
         );
     }
@@ -81,6 +88,16 @@ public class AppenderLogic implements BiConsumer<LogEvent, ByteBuffer> {
         }
 
         for (Map.Entry<String, LabelPrinter> labelPrinter : lokiLabels.entrySet()) {
+            labelSerializer.appendLabelName(labelPrinter.getKey());
+
+            labelSerializer.startAppendingLabelValue();
+            labelPrinter.getValue().append(event, labelSerializer::appendPartialLabelValue);
+            labelSerializer.finishAppendingLabelValue();
+        }
+    }
+
+    private void processStructuredMetadata(LabelSerializer labelSerializer, LogEvent event) {
+        for (Map.Entry<String, LabelPrinter> labelPrinter : structuredMetadata.entrySet()) {
             labelSerializer.appendLabelName(labelPrinter.getKey());
 
             labelSerializer.startAppendingLabelValue();

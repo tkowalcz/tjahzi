@@ -10,21 +10,22 @@
     </Loggers>
 
     <appenders>
-        <Loki name="Loki" bufferSizeMegabytes="2" batchWait="1000">
-            <batchSize>509600</batchSize>
-
+        <Loki name="Loki">
             <host>${sys:loki.host}</host>
             <port>${sys:loki.port}</port>
 
             <ThresholdFilter level="ALL"/>
             <PatternLayout>
-                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} -
-                    %m%n%exception{full}
-                </Pattern>
+                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
             </PatternLayout>
 
             <Header name="server" value="127.0.0.1"/>
             <Label name="server" value="127.0.0.1"/>
+            <Label name="tx_id_label" pattern="%X{tx_id}"/>
+
+            <Metadata name="fixed" value="stuff"/>
+            <Metadata name="tx_id_metadata" pattern="${ctx:tx_id}"/>
+            <Metadata name="thread_id_metadata" pattern="${ctx:thread_id}"/>
         </Loki>
     </appenders>
 </configuration>

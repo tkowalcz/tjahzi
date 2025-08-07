@@ -31,6 +31,7 @@ public class ReconnectTest {
     private StandardMonitoringModule monitoringModule;
 
     private LabelSerializer labelSerializer;
+    private LabelSerializer structuredMetadataSerializer;
 
     @BeforeEach
     void setUp() {
@@ -49,6 +50,7 @@ public class ReconnectTest {
         monitoringModule = new StandardMonitoringModule();
 
         labelSerializer = LabelSerializerCreator.from("level", "warn");
+        structuredMetadataSerializer = LabelSerializerCreator.from("this", "that");
     }
 
     @AfterEach
@@ -100,6 +102,7 @@ public class ReconnectTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                structuredMetadataSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -151,6 +154,7 @@ public class ReconnectTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                structuredMetadataSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -171,6 +175,7 @@ public class ReconnectTest {
                 System.currentTimeMillis(),
                 0,
                 labelSerializer,
+                structuredMetadataSerializer,
                 ByteBuffer.wrap("Test".getBytes())
         );
 

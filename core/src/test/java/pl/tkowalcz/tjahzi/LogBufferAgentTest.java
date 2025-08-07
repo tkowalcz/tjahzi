@@ -71,6 +71,7 @@ class LogBufferAgentTest {
                     42L,
                     0,
                     LabelSerializerCreator.from(Map.of()),
+                    new LabelSerializer(),
                     ByteBuffer.wrap((
                             "Cupcake ipsum dolor sit amet cake wafer. " +
                             "Soufflé jelly beans biscuit topping. " +
@@ -122,6 +123,7 @@ class LogBufferAgentTest {
                 42L,
                 0,
                 LabelSerializerCreator.from(Map.of()),
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
 
@@ -210,6 +212,7 @@ class LogBufferAgentTest {
                 42L,
                 0,
                 LabelSerializerCreator.from(Map.of()),
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
         clock.tick(wait5s + 1);
@@ -219,6 +222,7 @@ class LogBufferAgentTest {
                 42L,
                 0,
                 LabelSerializerCreator.from(Map.of()),
+                new LabelSerializer(),
                 ByteBuffer.wrap("Test".getBytes())
         );
         clock.tick(wait5s + 1);
@@ -266,6 +270,7 @@ class LogBufferAgentTest {
                     42L,
                     0,
                     LabelSerializerCreator.from(Map.of()),
+                    new LabelSerializer(),
                     ByteBuffer.wrap("Test".getBytes())
             );
         }

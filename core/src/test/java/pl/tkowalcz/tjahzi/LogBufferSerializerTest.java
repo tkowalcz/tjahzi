@@ -32,6 +32,7 @@ class LogBufferSerializerTest {
         // When
         int actual = serializer.calculateRequiredSize(
                 labelSerializer,
+                new LabelSerializer(),
                 ByteBuffer.wrap(logLine.getBytes())
         );
 
