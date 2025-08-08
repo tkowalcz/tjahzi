@@ -4,6 +4,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.EfficientPatternLayout;
 import pl.tkowalcz.tjahzi.LabelSerializer;
+import pl.tkowalcz.tjahzi.LabelSerializerPair;
 import pl.tkowalcz.tjahzi.LabelSerializers;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
@@ -11,6 +12,7 @@ import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +31,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     private String loggerNameLabel;
     private String threadNameLabel;
     private List<String> mdcLogLabels;
+    private HashMap<String, String> structuredMetadata;
 
     private MutableMonitoringModuleWrapper monitoringModuleWrapper;
 
@@ -69,19 +72,29 @@ public class LokiAppender extends LokiAppenderConfigurator {
         ByteBuffer logLine = actualEncoder.apply(event);
         Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
 
-        LabelSerializer labelSerializer = LabelSerializers.threadLocal().getFirst();
+        LabelSerializerPair labelSerializerPair = LabelSerializers.threadLocal();
+        LabelSerializer labelSerializer = labelSerializerPair.getFirst();
+        LabelSerializer metadataSerializer = labelSerializerPair.getSecond();
+
         appendLogLabel(labelSerializer, logLevel);
         appendLoggerLabel(labelSerializer, loggerName);
         appendThreadLabel(labelSerializer, threadName);
         appendMdcLogLabels(labelSerializer, mdcPropertyMap);
+        processStructuredMetadata(metadataSerializer, event);
 
         logger.log(
                 event.getTimeStamp(),
-                0L,
+                event.getNanoseconds() % 1_000_000L,
                 labelSerializer,
-                new LabelSerializer(),
+                metadataSerializer,
                 logLine
         );
+    }
+
+    private void processStructuredMetadata(LabelSerializer labelSerializer, ILoggingEvent event) {
+        for (Map.Entry<String, String> labelPrinter : structuredMetadata.entrySet()) {
+            labelSerializer.appendLabel(labelPrinter.getKey(), labelPrinter.getValue());
+        }
     }
 
     private void appendLogLabel(LabelSerializer labelSerializer, String logLevel) {
@@ -134,6 +147,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
         loggerNameLabel = lokiAppenderFactory.getLoggerNameLabel();
         threadNameLabel = lokiAppenderFactory.getThreadNameLabel();
         mdcLogLabels = lokiAppenderFactory.getMdcLogLabels();
+        structuredMetadata = lokiAppenderFactory.getStructuredMetadata();
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
         logger = loggingSystem.createLogger();

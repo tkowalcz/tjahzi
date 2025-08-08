@@ -46,6 +46,7 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     private final List<Header> headers = new ArrayList<>();
     private final List<Label> labels = new ArrayList<>();
+    private final List<Label> metadatas = new ArrayList<>();
 
     public String getUrl() {
         return url;
@@ -229,6 +230,14 @@ public abstract class LokiAppenderConfigurator extends UnsynchronizedAppenderBas
 
     public List<Label> getLabels() {
         return labels;
+    }
+
+    public void addMetadata(Label metadata) {
+        metadatas.add(metadata);
+    }
+
+    public List<Label> getMetadatas() {
+        return metadatas;
     }
 
     public List<String> getMdcLogLabels() {
