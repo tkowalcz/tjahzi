@@ -39,6 +39,6 @@ public class Label {
     }
 
     public static boolean hasValidName(String label) {
-        return LABEL_NAME_PATTER.matcher(label).matches();
+        return label != null && LABEL_NAME_PATTER.matcher(label).matches();
     }
 }

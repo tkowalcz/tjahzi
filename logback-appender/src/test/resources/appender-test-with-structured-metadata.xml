@@ -1,0 +1,45 @@
+<configuration debug="true">
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+        <host>${loki.host}</host>
+        <port>${loki.port}</port>
+        <verbose>true</verbose>
+
+        <efficientLayout>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </efficientLayout>
+
+        <header>
+            <name>X-Org-Id</name>
+            <value>Circus</value>
+        </header>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+
+        <metadata>
+            <name>fixed</name>
+            <value>stuff</value>
+        </metadata>
+        <metadata>
+            <name>thread</name>
+            <value>123</value>
+        </metadata>
+
+        <mdcLogLabel>
+            trace_id
+        </mdcLogLabel>
+
+        <mdcLogLabel>
+            span_id
+        </mdcLogLabel>
+    </appender>
+
+    <root level="off">
+    </root>
+
+    <logger name="pl.tkowalcz" level="ALL">
+        <appender-ref ref="Loki"/>
+    </logger>
+</configuration>

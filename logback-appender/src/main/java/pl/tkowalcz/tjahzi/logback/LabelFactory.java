@@ -78,6 +78,7 @@ public class LabelFactory {
 
     private void detectAndLogDuplicateLabels() {
         List<String> duplicatedLabels = stream(labels)
+                .filter(Label::hasValidName)
                 .collect(Collectors.groupingBy(Label::getName, counting()))
                 .entrySet()
                 .stream().filter(entry -> entry.getValue() > 1)
@@ -88,7 +89,7 @@ public class LabelFactory {
             internalLogger.addWarn(
                     String.format(
                             "There are duplicated labels which is not allowed by Loki. " +
-                                    "These labels will be deduplicated non-deterministically: %s\n",
+                            "These labels will be deduplicated non-deterministically: %s\n",
                             duplicatedLabels
                     )
             );

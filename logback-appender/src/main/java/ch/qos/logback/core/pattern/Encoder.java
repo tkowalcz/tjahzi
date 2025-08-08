@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 public class Encoder {
 
     /**
-     * 10kb should be enough for everyone. Even in case of 1000s of threads we will allocate at most 10s of MB of buffers.
+     * 10kb should be enough for everyone. Even in the case of 1000s of threads we will allocate at most 10s of MB of buffers.
      * Larger messages will be fragmented.
      */
     private static final int ENCODER_BUFFER_SIZE = Integer.getInteger("tjahzi.logback.layout.encoder.bufferSize", 10 * 1024);
