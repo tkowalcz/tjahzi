@@ -107,6 +107,9 @@ attribute of configuration so that the appender can be found.
 
             <Header name="X-Scope-OrgID" value="Circus"/>
             <Label name="server" value="127.0.0.1"/>
+            
+            <Metadata name="environment" value="production"/>
+            <Metadata name="service_version" pattern="${ctx:version}"/>
 
             <LogLevelLabel>log_level</LogLevelLabel>
         </Loki>
@@ -301,6 +304,26 @@ runtime.
 
 If defined, then a log level label of the configured name will be added to each line sent to Loki. It will contain Log4j log
 level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
+
+#### Metadata (optional)
+
+Specify structured metadata attached to each log line sent via this appender instance. Unlike labels, structured metadata 
+does not affect log stream grouping and is stored alongside the log entry. See the [official documentation](https://grafana.com/docs/loki/latest/get-started/labels/structured-metadata/) of Loki.
+
+> **Note:** Structured metadata was added to chunk format V4 and will not work prior to version [2.9](https://grafana.com/docs/loki/latest/release-notes/v2-9/) of Loki.
+
+You can use the `value` attribute to specify static text, or use the `pattern` attribute with Log4j pattern layout 
+expressions (including context/MDC lookups like `${ctx:variable_name}`) that will be resolved at runtime.
+
+Example configuration:
+```xml
+<Metadata name="fixed" value="stuff"/>
+<Metadata name="tx_id_metadata" pattern="${ctx:tx_id}"/>
+<Metadata name="thread_id_metadata" pattern="${ctx:thread_id}"/>
+```
+
+This tag supports the same variable substitution and pattern features as the `Label` tag, but the resulting 
+key-value pairs are sent as structured metadata rather than labels.
 
 #### bufferSizeMegabytes (optional, default = 32)
 

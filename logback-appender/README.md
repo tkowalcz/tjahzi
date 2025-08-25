@@ -62,7 +62,7 @@ gives you Logback appender.
 Tjahzi sends `POST` requests to `/loki/api/v1/push` HTTP endpoint.
 Specifying
 e.g. `<host>loki.mydomain.com</host><port>3100</port>`
-will configure the appender to call to URL:
+will configure the appender to call URL:
 `http://loki.mydomain.com:3100/loki/api/v1/push`.
 
 ## Custom pattern layout and decreasing allocations
@@ -119,6 +119,11 @@ class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
             <value>127.0.0.1</value>
         </label>
 
+        <metadata>
+            <name>environment</name>
+            <value>production</value>
+        </metadata>
+
         <logLevelLabel>
             log_level
         </logLevelLabel>
@@ -134,8 +139,8 @@ class `pl.tkowalcz.tjahzi.logback.LokiAppender`.
 
 Connection is configured by providing parameters like host or port
 explicitly in dedicated tags or by using a URL
-that has them all "inline". First we will show how the individual
-parameters work. At a minimum Tjahzi needs host and
+that has them all "inline". First, we will show how the individual
+parameters work. At a minimum, Tjahzi needs host and
 port configuration to connect to Loki, e.g.:
 
 ```xml
@@ -156,7 +161,7 @@ SSL manually:
 ```
 
 You can also override the default endpoint to which Tjahzi sends data.
-This can be useful if Loki is behind reverse proxy and
+This can be useful if Loki is behind the reverse proxy and
 additional path mapping is used:
 
 ```xml
@@ -178,8 +183,8 @@ Note that all previously mentioned tags (host, port, useSSL,
 logEndpoint) cannot be used when using URL.
 
 URL consists of four parts: protocol, host, port, path. Some of them may
-be omitted and there are defaults that depend
-on contents of other parts of the URL. This table has a rundown of all
+be omitted, and there are defaults that depend
+on the contents of other parts of the URL. This table has a rundown of all
 viable configurations:
 
 | Section  | Default                    | Comment                                                                              |
@@ -201,11 +206,9 @@ Some examples of correct URLs:
 
 ### Lookups / variable substitution
 
-Contents of the properties are automatically interpolated by Logback (
-see [here](http://logback.qos.ch/manual/configuration.html#variableSubstitution)).
-All environment, system etc. variable
-references will be replaced by their values during initialization of the
-appender.
+Contents of the properties are automatically interpolated by Logback (see [here](http://logback.qos.ch/manual/configuration.html#variableSubstitution)).
+All environment, system etc. variable references will be replaced by their 
+values during initialization of the appender.
 
 ### MDC support
 
@@ -254,9 +257,37 @@ it into a label.
 
 </details>
 
+### Structured metadata support
+
+Specify structured metadata attached to each log line sent via this appender instance. Unlike labels, structured metadata 
+does not affect log stream grouping and is stored alongside the log entry. See the [official documentation](https://grafana.com/docs/loki/latest/get-started/labels/structured-metadata/) of Loki.
+
+> **Note:** Structured metadata was added to chunk format V4 and will not work prior to version [2.9](https://grafana.com/docs/loki/latest/release-notes/v2-9/) of Loki.
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+
+    ...
+
+    <metadata>
+        <name>environment</name>
+        <value>production</value>
+    </metadata>
+
+    <metadata>
+        <name>service_version</name>
+        <value>${SERVICE_VERSION}</value>
+    </metadata>
+</appender>
+```
+
+Structured metadata supports variable substitution just like labels. 
+All environment, system etc. variable references will be replaced by 
+their values during initialization of the appender.
+
 ### Logger name and thread name in labels
 
-You can include logger name and logging thread name as labels by using
+You can include the logger name and logging thread name as labels by using
 dedicated configuration tags. It will dynamically extract these values
 and will turn
 them into a label.
@@ -279,7 +310,7 @@ them into a label.
 
 ## Details
 
-Let's go through the example config above and analyze configuration
+Let's go through the example the config above and analyze configuration
 options (**Note: Tags are case-insensitive**).
 
 #### Mandatory configuration parameters
@@ -305,7 +336,7 @@ You can define layout and pattern in a traditional Logback way:
 </encoder>
 ```
 
-or use Tjahzi optimized efficient, low allocation encoder:
+or use Tjahzi optimized efficient, low-allocation encoder:
 
 ```xml
 
@@ -325,6 +356,7 @@ or use Tjahzi optimized efficient, low allocation encoder:
 | Header                         | -                     | This tag can be used multiple times to specify additional headers that are passed to Loki instance. One example is to pass a `X-Scope-OrgID` header when [running Loki in multi-tenant mode](https://grafana.com/docs/loki/latest/operations/authentication/).                                                                                                                                                                                                                                                               |
 | Label                          | -                     | Specify additional labels attached to each log line sent via this appender instance. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).                                                                                                                                                                                                                                                                                                                                               |
 | LogLevelLabel                  | -                     | If defined then log level label of configured name will be added to each line sent to Loki. It will contain Logback log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).                                                                                                                                                                                                                                                                             |
+| Metadata                       | -                     | Specify structured metadata attached to each log line sent via this appender instance. Unlike labels, structured metadata does not affect log stream grouping and is stored separately alongside the log entry. This feature is useful for adding contextual information that doesn't need to be indexed for stream identification. Supports both static values and variable substitution.                                                                                                                                   |
 | BufferSizeMegabytes            | 32 MB                 | Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations.                                                                                                                                                                                                                                                                                                                                                |
 | MaxRetries                     | 3                     | Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then next batches will probably fail too).                                                                                                                                                                                                                   |
 | ConnectTimeoutMillis           | 5s                    | This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue to retry indefinitely employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3).                                                                                                                                                                                                                                                                                 |
