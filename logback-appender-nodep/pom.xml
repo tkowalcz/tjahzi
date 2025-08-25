@@ -1,19 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.40-SNAPSHOT</version>
+        <version>0.9.40</version>
     </parent>
 
     <name>logback-appender-nodep</name>
     <artifactId>logback-appender-nodep</artifactId>
     <packaging>jar</packaging>
-    <version>0.9.40-SNAPSHOT</version>
+    <version>0.9.40</version>
 
     <properties>
         <!--add comma separated artifact names from dependencies, to be included in unpacking-->
