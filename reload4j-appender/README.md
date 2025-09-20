@@ -251,3 +251,62 @@ excluding the `reload4j` dependency manually. In maven:
 </dependency>
 
 ```
+
+## TLS (HTTPS) and truststore configuration
+
+Tjahzi supports secure HTTPS connections out of the box and lets you choose how server certificates are trusted.
+
+There are two ways to configure trust:
+
+- Use the default JVM truststore (recommended for public CAs like Let's Encrypt)
+  - Do not set any truststore fields in the appender and enable SSL (either set <param name="port" value="443"/> or <param name="useSSL" value="true"/>).
+  - Optionally, you can control the JVM default truststore with standard system properties: -Djavax.net.ssl.trustStore=... and -Djavax.net.ssl.trustStorePassword=....
+- Provide a custom truststore (for self-signed or internal CA)
+  - Set truststorePath, truststorePassword (optional), and truststoreType (optional). Supported types: PKCS12 and JKS.
+  - If truststoreType is empty, Tjahzi auto-detects type by file extension: .p12/.pfx -> PKCS12; otherwise defaults to JKS.
+
+Notes:
+- The truststore settings are ignored when useSSL is false (plain HTTP).
+- URL-based and host/port-based configurations both support truststore fields.
+
+Examples
+
+1) Rely on JVM default truststore (e.g., Let's Encrypt)
+
+```xml
+<appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+    <param name="host" value="logs.example.com"/>
+    <param name="port" value="443"/>
+    <param name="useSSL" value="true"/>
+    <!-- No truststore* params needed when relying on JVM defaults -->
+</appender>
+```
+
+2) Custom truststore (host/port)
+
+```xml
+<appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+    <param name="host" value="logs.example.internal"/>
+    <param name="port" value="8443"/>
+    <param name="useSSL" value="true"/>
+
+    <param name="truststorePath" value="/path/to/ca-or-truststore.p12"/>
+    <param name="truststorePassword" value="changeit"/>
+    <!-- Either set explicitly or leave empty for auto-detection by extension -->
+    <param name="truststoreType" value="PKCS12"/>
+</appender>
+```
+
+3) Custom truststore (URL-based)
+
+```xml
+<appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+    <param name="url" value="https://logs.example.internal:8443/monitoring/loki/api/v1/push"/>
+
+    <param name="truststorePath" value="${loki.truststore.path}"/>
+    <param name="truststorePassword" value="${loki.truststore.password}"/>
+    <param name="truststoreType" value="${loki.truststore.type}"/>
+</appender>
+```
+
+Tip: Use system properties or environment-variable substitution to avoid hardcoding sensitive paths/passwords in config files.

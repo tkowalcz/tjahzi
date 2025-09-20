@@ -1,23 +1,30 @@
-package pl.tkowalcz.tjahzi.logback;
+package pl.tkowalcz.tjahzi.reload4j;
 
-import ch.qos.logback.classic.LoggerContext;
+import org.apache.log4j.Logger;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import pl.tkowalcz.tjahzi.logback.infra.HttpsNginxIntegrationTest;
+import pl.tkowalcz.tjahzi.reload4j.infra.HttpsNginxIntegrationTest;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static pl.tkowalcz.tjahzi.logback.infra.LokiAssert.assertThat;
+import static pl.tkowalcz.tjahzi.reload4j.infra.LokiAssert.assertThat;
+import static pl.tkowalcz.tjahzi.reload4j.infra.TruststoreUtil.setupTruststoreSysProps;
 
-class LokiAppenderHttpsUrlConnectionReverseProxyTest extends HttpsNginxIntegrationTest {
+class LokiAppenderHttpsCustomEndpointTest extends HttpsNginxIntegrationTest {
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        setupTruststoreSysProps("nginx/nginx-selfsigned.crt", "changeit");
+    }
 
     @Test
     void shouldSendData() {
         // Given
-        LoggerContext context = loadConfig("appender-test-url-configuration.xml");
-        Logger logger = context.getLogger(LokiAppenderHttpsUrlConnectionReverseProxyTest.class);
+        loadConfig("appender-test-custom-endpoint-configuration.xml");
+        Logger logger = Logger.getLogger(LokiAppenderHttpsCustomEndpointTest.class);
 
         String expectedLogLine = "Hello World";
 
@@ -34,7 +41,7 @@ class LokiAppenderHttpsUrlConnectionReverseProxyTest extends HttpsNginxIntegrati
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("p.t.t.l.LokiAppenderHttpsUrlConnectionReverseProxyTest - " + expectedLogLine)
+                                                        containsString("LokiAppenderHttpsCustomEndpointTest - " + expectedLogLine)
                                                 )
                                         )
                                 )

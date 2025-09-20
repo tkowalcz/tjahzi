@@ -31,6 +31,10 @@ public class ClientConfigurationBuilder {
     private String username;
     private String password;
 
+    private String trustStorePath;
+    private String trustStorePassword;
+    private String trustStoreType;
+
     private int connectionTimeoutMillis = DEFAULT_CONNECT_TIMEOUT_MILLIS;
     private int requestTimeoutMillis = DEFAULT_REQUEST_TIMEOUT_MILLIS;
     private int maxRequestsInFlight = DEFAULT_MAX_REQUESTS_IN_FLIGHT;
@@ -64,6 +68,21 @@ public class ClientConfigurationBuilder {
 
     public ClientConfigurationBuilder withPassword(String password) {
         this.password = password;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withTrustStorePath(String trustStorePath) {
+        this.trustStorePath = trustStorePath;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+        return this;
+    }
+
+    public ClientConfigurationBuilder withTrustStoreType(String trustStoreType) {
+        this.trustStoreType = trustStoreType;
         return this;
     }
 
@@ -112,6 +131,9 @@ public class ClientConfigurationBuilder {
                 connectionParams.isUseSSL(),
                 username,
                 password,
+                trustStorePath,
+                trustStorePassword,
+                trustStoreType,
                 connectionTimeoutMillis,
                 requestTimeoutMillis,
                 maxRequestsInFlight,

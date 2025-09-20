@@ -97,6 +97,15 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginBuilderAttribute
     private boolean verbose;
 
+    @PluginBuilderAttribute
+    private String truststorePath;
+
+    @PluginBuilderAttribute
+    private String truststorePassword;
+
+    @PluginBuilderAttribute
+    private String truststoreType;
+
     @PluginElement("Headers")
     private Header[] headers;
 
@@ -120,6 +129,9 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
                 .withMaxRetries(maxRetries)
                 .withRequestTimeoutMillis(readTimeoutMillis)
                 .withMaxRequestsInFlight(maxRequestsInFlight)
+                .withTrustStorePath(truststorePath)
+                .withTrustStorePassword(truststorePassword)
+                .withTrustStoreType(truststoreType)
                 .build();
 
         String[] additionalHeaders = stream(headers)

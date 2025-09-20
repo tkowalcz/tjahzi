@@ -367,3 +367,62 @@ or use Tjahzi optimized efficient, low-allocation encoder:
 | shutdownTimeoutSeconds         | 10s                   | On logging system shutdown (or config reload) Tjahzi will flush its internal buffers so that no logs are lost. This property sets limit on how long to wait for this to complete before proceeding with shutdown.                                                                                                                                                                                                                                                                                                            |
 | useDaemonThreads               | false                 | If set to true Tjahzi will run all it's threads as daemon threads. Use this option if you do not want to explicitly close the logging system and still want to make sure Tjahzi internal threads will not prevent JVM from closing down. Note that this can result in unflushed logs not being delivered when the JVM is closed.                                                                                                                                                                                             |
 | verbose                        | false                 | If set to true, Tjahzi will log internal errors and connection errors to Logback's internal error logging system. This includes agent errors, pipeline errors, dropped log entries, HTTP errors, failed HTTP requests, and connection issues. When enabled, these errors will be logged using Logback's `addError()` method, which typically outputs to the console or configured status destination. See the [logback docs](https://logback.qos.ch/manual/configuration.html#automaticStatusPrinting) for more information. |
+
+## TLS (HTTPS) and truststore configuration
+
+Tjahzi supports secure HTTPS connections out of the box and lets you choose how server certificates are trusted.
+
+There are two ways to configure trust:
+
+- Use the default JVM truststore (recommended for public CAs like Let's Encrypt)
+  - Do not set any truststore fields in the appender and enable SSL (either set <port>443</port> or <useSSL>true</useSSL> when using host/port, or use an https URL).
+  - Optionally, you can control the JVM default truststore with standard system properties: -Djavax.net.ssl.trustStore=... and -Djavax.net.ssl.trustStorePassword=....
+- Provide a custom truststore (for self-signed or internal CA)
+  - Set truststorePath, truststorePassword (optional), and truststoreType (optional). Supported types: PKCS12 and JKS.
+  - If truststoreType is empty, Tjahzi auto-detects type by file extension: .p12/.pfx -> PKCS12; otherwise defaults to JKS.
+
+Notes:
+- The truststore settings are ignored when useSSL is false (plain HTTP).
+- URL-based and host/port-based configurations both support truststore fields.
+
+Examples
+
+1) Rely on JVM default truststore (e.g., Let's Encrypt)
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+    <host>logs.example.com</host>
+    <port>443</port>
+    <useSSL>true</useSSL>
+    <!-- No truststore* tags needed when relying on JVM defaults -->
+</appender>
+```
+
+2) Custom truststore (host/port)
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+    <host>logs.example.internal</host>
+    <port>8443</port>
+    <useSSL>true</useSSL>
+
+    <truststorePath>/path/to/ca-or-truststore.p12</truststorePath>
+    <truststorePassword>changeit</truststorePassword>
+    <!-- Either set explicitly or leave empty for auto-detection by extension -->
+    <truststoreType>PKCS12</truststoreType>
+</appender>
+```
+
+3) Custom truststore (URL-based)
+
+```xml
+<appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+    <url>https://logs.example.internal:8443/monitoring/loki/api/v1/push</url>
+
+    <truststorePath>${loki.truststore.path}</truststorePath>
+    <truststorePassword>${loki.truststore.password}</truststorePassword>
+    <truststoreType>${loki.truststore.type}</truststoreType>
+</appender>
+```
+
+Tip: Use system properties or environment-variable substitution to avoid hardcoding sensitive paths/passwords in config files.
