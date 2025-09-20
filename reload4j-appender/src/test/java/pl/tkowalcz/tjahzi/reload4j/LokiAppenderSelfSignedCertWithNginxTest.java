@@ -23,7 +23,7 @@ class LokiAppenderSelfSignedCertWithNginxTest extends HttpsNginxIntegrationTest 
     @Test
     void shouldSendData() {
         // Given
-        loadConfig("appender-test-url-configuration.xml");
+        loadConfig("appender-test-cert-selfsigned-configuration.xml");
         Logger logger = Logger.getLogger(LokiAppenderSelfSignedCertWithNginxTest.class);
 
         String expectedLogLine = "Hello World";
