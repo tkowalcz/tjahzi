@@ -15,7 +15,7 @@ class LokiAppenderHttpsCustomEndpointTest extends HttpsNginxIntegrationTest {
 
     @Override
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
         setupTruststoreSysProps("nginx/nginx-selfsigned.crt", "changeit");
     }
