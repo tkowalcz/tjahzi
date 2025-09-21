@@ -27,6 +27,10 @@ public abstract class LokiAppenderConfigurator extends AppenderSkeleton implemen
 
     private String password;
 
+    private String truststorePath;
+    private String truststorePassword;
+    private String truststoreType;
+
     private int connectTimeoutMillis = 5000;
     private int readTimeoutMillis = 60_000;
     private int maxRetries = 3;
@@ -118,6 +122,30 @@ public abstract class LokiAppenderConfigurator extends AppenderSkeleton implemen
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTruststorePath() {
+        return truststorePath;
+    }
+
+    public void setTruststorePath(String truststorePath) {
+        this.truststorePath = truststorePath;
+    }
+
+    public String getTruststorePassword() {
+        return truststorePassword;
+    }
+
+    public void setTruststorePassword(String truststorePassword) {
+        this.truststorePassword = truststorePassword;
+    }
+
+    public String getTruststoreType() {
+        return truststoreType;
+    }
+
+    public void setTruststoreType(String truststoreType) {
+        this.truststoreType = truststoreType;
     }
 
     public int getConnectTimeoutMillis() {

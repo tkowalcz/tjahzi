@@ -393,3 +393,62 @@ see [log4j2 docs](https://logging.apache.org/log4j/2.x/manual/status-logger.html
 
 This functionality is provided using `LokiAppender::setMonitoringModule`. It will not work if you set your own 
 custom monitoring module, which should be fine—you already have set up your own way to monitor errors.
+
+## TLS (HTTPS) and truststore configuration
+
+Tjahzi supports secure HTTPS connections out of the box and lets you choose how server certificates are trusted.
+
+There are two ways to configure trust:
+
+- Use the default JVM truststore (recommended for public CAs like Let's Encrypt)
+  - Do not set any truststore fields in the appender and enable SSL (either set <port>443</port> or <useSSL>true</useSSL>).
+  - Optionally, you can control the JVM default truststore with standard system properties: -Djavax.net.ssl.trustStore=... and -Djavax.net.ssl.trustStorePassword=....
+- Provide a custom truststore (for self-signed or internal CA)
+  - Set truststorePath, truststorePassword (optional), and truststoreType (optional). Supported types: PKCS12 and JKS.
+  - If truststoreType is empty, Tjahzi auto-detects type by file extension: .p12/.pfx -> PKCS12; otherwise defaults to JKS.
+
+Notes:
+- The truststore settings are ignored when useSSL is false (plain HTTP).
+- URL-based and host/port-based configurations both support truststore fields.
+
+Examples
+
+1) Rely on JVM default truststore (e.g., Let's Encrypt)
+
+```xml
+<Loki name="Loki">
+    <host>logs.example.com</host>
+    <port>443</port>
+    <useSSL>true</useSSL>
+    <!-- No truststore* tags needed when relying on JVM defaults -->
+</Loki>
+```
+
+2) Custom truststore (host/port)
+
+```xml
+<Loki name="Loki">
+    <host>logs.example.internal</host>
+    <port>8443</port>
+    <useSSL>true</useSSL>
+
+    <truststorePath>/path/to/ca-or-truststore.p12</truststorePath>
+    <truststorePassword>changeit</truststorePassword>
+    <!-- Either set explicitly or leave empty for auto-detection by extension -->
+    <truststoreType>PKCS12</truststoreType>
+</Loki>
+```
+
+3) Custom truststore (URL-based)
+
+```xml
+<Loki name="Loki">
+    <url>https://logs.example.internal:8443/monitoring/loki/api/v1/push</url>
+
+    <truststorePath>${sys:loki.truststore.path}</truststorePath>
+    <truststorePassword>${sys:loki.truststore.password}</truststorePassword>
+    <truststoreType>${sys:loki.truststore.type}</truststoreType>
+</Loki>
+```
+
+Tip: Use system properties or environment-variable substitution to avoid hardcoding sensitive paths/passwords in config files.

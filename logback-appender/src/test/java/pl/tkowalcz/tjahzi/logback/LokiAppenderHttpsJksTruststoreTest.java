@@ -1,23 +1,38 @@
 package pl.tkowalcz.tjahzi.logback;
 
 import ch.qos.logback.classic.LoggerContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import pl.tkowalcz.tjahzi.logback.infra.HttpsNginxIntegrationTest;
+import pl.tkowalcz.tjahzi.logback.infra.TruststoreUtil;
+
+import java.io.File;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static pl.tkowalcz.tjahzi.logback.infra.LokiAssert.assertThat;
 
-class LokiAppenderHttpsUrlConnectionReverseProxyTest extends HttpsNginxIntegrationTest {
+class LokiAppenderHttpsJksTruststoreTest extends HttpsNginxIntegrationTest {
+
+    @Override
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+
+        File ts = TruststoreUtil.createJksTruststoreFromPem("nginx/nginx-selfsigned.crt", "changeit");
+
+        System.setProperty("loki.truststore.path", ts.getAbsolutePath());
+        System.setProperty("loki.truststore.password", "changeit");
+        System.setProperty("loki.truststore.type", "JKS");
+    }
 
     @Test
-    void shouldSendData() {
+    void shouldSendDataUsingJksTruststore() {
         // Given
         LoggerContext context = loadConfig("appender-test-url-configuration.xml");
-        Logger logger = context.getLogger(LokiAppenderHttpsUrlConnectionReverseProxyTest.class);
+        Logger logger = context.getLogger(LokiAppenderHttpsJksTruststoreTest.class);
 
         String expectedLogLine = "Hello World";
 
@@ -34,11 +49,12 @@ class LokiAppenderHttpsUrlConnectionReverseProxyTest extends HttpsNginxIntegrati
                                 hasItems(
                                         hasItems(
                                                 hasItems(
-                                                        containsString("p.t.t.l.LokiAppenderHttpsUrlConnectionReverseProxyTest - " + expectedLogLine)
+                                                        containsString("p.t.t.l.LokiAppenderHttpsJksTruststoreTest - " + expectedLogLine)
                                                 )
                                         )
                                 )
                         )
                 );
     }
+
 }

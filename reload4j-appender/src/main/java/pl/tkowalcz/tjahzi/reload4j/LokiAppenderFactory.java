@@ -59,6 +59,9 @@ public class LokiAppenderFactory {
                 .withMaxRetries(configurator.getMaxRetries())
                 .withRequestTimeoutMillis(configurator.getReadTimeoutMillis())
                 .withMaxRequestsInFlight(configurator.getMaxRequestsInFlight())
+                .withTrustStorePath(configurator.getTruststorePath())
+                .withTrustStorePassword(configurator.getTruststorePassword())
+                .withTrustStoreType(configurator.getTruststoreType())
                 .build();
 
         String[] additionalHeaders = configurator.getHeaders().stream()

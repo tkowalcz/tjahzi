@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration packages="pl.tkowalcz.tjahzi.log4j2">
+    <Loggers>
+        <Root level="OFF">
+        </Root>
+
+        <Logger name="pl.tkowalcz" level="ALL">
+            <AppenderRef ref="Loki"/>
+        </Logger>
+    </Loggers>
+
+    <appenders>
+        <Loki name="Loki">
+            <host>${sys:loki.host}</host>
+            <port>${sys:loki.port}</port>
+
+            <useSSL>true</useSSL>
+            <logEndpoint>/monitoring/loki/api/v1/push</logEndpoint>
+
+            <username>tjahzi</username>
+            <password>tjahzi</password>
+
+            <!-- Intentionally do not set truststore sysprops in the test to verify failure -->
+            <truststorePath>${sys:loki.truststore.path}</truststorePath>
+            <truststorePassword>${sys:loki.truststore.password}</truststorePassword>
+            <truststoreType>${sys:loki.truststore.type}</truststoreType>
+
+            <ThresholdFilter level="ALL"/>
+            <PatternLayout>
+                <Pattern>[%t] %d{DEFAULT} %5p %c{1} - %m%n%exception{full}</Pattern>
+            </PatternLayout>
+
+            <Label name="scenario" value="tls-missing-truststore"/>
+        </Loki>
+    </appenders>
+</configuration>

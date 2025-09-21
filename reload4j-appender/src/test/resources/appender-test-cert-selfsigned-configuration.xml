@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+        <param name="url" value="https://${loki.host}:${loki.port}/monitoring/loki/api/v1/push"/>
+
+        <param name="username" value="tjahzi"/>
+        <param name="password" value="tjahzi"/>
+
+        <param name="truststorePath" value="${loki.truststore.path}"/>
+        <param name="truststorePassword" value="${loki.truststore.password}"/>
+        <param name="truststoreType" value="${loki.truststore.type}"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p %c - %m%n"/>
+        </layout>
+
+        <label>
+            <name>server</name>
+            <value>127.0.0.1</value>
+        </label>
+    </appender>
+
+    <root>
+        <priority value="INFO"/>
+        <appender-ref ref="loki"/>
+    </root>
+</log4j:configuration>

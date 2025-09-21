@@ -36,7 +36,7 @@ public class IntegrationTest {
             .withExposedPorts(3100);
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         System.setProperty("loki.host", loki.getHost());
         System.setProperty("loki.port", loki.getFirstMappedPort().toString());
     }

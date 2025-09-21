@@ -9,6 +9,10 @@
         <username>tjahzi</username>
         <password>tjahzi</password>
 
+        <truststorePath>${loki.truststore.path}</truststorePath>
+        <truststorePassword>${loki.truststore.password}</truststorePassword>
+        <truststoreType>${loki.truststore.type}</truststoreType>
+
         <efficientLayout>
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
         </efficientLayout>

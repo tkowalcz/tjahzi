@@ -10,6 +10,10 @@ public class ClientConfiguration {
     private final String username;
     private final String password;
 
+    private final String trustStorePath;       // null -> use JVM default trust store
+    private final String trustStorePassword;   // may be null if trust store has no password
+    private final String trustStoreType;       // e.g., "JKS", "PKCS12"; null -> auto/default
+
     private final int connectionTimeoutMillis;
     private final int requestTimeoutMillis;
     private final int maxRequestsInFlight;
@@ -23,6 +27,9 @@ public class ClientConfiguration {
             boolean useSSL,
             String username,
             String password,
+            String trustStorePath,
+            String trustStorePassword,
+            String trustStoreType,
             int connectionTimeoutMillis,
             int requestTimeoutMillis,
             int maxRequestsInFlight,
@@ -34,6 +41,10 @@ public class ClientConfiguration {
 
         this.username = username;
         this.password = password;
+
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = trustStorePassword;
+        this.trustStoreType = trustStoreType;
 
         this.connectionTimeoutMillis = connectionTimeoutMillis;
         this.requestTimeoutMillis = requestTimeoutMillis;
@@ -64,6 +75,18 @@ public class ClientConfiguration {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getTrustStorePath() {
+        return trustStorePath;
+    }
+
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    public String getTrustStoreType() {
+        return trustStoreType;
     }
 
     public int getConnectionTimeoutMillis() {
