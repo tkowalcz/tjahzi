@@ -5,7 +5,7 @@
     <parent>
         <groupId>pl.tkowalcz.tjahzi</groupId>
         <artifactId>tjahzi-parent</artifactId>
-        <version>0.9.41-SNAPSHOT</version>
+        <version>0.9.41</version>
     </parent>
 
     <name>reload4j-appender</name>
