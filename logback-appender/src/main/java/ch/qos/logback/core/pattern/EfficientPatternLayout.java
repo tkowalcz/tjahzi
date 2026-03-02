@@ -5,7 +5,9 @@ import ch.qos.logback.classic.pattern.EnsureExceptionHandling;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class EfficientPatternLayout extends PatternLayoutBase<ILoggingEvent> {
 
@@ -15,8 +17,13 @@ public class EfficientPatternLayout extends PatternLayoutBase<ILoggingEvent> {
         this.postCompileProcessor = new EnsureExceptionHandling();
     }
 
+    @Override
+    protected Map<String, Supplier<DynamicConverter>> getDefaultConverterSupplierMap() {
+        return Collections.EMPTY_MAP;
+    }
+
     public Map<String, String> getDefaultConverterMap() {
-        return PatternLayout.defaultConverterMap;
+        return PatternLayout.DEFAULT_CONVERTER_MAP;
     }
 
     public ByteBuffer doEfficientLayout(ILoggingEvent event) {
