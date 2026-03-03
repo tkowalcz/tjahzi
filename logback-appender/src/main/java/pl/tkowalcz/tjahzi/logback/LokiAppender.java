@@ -23,10 +23,11 @@ public class LokiAppender extends LokiAppenderConfigurator {
     private EfficientPatternLayout efficientLayout;
     private PatternLayoutEncoder encoder;
 
-    private LoggingSystem loggingSystem;
+    private LokiAppenderFactory lokiAppenderFactory;
+    private volatile LoggingSystem loggingSystem;
     private Function<ILoggingEvent, ByteBuffer> actualEncoder;
 
-    private TjahziLogger logger;
+    private volatile TjahziLogger logger;
     private String logLevelLabel;
     private String loggerNameLabel;
     private String threadNameLabel;
@@ -61,11 +62,18 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     // @VisibleForTesting
     public LoggingSystem getLoggingSystem() {
+        if (loggingSystem == null) {
+            ensureInitialized();
+        }
         return loggingSystem;
     }
 
     @Override
     protected void append(ILoggingEvent event) {
+        if (logger == null) {
+            ensureInitialized();
+        }
+
         String logLevel = event.getLevel().toString();
         String loggerName = event.getLoggerName();
         String threadName = event.getThreadName();
@@ -141,8 +149,8 @@ public class LokiAppender extends LokiAppenderConfigurator {
             actualEncoder = event -> ByteBuffer.wrap(encoder.encode(event));
         }
 
-        LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
-        loggingSystem = lokiAppenderFactory.createAppender();
+        // Validate configuration and extract labels eagerly (no Netty involved).
+        lokiAppenderFactory = new LokiAppenderFactory(this);
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
         loggerNameLabel = lokiAppenderFactory.getLoggerNameLabel();
         threadNameLabel = lokiAppenderFactory.getThreadNameLabel();
@@ -150,9 +158,19 @@ public class LokiAppender extends LokiAppenderConfigurator {
         structuredMetadata = lokiAppenderFactory.getStructuredMetadata();
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
+        // Netty HTTP client creation is deferred to first append() call so that
+        // Netty's internal SLF4J logging does not fire during logback initialization.
+        super.start();
+    }
+
+    private synchronized void ensureInitialized() {
+        if (logger != null) {
+            return;
+        }
+
+        loggingSystem = lokiAppenderFactory.createAppender();
         logger = loggingSystem.createLogger();
         loggingSystem.start();
-        super.start();
     }
 
     @Override
@@ -161,10 +179,12 @@ public class LokiAppender extends LokiAppenderConfigurator {
             monitoringModuleWrapper.onClose();
         }
 
-        loggingSystem.close(
-                (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
-                thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
-        );
+        if (loggingSystem != null) {
+            loggingSystem.close(
+                    (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
+                    thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
+            );
+        }
 
         super.stop();
     }
