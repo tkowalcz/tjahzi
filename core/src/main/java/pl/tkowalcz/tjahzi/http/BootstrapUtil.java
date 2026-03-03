@@ -17,6 +17,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.X509Certificate;
+import java.util.Date;
+import java.util.Enumeration;
 
 public class BootstrapUtil {
 
@@ -29,7 +34,7 @@ public class BootstrapUtil {
 
         SslContext sslContext = null;
         if (clientConfiguration.isUseSSL()) {
-            sslContext = createSslContext(clientConfiguration);
+            sslContext = createSslContext(clientConfiguration, monitoringModule);
         }
 
         return bootstrap.group(group)
@@ -54,10 +59,12 @@ public class BootstrapUtil {
                 ).connect();
     }
 
-    private static SslContext createSslContext(ClientConfiguration configuration) {
+    private static SslContext createSslContext(
+            ClientConfiguration configuration,
+            MonitoringModule monitoringModule) {
         try {
             SslContextBuilder builder = SslContextBuilder.forClient();
-            TrustManagerFactory tmf = buildTrustManagerFactory(configuration);
+            TrustManagerFactory tmf = buildTrustManagerFactory(monitoringModule, configuration);
             builder.trustManager(tmf);
 
             return builder.build();
@@ -66,7 +73,9 @@ public class BootstrapUtil {
         }
     }
 
-    private static TrustManagerFactory buildTrustManagerFactory(ClientConfiguration configuration) {
+    private static TrustManagerFactory buildTrustManagerFactory(
+            MonitoringModule monitoringModule,
+            ClientConfiguration configuration) {
         String trustStorePath = configuration.getTrustStorePath();
         String trustStorePassword = configuration.getTrustStorePassword();
         String trustStoreType = configuration.getTrustStoreType();
@@ -90,10 +99,45 @@ public class BootstrapUtil {
             try (FileInputStream fis = new FileInputStream(trustStorePath)) {
                 keyStore.load(fis, passwordChars);
             }
+
+            warnAboutExpiredCertificates(monitoringModule, keyStore, trustStorePath);
+
             tmf.init(keyStore);
             return tmf;
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException("Failed to initialize TrustManagerFactory for TLS. " + e.getMessage(), e);
+        }
+    }
+
+    private static void warnAboutExpiredCertificates(
+            MonitoringModule monitoringModule,
+            KeyStore keyStore,
+            String trustStorePath) {
+        try {
+            Date now = new Date();
+            Enumeration<String> aliases = keyStore.aliases();
+
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                Certificate cert = keyStore.getCertificate(alias);
+
+                if (cert instanceof X509Certificate) {
+                    X509Certificate x509 = (X509Certificate) cert;
+
+                    if (x509.getNotAfter().before(now)) {
+                        monitoringModule.addAgentError(
+                                new CertificateExpiredException(
+                                        "[Tjahzi] WARNING: Certificate '" + alias
+                                        + "' in truststore " + trustStorePath
+                                        + " expired on " + x509.getNotAfter()
+                                        + ". TLS connections will fail. Please replace with a valid certificate."
+                                )
+                        );
+                    }
+                }
+            }
+        } catch (GeneralSecurityException e) {
+            // Don't prevent startup if we can't check certificates
         }
     }
 

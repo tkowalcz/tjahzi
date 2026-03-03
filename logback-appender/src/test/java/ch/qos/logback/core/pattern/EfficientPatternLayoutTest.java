@@ -5,17 +5,18 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.classic.pattern.SampleConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.classic.testUtil.SampleConverter;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.pattern.parser.AbstractPatternLayoutBaseTest;
+import ch.qos.logback.core.pattern.parser.test.AbstractPatternLayoutBaseTest;
 import ch.qos.logback.core.spi.ScanException;
 import ch.qos.logback.core.testUtil.StringListAppender;
 import ch.qos.logback.core.util.OptionHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 import static ch.qos.logback.classic.ClassicTestConstants.ISO_REGEX;
@@ -34,7 +35,7 @@ public class EfficientPatternLayoutTest extends AbstractPatternLayoutBaseTest<IL
     private final Logger logger = loggerContext.getLogger(EfficientPatternLayoutTest.class);
     private final Logger root = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         patternLayout = getPatternLayoutBase();
         patternLayout.setContext(loggerContext);
