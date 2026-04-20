@@ -6,6 +6,8 @@ import org.testcontainers.containers.NginxContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 
+import java.io.File;
+
 public class HttpsNginxIntegrationTest extends IntegrationTest {
 
     @Container
@@ -40,5 +42,18 @@ public class HttpsNginxIntegrationTest extends IntegrationTest {
     public void setUp() throws Exception {
         System.setProperty("loki.host", nginx.getHost());
         System.setProperty("loki.port", nginx.getFirstMappedPort().toString());
+
+        System.clearProperty("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
+        System.clearProperty("javax.net.ssl.trustStoreType");
+
+        System.clearProperty("loki.truststore.path");
+        System.clearProperty("loki.truststore.password");
+        System.clearProperty("loki.truststore.type");
+
+        File truststore = TruststoreUtil.createPkcs12TruststoreFromPem("nginx/nginx-selfsigned.crt", "changeit");
+        System.setProperty("loki.truststore.path", truststore.getAbsolutePath());
+        System.setProperty("loki.truststore.password", "changeit");
+        System.setProperty("loki.truststore.type", "PKCS12");
     }
 }

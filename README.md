@@ -37,6 +37,20 @@ designs do not allow allocation-free operation, but we go to great
 lengths to reduce allocations and even provide an optimized version of
 the pattern layout for `Logback`.
 
+## Compatibility
+
+The `0.9.x` line is built for Java 8 and is still supported and patched.
+
+The `1.x` line is built for Java 17 and current logging-stack
+dependencies:
+
+1. `log4j2` appender targets Log4j 2.25.x.
+1. `Logback` appender targets Logback 1.5.x.
+1. `reload4j` appender targets reload4j 1.2.26 and remains usable with
+   compatible `log4j1.x` APIs.
+1. The core HTTP client uses Netty 4.2.x and supports HTTPS with the JVM
+   default truststore or a custom JKS/PKCS12 truststore.
+
 ## Getting started
 
 #### Log4j2

@@ -29,6 +29,7 @@ class LokiAppenderHttpsJvmDefaultTruststoreTest extends HttpsNginxIntegrationTes
         File ts = TruststoreUtil.createPkcs12TruststoreFromPem("nginx/nginx-selfsigned.crt", "changeit");
         System.setProperty("javax.net.ssl.trustStore", ts.getAbsolutePath());
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
     }
 
     @Test

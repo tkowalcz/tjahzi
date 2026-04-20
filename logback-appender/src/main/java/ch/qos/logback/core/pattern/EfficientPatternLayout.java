@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 
 import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class EfficientPatternLayout extends PatternLayoutBase<ILoggingEvent> {
 
@@ -13,6 +14,11 @@ public class EfficientPatternLayout extends PatternLayoutBase<ILoggingEvent> {
 
     public EfficientPatternLayout() {
         this.postCompileProcessor = new EnsureExceptionHandling();
+    }
+
+    @Override
+    protected Map<String, Supplier<DynamicConverter>> getDefaultConverterSupplierMap() {
+        return PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP;
     }
 
     public Map<String, String> getDefaultConverterMap() {

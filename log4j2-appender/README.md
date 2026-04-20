@@ -11,7 +11,7 @@ Log4j2 appender seemed like a good first.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender-nodep</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -22,7 +22,7 @@ Log4j2 appender seemed like a good first.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>log4j2-appender</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -51,6 +51,18 @@ Log4j2 appender seemed like a good first.
     <AppenderRef ref="Loki"/>
 </Root>
 ```
+
+## Compatibility
+
+The `1.x` appender requires Java 17 and is built against Log4j 2.25.x.
+The regular artifact depends on the shared core module, which uses
+Agrona 2.4.x and Netty 4.2.x. The no-dependency artifact shades and
+relocates those core runtime dependencies while leaving Log4j2 itself
+provided by the application.
+
+XML and properties configuration remain unchanged. Programmatic builder
+configuration should use the public setters exposed by the appender
+builder, matching Log4j2's current builder-injection model.
 
 ### Note on Loki HTTP endpoint and host/port configuration
 
@@ -161,7 +173,7 @@ on the contents of other parts of the URL. This table has a rundown of all viabl
 
 | Section  | Default                    | Comment                                                                              |
 |----------|----------------------------|--------------------------------------------------------------------------------------|
-| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useUSSL` |
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useSSL`  |
 | Host     | None (must be provided)    |                                                                                      |
 | Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https          |
 | Path     | '/loki/api/v1/push'        |                                                                                      |
@@ -410,6 +422,8 @@ There are two ways to configure trust:
 Notes:
 - The truststore settings are ignored when useSSL is false (plain HTTP).
 - URL-based and host/port-based configurations both support truststore fields.
+- When relying on the JVM default truststore, omit the `truststore*`
+  fields from the appender configuration.
 
 Examples
 

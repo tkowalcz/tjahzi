@@ -11,7 +11,7 @@ gives you Logback appender.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender-nodep</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -23,7 +23,7 @@ gives you Logback appender.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>logback-appender</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -56,6 +56,14 @@ gives you Logback appender.
     <appender-ref ref="Loki"/>
 </root>
 ```
+
+## Compatibility
+
+The `1.x` appender requires Java 17 and is built against Logback 1.5.x.
+The regular artifact depends on the shared core module, which uses
+Agrona 2.4.x and Netty 4.2.x. The no-dependency artifact shades and
+relocates those core runtime dependencies while leaving Logback itself
+provided by the application.
 
 ### Note on Loki HTTP endpoint and host/port configuration
 
@@ -189,7 +197,7 @@ viable configurations:
 
 | Section  | Default                    | Comment                                                                              |
 |----------|----------------------------|--------------------------------------------------------------------------------------|
-| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useUSSL` |
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useSSL`  |
 | Host     | None (must be provided)    |                                                                                      |
 | Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https          |
 | Path     | '/loki/api/v1/push'        |                                                                                      |
@@ -384,6 +392,11 @@ There are two ways to configure trust:
 Notes:
 - The truststore settings are ignored when useSSL is false (plain HTTP).
 - URL-based and host/port-based configurations both support truststore fields.
+- When relying on the JVM default truststore, omit the `truststore*`
+  fields from the appender configuration. Logback 1.5 substitutes
+  undefined variables with values such as
+  `loki.truststore.type_IS_UNDEFINED`, and Tjahzi treats those as
+  explicit configuration values.
 
 Examples
 

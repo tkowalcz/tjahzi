@@ -15,11 +15,11 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class LogBufferAgentTest {
 
@@ -131,7 +131,7 @@ class LogBufferAgentTest {
         agent.doWork();
 
         // Then
-        verifyZeroInteractions(httpClient);
+        verifyNoInteractions(httpClient);
     }
 
     @Test
@@ -168,7 +168,7 @@ class LogBufferAgentTest {
         agent.doWork();
 
         // Then
-        verifyZeroInteractions(httpClient);
+        verifyNoInteractions(httpClient);
     }
 
     @Test

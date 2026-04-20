@@ -14,9 +14,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.tkowalcz.tjahzi.log4j2.infra.IntegrationTest;
 import pl.tkowalcz.tjahzi.log4j2.infra.LokiAssert;
+import pl.tkowalcz.tjahzi.log4j2.infra.TruststoreUtil;
 
+import java.io.File;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -89,11 +90,24 @@ public class ServerNameIndicatorTest {
             .withExposedPorts(81);
 
     @BeforeEach
-    public void setUp() throws UnknownHostException {
+    public void setUp() throws Exception {
         InetAddress inetAddress = InetAddress.getByName(nginx.getHost());
 
         DnsCacheManipulator.setDnsCache(MARVEL_LOKI_ADDRESS, inetAddress.getHostAddress());
         DnsCacheManipulator.setDnsCache(DC_LOKI_ADDRESS, inetAddress.getHostAddress());
+
+        System.clearProperty("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
+        System.clearProperty("javax.net.ssl.trustStoreType");
+
+        System.clearProperty("loki.truststore.path");
+        System.clearProperty("loki.truststore.password");
+        System.clearProperty("loki.truststore.type");
+
+        File truststore = TruststoreUtil.createPkcs12TruststoreFromPem("nginx/nginx-selfsigned.crt", "changeit");
+        System.setProperty("javax.net.ssl.trustStore", truststore.getAbsolutePath());
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.trustStoreType", "PKCS12");
     }
 
     @Test

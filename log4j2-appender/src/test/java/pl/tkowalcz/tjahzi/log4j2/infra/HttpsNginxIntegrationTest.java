@@ -40,5 +40,13 @@ public class HttpsNginxIntegrationTest extends IntegrationTest {
     public void setUp() throws Exception {
         System.setProperty("loki.host", nginx.getHost());
         System.setProperty("loki.port", nginx.getFirstMappedPort().toString());
+
+        System.clearProperty("javax.net.ssl.trustStore");
+        System.clearProperty("javax.net.ssl.trustStorePassword");
+        System.clearProperty("javax.net.ssl.trustStoreType");
+
+        System.clearProperty("loki.truststore.path");
+        System.clearProperty("loki.truststore.password");
+        System.clearProperty("loki.truststore.type");
     }
 }

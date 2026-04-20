@@ -28,14 +28,15 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>4.1.17</version>
+            <version>4.2.38</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.25.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

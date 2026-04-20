@@ -58,7 +58,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginBuilderAttribute
     private String username;
 
-    @PluginBuilderAttribute
+    @PluginBuilderAttribute(sensitive = true)
     private String password;
 
     @PluginBuilderAttribute
@@ -100,7 +100,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     @PluginBuilderAttribute
     private String truststorePath;
 
-    @PluginBuilderAttribute
+    @PluginBuilderAttribute(sensitive = true)
     private String truststorePassword;
 
     @PluginBuilderAttribute
@@ -214,48 +214,54 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         return url;
     }
 
-    public void setUrl(String url) {
+    public B setUrl(String url) {
         this.url = url;
+        return asBuilder();
     }
 
     public String getLogEndpoint() {
         return logEndpoint;
     }
 
-    public void setLogEndpoint(String logEndpoint) {
+    public B setLogEndpoint(String logEndpoint) {
         this.logEndpoint = logEndpoint;
+        return asBuilder();
     }
 
     public boolean isUseSSL() {
         return useSSL;
     }
 
-    public void setUseSSL(boolean useSSL) {
+    public B setUseSSL(boolean useSSL) {
         this.useSSL = useSSL;
+        return asBuilder();
     }
 
     public boolean isUseDaemonThreads() {
         return useDaemonThreads;
     }
 
-    public void setUseDaemonThreads(boolean useDaemonThreads) {
+    public B setUseDaemonThreads(boolean useDaemonThreads) {
         this.useDaemonThreads = useDaemonThreads;
+        return asBuilder();
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public B setUsername(String username) {
         this.username = username;
+        return asBuilder();
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public B setPassword(String password) {
         this.password = password;
+        return asBuilder();
     }
 
     public int getConnectTimeoutMillis() {
@@ -289,107 +295,148 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
         return port;
     }
 
-    public void setPort(int port) {
+    public B setPort(int port) {
         this.port = port;
+        return asBuilder();
     }
 
     public int getMaxRetries() {
         return maxRetries;
     }
 
-    public void setMaxRetries(int maxRetries) {
+    public B setMaxRetries(int maxRetries) {
         this.maxRetries = maxRetries;
+        return asBuilder();
     }
 
     public int getBufferSizeMegabytes() {
         return bufferSizeMegabytes;
     }
 
-    public void setBufferSizeMegabytes(int bufferSizeMegabytes) {
+    public B setBufferSizeMegabytes(int bufferSizeMegabytes) {
         this.bufferSizeMegabytes = bufferSizeMegabytes;
+        return asBuilder();
     }
 
     public String getLogLevelLabel() {
         return logLevelLabel;
     }
 
-    public void setLogLevelLabel(String logLevelLabel) {
+    public B setLogLevelLabel(String logLevelLabel) {
         this.logLevelLabel = logLevelLabel;
+        return asBuilder();
     }
 
     public long getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(long batchSize) {
+    public B setBatchSize(long batchSize) {
         this.batchSize = batchSize;
+        return asBuilder();
     }
 
     public long getBatchWait() {
         return batchWait;
     }
 
-    public void setBatchWait(long batchWait) {
+    public B setBatchWait(long batchWait) {
         this.batchWait = batchWait;
+        return asBuilder();
     }
 
     public long getLogShipperWakeupIntervalMillis() {
         return logShipperWakeupIntervalMillis;
     }
 
-    public void setLogShipperWakeupIntervalMillis(long logShipperWakeupIntervalMillis) {
+    public B setLogShipperWakeupIntervalMillis(long logShipperWakeupIntervalMillis) {
         this.logShipperWakeupIntervalMillis = logShipperWakeupIntervalMillis;
+        return asBuilder();
     }
 
     public int getShutdownTimeoutSeconds() {
         return shutdownTimeoutSeconds;
     }
 
-    public void setShutdownTimeoutSeconds(int shutdownTimeoutSeconds) {
+    public B setShutdownTimeoutSeconds(int shutdownTimeoutSeconds) {
         this.shutdownTimeoutSeconds = shutdownTimeoutSeconds;
+        return asBuilder();
     }
 
-    public void setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
+    public B setMaxLogLineSizeKilobytes(int maxLogLineSizeKilobytes) {
         this.maxLogLineSizeKilobytes = maxLogLineSizeKilobytes;
+        return asBuilder();
     }
 
     public long getMaxLogLineSizeKilobytes() {
         return maxLogLineSizeKilobytes;
     }
 
-    public void setMaxRequestsInFlight(int maxRequestsInFlight) {
+    public B setMaxRequestsInFlight(int maxRequestsInFlight) {
         this.maxRequestsInFlight = maxRequestsInFlight;
+        return asBuilder();
     }
 
     public int getMaxRequestsInFlight() {
         return maxRequestsInFlight;
     }
 
-    public void setHeaders(Header[] headers) {
+    public B setHeaders(Header[] headers) {
         this.headers = headers;
+        return asBuilder();
     }
 
     public Label[] getLabels() {
         return labels;
     }
 
-    public void setLabels(Label[] labels) {
+    public B setLabels(Label[] labels) {
         this.labels = labels;
+        return asBuilder();
     }
 
     public StructuredMetadata[] getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(StructuredMetadata[] metadata) {
+    public B setMetadata(StructuredMetadata[] metadata) {
         this.metadata = metadata;
+        return asBuilder();
     }
 
     public boolean isVerbose() {
         return verbose;
     }
 
-    public void setVerbose(boolean verbose) {
+    public B setVerbose(boolean verbose) {
         this.verbose = verbose;
+        return asBuilder();
+    }
+
+    public String getTruststorePath() {
+        return truststorePath;
+    }
+
+    public B setTruststorePath(String truststorePath) {
+        this.truststorePath = truststorePath;
+        return asBuilder();
+    }
+
+    public String getTruststorePassword() {
+        return truststorePassword;
+    }
+
+    public B setTruststorePassword(String truststorePassword) {
+        this.truststorePassword = truststorePassword;
+        return asBuilder();
+    }
+
+    public String getTruststoreType() {
+        return truststoreType;
+    }
+
+    public B setTruststoreType(String truststoreType) {
+        this.truststoreType = truststoreType;
+        return asBuilder();
     }
 }

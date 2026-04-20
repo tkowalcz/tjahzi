@@ -17,7 +17,7 @@ both frameworks.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>reload4j-appender-nodep</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -29,7 +29,7 @@ both frameworks.
    <dependency>
      <groupId>pl.tkowalcz.tjahzi</groupId>
      <artifactId>reload4j-appender</artifactId>
-     <version>0.9.39</version>
+     <version>1.0.0</version>
    </dependency>
    ```
 
@@ -61,6 +61,16 @@ both frameworks.
     <appender-ref ref="loki"/>
 </root>
 ```
+
+## Compatibility
+
+The `1.x` appender requires Java 17 and is built against reload4j
+1.2.26. Since reload4j is binary compatible with `log4j1.x`, the
+appender can still be used from applications on compatible `log4j1.x`
+APIs. The regular artifact depends on the shared core module, which uses
+Agrona 2.4.x and Netty 4.2.x. The no-dependency artifact shades and
+relocates those core runtime dependencies while leaving reload4j or
+`log4j1.x` provided by the application.
 
 ### Note on Loki HTTP endpoint and host/port configuration
 
@@ -194,7 +204,7 @@ all viable configurations:
 
 | Section  | Default                    | Comment                                                                              |
 |----------|----------------------------|--------------------------------------------------------------------------------------|
-| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useUSSL` |
+| Protocol | None (must be provided)    | Supported protocols are `http` and `https`. Https is equivalent to setting `useSSL`  |
 | Host     | None (must be provided)    |                                                                                      |
 | Port     | 80 for http, 443 for https | You can use any port and SSL will still be used if protocol is set to https          |
 | Path     | '/loki/api/v1/push'        |                                                                                      |
@@ -241,7 +251,7 @@ excluding the `reload4j` dependency manually. In maven:
 <dependency>
     <groupId>pl.tkowalcz.tjahzi</groupId>
     <artifactId>reload4j-appender</artifactId>
-    <version>0.9.39</version>
+    <version>1.0.0</version>
     <exclusions>
         <exclusion>
             <groupId>ch.qos.reload4j</groupId>
@@ -268,6 +278,8 @@ There are two ways to configure trust:
 Notes:
 - The truststore settings are ignored when useSSL is false (plain HTTP).
 - URL-based and host/port-based configurations both support truststore fields.
+- When relying on the JVM default truststore, omit the `truststore*`
+  parameters from the appender configuration.
 
 Examples
 
