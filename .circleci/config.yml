@@ -6,8 +6,15 @@ orbs:
 jobs:
   build-and-test:
     machine:
-      image: cimg/openjdk:21.0.9
+      image: ubuntu-2204:2025.09.1
     steps:
+      - run:
+          name: Install OpenJDK 21
+          command: |
+            sudo apt-get update && sudo apt-get install openjdk-21-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-21-openjdk-amd64/bin/javac
+            java -version
       - checkout
 
       # Download and cache dependencies
