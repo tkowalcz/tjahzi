@@ -6,15 +6,8 @@ orbs:
 jobs:
   build-and-test:
     machine:
-      image: ubuntu-2204:2024.11.1
+      image: cimg/openjdk:21.0.9
     steps:
-      - run:
-          name: Install OpenJDK 11
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
-            java -version
       - checkout
 
       # Download and cache dependencies
@@ -58,7 +51,7 @@ jobs:
 executors:
   new-java-maven-executor:
     machine:
-      image: ubuntu-2204:2024.11.1
+      image: cimg/openjdk:21.0.9
 
 parameters:
   run_workflow_release:
