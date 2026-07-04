@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class StandardMonitoringModule implements MonitoringModule {
 
-    private static final int ERROR_LOG_CAPACITY = 1024;
+    private static final int ERROR_LOG_CAPACITY = 64 * 1024;
 
     private final AtomicLong droppedPuts = new AtomicLong();
     private final AtomicLong httpConnectAttempts = new AtomicLong();
@@ -26,17 +26,15 @@ public class StandardMonitoringModule implements MonitoringModule {
     private final DistinctErrorLog distinctErrorLog;
 
     public StandardMonitoringModule() {
-        StatsDumpingThread thread = new StatsDumpingThread(this);
-        if (thread.isEnabled()) {
-            thread.start();
-        }
-
         distinctErrorLog = new DistinctErrorLog(
                 new UnsafeBuffer(ByteBuffer.allocateDirect(ERROR_LOG_CAPACITY)),
                 new SystemEpochClock()
         );
 
-        distinctErrorLog.record(new NullPointerException());
+        StatsDumpingThread thread = new StatsDumpingThread(this);
+        if (thread.isEnabled()) {
+            thread.start();
+        }
     }
 
     @Override
