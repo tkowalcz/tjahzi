@@ -41,6 +41,29 @@ public class EfficientPatternLayout extends PatternLayoutBase<ILoggingEvent> {
         return encoder.getBuffer();
     }
 
+    /**
+     * Runs the converters for this event and prepares a thread local {@link Encoder} for
+     * fragmented encoding via {@link Encoder#encodeFragment()}. Use instead of
+     * {@link #doEfficientLayout(ILoggingEvent)} to handle messages larger than the
+     * encoder buffer without truncation.
+     */
+    public Encoder startEfficientLayout(ILoggingEvent event) {
+        StringBuilder strBuilder = StringBuilders.threadLocal();
+
+        if (isStarted()) {
+            Converter<ILoggingEvent> c = head;
+            while (c != null) {
+                c.write(strBuilder, event);
+                c = c.getNext();
+            }
+        }
+
+        Encoder encoder = Encoders.threadLocal();
+        encoder.startEncoding(strBuilder);
+
+        return encoder;
+    }
+
     @Override
     protected String getPresentationHeaderPrefix() {
         return PatternLayout.HEADER_PREFIX;

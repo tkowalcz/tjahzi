@@ -10,6 +10,7 @@ import pl.tkowalcz.tjahzi.stats.LoggingMonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 import pl.tkowalcz.tjahzi.stats.StandardMonitoringModule;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +53,24 @@ public class LokiAppenderFactory {
         );
 
         structuredMetadata = structuredMetadataFactory.convertLabelsDroppingInvalid();
-        mdcLogLabels = configurator.getMdcLogLabels();
+        mdcLogLabels = validateMdcLogLabels(configurator);
         monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
+    }
+
+    private static List<String> validateMdcLogLabels(LokiAppenderConfigurator configurator) {
+        List<String> result = new ArrayList<>();
+
+        for (String mdcLogLabel : configurator.getMdcLogLabels()) {
+            if (Label.hasValidName(mdcLogLabel)) {
+                result.add(mdcLogLabel);
+            } else {
+                configurator.addError(
+                        "Ignoring mdcLogLabel '" + mdcLogLabel + "' - it is not a valid Loki label name"
+                );
+            }
+        }
+
+        return result;
     }
 
     public LoggingSystem createAppender() {
