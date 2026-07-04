@@ -98,7 +98,8 @@ class Log4jAdapterLabelPrinterTest {
                 Arguments.of("Empty", "", true),
                 Arguments.of("Literal value", "literal value", true),
                 Arguments.of("Literal value with variable", "Literal & variable: ${server}", false),
-                Arguments.of("Contains pattern", "With pattern %c{1}", true) // Since 2.15.0 no interpolation possible
+                Arguments.of("Contains pattern", "With pattern %c{1}", false),
+                Arguments.of("Literal followed by MDC pattern", "myapp-%X{region}", false)
         );
     }
 

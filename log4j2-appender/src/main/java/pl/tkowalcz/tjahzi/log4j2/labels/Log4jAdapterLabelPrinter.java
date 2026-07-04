@@ -40,7 +40,9 @@ public class Log4jAdapterLabelPrinter implements LabelPrinter {
                 }
             }
 
-            return !converter.isVariable();
+            if (converter.isVariable()) {
+                return false;
+            }
         }
 
         return true;
