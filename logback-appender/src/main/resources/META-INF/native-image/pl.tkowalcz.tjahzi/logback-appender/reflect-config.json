@@ -1,0 +1,22 @@
+[
+  {
+    "name": "pl.tkowalcz.tjahzi.logback.LokiAppender",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "pl.tkowalcz.tjahzi.logback.Label",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "pl.tkowalcz.tjahzi.logback.Header",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "ch.qos.logback.core.pattern.EfficientPatternLayout",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  }
+]
