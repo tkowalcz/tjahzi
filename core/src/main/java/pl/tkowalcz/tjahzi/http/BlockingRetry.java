@@ -45,6 +45,8 @@ class BlockingRetry implements Retry {
             try {
                 Thread.sleep(strategy.getAsLong(), 0);
             } catch (InterruptedException ignore) {
+                Thread.currentThread().interrupt();
+                failureAction.run();
                 return;
             }
 

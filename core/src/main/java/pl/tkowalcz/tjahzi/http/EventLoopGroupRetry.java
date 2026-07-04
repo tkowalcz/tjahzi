@@ -45,4 +45,8 @@ class EventLoopGroupRetry implements Retry, Runnable {
                 TimeUnit.MILLISECONDS
         );
     }
+
+    public void reset() {
+        strategy.reset();
+    }
 }
