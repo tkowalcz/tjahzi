@@ -2,6 +2,7 @@ package pl.tkowalcz.tjahzi;
 
 import org.agrona.concurrent.AgentRunner;
 import org.agrona.concurrent.ringbuffer.ManyToOneRingBuffer;
+import pl.tkowalcz.tjahzi.http.NettyHttpClient;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
 import java.io.Closeable;
@@ -50,14 +51,27 @@ public class LoggingSystem {
     public void close(
             int retryCloseTimeoutMs,
             Consumer<Thread> closeFailAction) {
+        long deadline = System.currentTimeMillis() + retryCloseTimeoutMs;
+
         runner.close(
                 retryCloseTimeoutMs,
                 closeFailAction
         );
 
+        // Give the http client at least a second to deliver the final batch even
+        // if draining the log buffer consumed the whole shutdown budget.
+        long remainingBudgetMillis = Math.max(
+                1_000,
+                deadline - System.currentTimeMillis()
+        );
+
         for (Closeable resource : resourcesToCleanup) {
             try {
-                resource.close();
+                if (resource instanceof NettyHttpClient) {
+                    ((NettyHttpClient) resource).close(remainingBudgetMillis);
+                } else {
+                    resource.close();
+                }
             } catch (Exception ignore) {
             }
         }

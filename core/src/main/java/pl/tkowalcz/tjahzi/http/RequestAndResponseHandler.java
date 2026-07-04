@@ -28,6 +28,9 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
 
     private PendingRequest resending;
 
+    // Written only from the event loop, read from the thread closing the connection.
+    private volatile int outstandingRequests;
+
     RequestAndResponseHandler(MonitoringModule monitoringModule, int maxRetries) {
         this.monitoringModule = monitoringModule;
         this.maxRetries = maxRetries;
@@ -49,6 +52,8 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
                                 maxRetries
                         )
                 );
+
+                outstandingRequests++;
             }
         }
 
@@ -72,7 +77,7 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
             retryBackoff.reset();
 
             if (pendingRequest != null) {
-                pendingRequest.release();
+                completePendingRequest(pendingRequest);
             }
         }
 
@@ -110,7 +115,7 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
 
         while (!inFlight.isEmpty()) {
             monitoringModule.incrementFailedHttpRequests();
-            inFlight.pollFirst().release();
+            completePendingRequest(inFlight.pollFirst());
         }
     }
 
@@ -133,19 +138,28 @@ class RequestAndResponseHandler extends ChannelDuplexHandler {
                     TimeUnit.MILLISECONDS
             );
         } else {
-            pendingRequest.release();
+            completePendingRequest(pendingRequest);
         }
     }
 
     private void resend(ChannelHandlerContext ctx, PendingRequest pendingRequest) {
         if (!ctx.channel().isActive()) {
             monitoringModule.incrementFailedHttpRequests();
-            pendingRequest.release();
+            completePendingRequest(pendingRequest);
             return;
         }
 
         resending = pendingRequest;
         ctx.channel().writeAndFlush(pendingRequest.request.retainedDuplicate());
+    }
+
+    int outstandingRequests() {
+        return outstandingRequests;
+    }
+
+    private void completePendingRequest(PendingRequest pendingRequest) {
+        outstandingRequests--;
+        pendingRequest.release();
     }
 
     private static boolean isRetriable(HttpResponseStatus status) {
