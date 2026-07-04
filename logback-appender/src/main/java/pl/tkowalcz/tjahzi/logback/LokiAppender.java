@@ -25,6 +25,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
     private PatternLayoutEncoder encoder;
 
     private LokiAppenderFactory lokiAppenderFactory;
+    private boolean initializing;
     private volatile LoggingSystem loggingSystem;
     private Function<ILoggingEvent, ByteBuffer> actualEncoder;
 
@@ -79,6 +80,15 @@ public class LokiAppender extends LokiAppenderConfigurator {
     protected void append(ILoggingEvent event) {
         if (logger == null) {
             ensureInitialized();
+
+            if (logger == null) {
+                // Recursive append from the thread that is currently starting
+                // the networking stack (e.g. Netty logging its own bootstrap
+                // through this appender). Delivering it is impossible - count
+                // it instead of recursing into initialization.
+                monitoringModuleWrapper.incrementDroppedPuts();
+                return;
+            }
         }
 
         String logLevel = event.getLevel().toString();
@@ -200,13 +210,18 @@ public class LokiAppender extends LokiAppenderConfigurator {
     }
 
     private synchronized void ensureInitialized() {
-        if (logger != null) {
+        if (logger != null || initializing) {
             return;
         }
 
-        loggingSystem = lokiAppenderFactory.createAppender();
-        loggingSystem.start();
-        logger = loggingSystem.createLogger();
+        initializing = true;
+        try {
+            loggingSystem = lokiAppenderFactory.createAppender();
+            loggingSystem.start();
+            logger = loggingSystem.createLogger();
+        } finally {
+            initializing = false;
+        }
     }
 
     @Override
