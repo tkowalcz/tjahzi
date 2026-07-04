@@ -19,6 +19,8 @@ public class NettyHttpClient implements Closeable {
     private final HttpHeaders headers;
     private final HttpConnection lokiConnection;
 
+    private final String hostHeader;
+
     private final Snappy snappy = new Snappy();
 
     public NettyHttpClient(
@@ -30,6 +32,7 @@ public class NettyHttpClient implements Closeable {
 
         this.headers = HttpHeadersFactory.createHeaders(clientConfiguration, additionalHeaders);
         this.lokiConnection = new HttpConnection(clientConfiguration, monitoringModule);
+        this.hostHeader = buildHostHeader(clientConfiguration);
     }
 
     public void log(ByteBuf dataBuffer) {
@@ -44,9 +47,23 @@ public class NettyHttpClient implements Closeable {
                 .add(headers)
                 .set(HttpHeaderNames.CONTENT_TYPE, PROTOBUF_MIME_TYPE)
                 .set(HttpHeaderNames.CONTENT_LENGTH, dataBuffer.readableBytes())
-                .set(HttpHeaderNames.HOST, clientConfiguration.getHost());
+                .set(HttpHeaderNames.HOST, hostHeader);
 
         lokiConnection.execute(request);
+    }
+
+    private static String buildHostHeader(ClientConfiguration clientConfiguration) {
+        int port = clientConfiguration.getPort();
+
+        boolean isDefaultPort = clientConfiguration.isUseSSL()
+                ? port == ConnectionParamsFactory.HTTPS_PORT
+                : port == ConnectionParamsFactory.HTTP_PORT;
+
+        if (isDefaultPort) {
+            return clientConfiguration.getHost();
+        }
+
+        return clientConfiguration.getHost() + ":" + port;
     }
 
     @Override
