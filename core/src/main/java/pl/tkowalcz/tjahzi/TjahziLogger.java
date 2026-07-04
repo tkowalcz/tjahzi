@@ -28,13 +28,20 @@ public class TjahziLogger {
             LabelSerializer structuredMetadata,
             ByteBuffer line
     ) {
-        int requiredSize = serializer.calculateRequiredSize(
-                serializedLabels,
-                structuredMetadata,
-                line
-        );
+        int claim;
+        try {
+            int requiredSize = serializer.calculateRequiredSize(
+                    serializedLabels,
+                    structuredMetadata,
+                    line
+            );
 
-        int claim = logBuffer.tryClaim(LOG_MESSAGE_TYPE_ID, requiredSize);
+            claim = logBuffer.tryClaim(LOG_MESSAGE_TYPE_ID, requiredSize);
+        } catch (Throwable t) {
+            monitoringModule.incrementDroppedPuts(t);
+            return this;
+        }
+
         if (claim > 0) {
             putMessageOnRing(
                     epochMillisecond,
