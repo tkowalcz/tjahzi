@@ -1,0 +1,10 @@
+{
+  "resources": {
+    "includes": [
+      { "pattern": "logback.xml" },
+      { "pattern": "log4j2.xml" },
+      { "pattern": "log4j-native.xml" },
+      { "pattern": "org/apache/log4j/xml/log4j.dtd" }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+[
+  {
+    "name": "org.apache.log4j.PatternLayout",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  }
+]

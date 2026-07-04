@@ -1,0 +1,17 @@
+[
+  {
+    "name": "pl.tkowalcz.tjahzi.reload4j.LokiAppender",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "pl.tkowalcz.tjahzi.reload4j.Label",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "pl.tkowalcz.tjahzi.reload4j.Header",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  }
+]

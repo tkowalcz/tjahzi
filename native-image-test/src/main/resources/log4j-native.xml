@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.reload4j.LokiAppender">
+        <param name="Host" value="localhost"/>
+        <param name="Port" value="3100"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m"/>
+        </layout>
+
+        <label>
+            <name>server</name>
+            <value>native-reload4j</value>
+        </label>
+    </appender>
+
+    <root>
+        <priority value="info"/>
+        <appender-ref ref="Loki"/>
+    </root>
+</log4j:configuration>

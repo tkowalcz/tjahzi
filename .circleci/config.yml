@@ -55,6 +55,30 @@ jobs:
       - store_test_results:
           path: ~/test-results
 
+  native-image-test:
+    machine:
+      image: ubuntu-2204:2024.11.1
+    steps:
+      - checkout
+      - run:
+          name: Install GraalVM
+          command: |
+            curl -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz | tar xz -C $HOME
+            echo "export JAVA_HOME=$HOME/graalvm-community-openjdk-21.0.2+13.1" >> $BASH_ENV
+            echo "export PATH=$HOME/graalvm-community-openjdk-21.0.2+13.1/bin:\$PATH" >> $BASH_ENV
+      - run:
+          name: Start Loki
+          command: docker run -d --rm -p 3100:3100 grafana/loki:3.1.0
+      - run:
+          name: Install module deps
+          command: mvn install -Dmaven.test.skip=true -ntp
+      - run:
+          name: Build native smoke test
+          command: mvn -Pnative -pl native-image-test package -DskipTests -ntp
+      - run:
+          name: Run native smoke test
+          command: ./native-image-test/target/native-smoke-test
+
 executors:
   new-java-maven-executor:
     machine:
@@ -70,6 +94,7 @@ workflows:
   main:
     jobs:
       - build-and-test
+      - native-image-test
   release:
     when: << pipeline.parameters.run_workflow_release >>
     jobs:
