@@ -10,13 +10,14 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.IdleStateHandler;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
+import java.util.concurrent.TimeUnit;
+
 class HttpClientInitializer extends ChannelInitializer<Channel> {
 
     private static final int BYTES_IN_MEGABYTE = 1024 * 1024;
     private static final int MAX_CONTENT_LENGTH = 10 * BYTES_IN_MEGABYTE;
 
     private final MonitoringModule monitoringModule;
-    private final RequestAndResponseHandler responseHandler;
 
     private final SslContext sslContext;
 
@@ -24,6 +25,7 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
     private final int port;
     private final int requestTimeoutMillis;
     private final int maxRequestsInFlight;
+    private final int maxRetries;
 
     HttpClientInitializer(
             MonitoringModule monitoringModule,
@@ -31,16 +33,17 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
             String host,
             int port,
             int requestTimeoutMillis,
-            int maxRequestsInFlight
+            int maxRequestsInFlight,
+            int maxRetries
     ) {
         this.monitoringModule = monitoringModule;
-        this.responseHandler = new RequestAndResponseHandler(monitoringModule);
         this.sslContext = sslContext;
         this.host = host;
         this.port = port;
 
         this.requestTimeoutMillis = requestTimeoutMillis;
         this.maxRequestsInFlight = maxRequestsInFlight;
+        this.maxRetries = maxRetries;
     }
 
     @Override
@@ -49,7 +52,8 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
         p.addLast(new IdleStateHandler(
                         requestTimeoutMillis,
                         0,
-                        60
+                        0,
+                        TimeUnit.MILLISECONDS
                 )
         );
 
@@ -66,6 +70,6 @@ class HttpClientInitializer extends ChannelInitializer<Channel> {
                         maxRequestsInFlight
                 )
         );
-        p.addLast(responseHandler);
+        p.addLast(new RequestAndResponseHandler(monitoringModule, maxRetries));
     }
 }

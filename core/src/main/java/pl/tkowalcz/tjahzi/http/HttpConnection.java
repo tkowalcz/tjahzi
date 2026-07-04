@@ -34,7 +34,7 @@ public class HttpConnection implements Closeable {
         recreateConnection(retry);
     }
 
-    private void recreateConnection(Retry retry) {
+    private void recreateConnection(EventLoopGroupRetry retry) {
         lokiConnection = BootstrapUtil.initConnection(
                 group,
                 clientConfiguration,
@@ -43,6 +43,8 @@ public class HttpConnection implements Closeable {
 
         lokiConnection.addListener((ChannelFuture future) -> {
             if (future.isSuccess()) {
+                retry.reset();
+
                 future
                         .channel()
                         .closeFuture()
@@ -74,7 +76,15 @@ public class HttpConnection implements Closeable {
 
         stableReference.awaitUninterruptibly();
         if (stableReference.isSuccess() && stableReference.channel().isActive()) {
-            stableReference.channel().writeAndFlush(request);
+            stableReference
+                    .channel()
+                    .writeAndFlush(request)
+                    .addListener((ChannelFuture future) -> {
+                        if (!future.isSuccess()) {
+                            monitoringModule.incrementFailedHttpRequests();
+                            monitoringModule.addPipelineError(future.cause());
+                        }
+                    });
         } else {
             retry.retry();
         }
