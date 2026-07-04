@@ -3,6 +3,7 @@ package pl.tkowalcz.tjahzi.logback;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.pattern.EfficientPatternLayout;
+import ch.qos.logback.core.pattern.Encoder;
 import pl.tkowalcz.tjahzi.LabelSerializer;
 import pl.tkowalcz.tjahzi.LabelSerializerPair;
 import pl.tkowalcz.tjahzi.LabelSerializers;
@@ -69,7 +70,6 @@ public class LokiAppender extends LokiAppenderConfigurator {
         String logLevel = event.getLevel().toString();
         String loggerName = event.getLoggerName();
         String threadName = event.getThreadName();
-        ByteBuffer logLine = actualEncoder.apply(event);
         Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
 
         LabelSerializerPair labelSerializerPair = LabelSerializers.threadLocal();
@@ -82,13 +82,42 @@ public class LokiAppender extends LokiAppenderConfigurator {
         appendMdcLogLabels(labelSerializer, mdcPropertyMap);
         processStructuredMetadata(metadataSerializer, event);
 
-        logger.log(
-                event.getTimeStamp(),
-                event.getNanoseconds() % 1_000_000L,
-                labelSerializer,
-                metadataSerializer,
-                logLine
-        );
+        if (encoder == null) {
+            appendFragmented(event, labelSerializer, metadataSerializer);
+        } else {
+            logger.log(
+                    event.getTimeStamp(),
+                    event.getNanoseconds() % 1_000_000L,
+                    labelSerializer,
+                    metadataSerializer,
+                    actualEncoder.apply(event)
+            );
+        }
+    }
+
+    private void appendFragmented(
+            ILoggingEvent event,
+            LabelSerializer labelSerializer,
+            LabelSerializer metadataSerializer
+    ) {
+        Encoder lineEncoder = efficientLayout.startEfficientLayout(event);
+
+        boolean hasMoreFragments;
+        do {
+            hasMoreFragments = lineEncoder.encodeFragment();
+
+            logger.log(
+                    event.getTimeStamp(),
+                    event.getNanoseconds() % 1_000_000L,
+                    labelSerializer,
+                    metadataSerializer,
+                    lineEncoder.getBuffer()
+            );
+
+            if (hasMoreFragments) {
+                lineEncoder.continueEncoding();
+            }
+        } while (hasMoreFragments);
     }
 
     private void processStructuredMetadata(LabelSerializer labelSerializer, ILoggingEvent event) {
@@ -161,10 +190,12 @@ public class LokiAppender extends LokiAppenderConfigurator {
             monitoringModuleWrapper.onClose();
         }
 
-        loggingSystem.close(
-                (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
-                thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
-        );
+        if (loggingSystem != null) {
+            loggingSystem.close(
+                    (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
+                    thread -> addError("Loki appender was unable to stop thread on shutdown: " + thread)
+            );
+        }
 
         super.stop();
     }
