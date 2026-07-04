@@ -70,6 +70,8 @@ public class MutableMonitoringModuleWrapper implements MonitoringModule {
 
     @Override
     public void onClose() {
-        monitoringModule.onClose();
+        if (monitoringModule != null) {
+            monitoringModule.onClose();
+        }
     }
 }

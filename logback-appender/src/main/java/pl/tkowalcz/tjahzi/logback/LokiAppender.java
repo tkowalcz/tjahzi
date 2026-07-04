@@ -24,10 +24,11 @@ public class LokiAppender extends LokiAppenderConfigurator {
     private EfficientPatternLayout efficientLayout;
     private PatternLayoutEncoder encoder;
 
-    private LoggingSystem loggingSystem;
+    private LokiAppenderFactory lokiAppenderFactory;
+    private volatile LoggingSystem loggingSystem;
     private Function<ILoggingEvent, ByteBuffer> actualEncoder;
 
-    private TjahziLogger logger;
+    private volatile TjahziLogger logger;
     private String logLevelLabel;
     private String loggerNameLabel;
     private String threadNameLabel;
@@ -62,11 +63,24 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     // @VisibleForTesting
     public LoggingSystem getLoggingSystem() {
+        if (loggingSystem == null) {
+            ensureInitialized();
+        }
+
+        return loggingSystem;
+    }
+
+    // @VisibleForTesting
+    LoggingSystem peekLoggingSystem() {
         return loggingSystem;
     }
 
     @Override
     protected void append(ILoggingEvent event) {
+        if (logger == null) {
+            ensureInitialized();
+        }
+
         String logLevel = event.getLevel().toString();
         String loggerName = event.getLoggerName();
         String threadName = event.getThreadName();
@@ -170,8 +184,11 @@ public class LokiAppender extends LokiAppenderConfigurator {
             actualEncoder = event -> ByteBuffer.wrap(encoder.encode(event));
         }
 
-        LokiAppenderFactory lokiAppenderFactory = new LokiAppenderFactory(this);
-        loggingSystem = lokiAppenderFactory.createAppender();
+        // Configuration is validated and labels extracted eagerly - only the
+        // networking stack is deferred. Creating the Netty client here would
+        // emit SLF4J calls while logback (the SLF4J backend) is still
+        // initializing, causing the substitute logger replay warnings.
+        lokiAppenderFactory = new LokiAppenderFactory(this);
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
         loggerNameLabel = lokiAppenderFactory.getLoggerNameLabel();
         threadNameLabel = lokiAppenderFactory.getThreadNameLabel();
@@ -179,9 +196,17 @@ public class LokiAppender extends LokiAppenderConfigurator {
         structuredMetadata = lokiAppenderFactory.getStructuredMetadata();
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
-        logger = loggingSystem.createLogger();
-        loggingSystem.start();
         super.start();
+    }
+
+    private synchronized void ensureInitialized() {
+        if (logger != null) {
+            return;
+        }
+
+        loggingSystem = lokiAppenderFactory.createAppender();
+        loggingSystem.start();
+        logger = loggingSystem.createLogger();
     }
 
     @Override
