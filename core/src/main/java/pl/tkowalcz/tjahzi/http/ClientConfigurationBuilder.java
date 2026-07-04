@@ -17,7 +17,7 @@ public class ClientConfigurationBuilder {
 
     public static final int DEFAULT_MAX_REQUESTS_IN_FLIGHT = 100;
 
-    public static final int DEFAULT_MAX_RETRIES = 0;
+    public static final int DEFAULT_MAX_RETRIES = 3;
 
     private String logEndpoint;
 
