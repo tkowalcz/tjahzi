@@ -293,6 +293,12 @@
 
     <profiles>
         <profile>
+            <id>native</id>
+            <modules>
+                <module>native-image-test</module>
+            </modules>
+        </profile>
+        <profile>
             <id>gpg-sign</id>
             <!--
             only sign during deploy phase

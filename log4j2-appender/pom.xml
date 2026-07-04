@@ -40,4 +40,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- JDK 23+ no longer runs annotation processors implicitly. The log4j
+                         plugin processors generate Log4j2Plugins.dat and the GraalVM
+                         reachability metadata, so force processing on. -->
+                    <proc>full</proc>
+                    <compilerArgs>
+                        <arg>-Alog4j.graalvm.groupId=pl.tkowalcz.tjahzi</arg>
+                        <arg>-Alog4j.graalvm.artifactId=log4j2-appender</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
