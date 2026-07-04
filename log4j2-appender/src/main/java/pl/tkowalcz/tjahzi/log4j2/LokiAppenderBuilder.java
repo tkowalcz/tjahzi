@@ -38,27 +38,34 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private static final int BYTES_IN_KILOBYTE = 1024;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String url;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String logEndpoint;
 
     @PluginBuilderAttribute
     private String host;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int port;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private boolean useSSL;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private boolean useDaemonThreads;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String username;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String password;
 
     @PluginBuilderAttribute
@@ -68,42 +75,55 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
     private int readTimeoutMillis = 60_000;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int maxRetries = 3;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int bufferSizeMegabytes = 32;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String logLevelLabel;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private long batchSize = 10_2400;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private long batchWait = 5;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private long logShipperWakeupIntervalMillis = 10;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int shutdownTimeoutSeconds = 10;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int maxLogLineSizeKilobytes = 10;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private int maxRequestsInFlight = 100;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private boolean verbose;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String truststorePath;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String truststorePassword;
 
     @PluginBuilderAttribute
+    @SuppressWarnings("log4j.public.setter")
     private String truststoreType;
 
     @PluginElement("Headers")
