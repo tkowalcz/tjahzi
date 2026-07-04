@@ -99,4 +99,69 @@ class EncoderTest {
         // Then
         assertThat(encoder.getBuffer()).isEqualTo(expected);
     }
+
+    @Test
+    void shouldFragmentLongerMessagesWithoutLosingData() {
+        // Given
+        Encoder encoder = new Encoder();
+
+        String toEncode = RandomStringUtils.randomAlphanumeric(40 * 1024 + 41);
+        ByteBuffer expected = wrap(toEncode.getBytes(StandardCharsets.UTF_8));
+
+        // When
+        encoder.startEncoding(new StringBuilder(toEncode));
+
+        ByteBuffer actual = ByteBuffer.allocate(64 * 1024);
+        int fragments = 0;
+
+        boolean hasMoreFragments;
+        do {
+            hasMoreFragments = encoder.encodeFragment();
+            fragments++;
+
+            actual.put(encoder.getBuffer());
+            if (hasMoreFragments) {
+                encoder.continueEncoding();
+            }
+        } while (hasMoreFragments);
+
+        actual.flip();
+
+        // Then
+        assertThat(fragments).isEqualTo(5);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void shouldFragmentMultiByteCharactersWithoutCorruption() {
+        // Given
+        Encoder encoder = new Encoder();
+
+        StringBuilder toEncode = new StringBuilder();
+        for (int i = 0; i < 11 * 1024; i++) {
+            toEncode.append('ż');
+        }
+
+        ByteBuffer expected = wrap(toEncode.toString().getBytes(StandardCharsets.UTF_8));
+
+        // When
+        encoder.startEncoding(toEncode);
+
+        ByteBuffer actual = ByteBuffer.allocate(64 * 1024);
+
+        boolean hasMoreFragments;
+        do {
+            hasMoreFragments = encoder.encodeFragment();
+
+            actual.put(encoder.getBuffer());
+            if (hasMoreFragments) {
+                encoder.continueEncoding();
+            }
+        } while (hasMoreFragments);
+
+        actual.flip();
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
 }
