@@ -42,6 +42,10 @@ public class StandardMonitoringModule implements MonitoringModule {
         droppedPuts.incrementAndGet();
     }
 
+    public long getDroppedPuts() {
+        return droppedPuts.get();
+    }
+
     @Override
     public void incrementDroppedPuts(Throwable throwable) {
         incrementDroppedPuts();
