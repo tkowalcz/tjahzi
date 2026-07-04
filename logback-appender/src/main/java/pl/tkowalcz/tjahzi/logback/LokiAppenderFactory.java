@@ -54,7 +54,16 @@ public class LokiAppenderFactory {
 
         structuredMetadata = structuredMetadataFactory.convertLabelsDroppingInvalid();
         mdcLogLabels = validateMdcLogLabels(configurator);
+
+        // Install the default monitoring module eagerly - createAppender() runs
+        // lazily on first append and must not overwrite a module the user
+        // injected via setMonitoringModule() after start.
         monitoringModuleWrapper = new MutableMonitoringModuleWrapper();
+        if (configurator.isVerbose()) {
+            monitoringModuleWrapper.setMonitoringModule(new LoggingMonitoringModule(configurator::addError));
+        } else {
+            monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
+        }
     }
 
     private static List<String> validateMdcLogLabels(LokiAppenderConfigurator configurator) {
@@ -94,12 +103,6 @@ public class LokiAppenderFactory {
         String[] additionalHeaders = configurator.getHeaders().stream()
                 .flatMap(header -> Stream.of(header.getName(), header.getValue()))
                 .toArray(String[]::new);
-
-        if (configurator.isVerbose()) {
-            monitoringModuleWrapper.setMonitoringModule(new LoggingMonitoringModule(configurator::addError));
-        } else {
-            monitoringModuleWrapper.setMonitoringModule(new StandardMonitoringModule());
-        }
 
         NettyHttpClient httpClient = HttpClientFactory
                 .defaultFactory()
