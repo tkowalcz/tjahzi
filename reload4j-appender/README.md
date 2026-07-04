@@ -108,7 +108,7 @@ As per the `log4j1.x` convention configuration parameters are set using
 ```
 
 The appender implements `UnrecognizedElementHandler` interface and
-handles additional nested tags: `label`, `header`, and `mdcLabel`:
+handles additional nested tags: `label`, `header`, and `mdcLogLabel`:
 
 ```xml
 
