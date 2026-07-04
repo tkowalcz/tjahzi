@@ -71,6 +71,10 @@ public class NettyHttpClient implements Closeable {
         lokiConnection.close();
     }
 
+    public void close(long timeoutMillis) {
+        lokiConnection.close(timeoutMillis);
+    }
+
     public void log(OutputBuffer outputBuffer) throws IOException {
         ByteBuf dataBuffer = outputBuffer.close();
         ByteBuf compressedBuffer = PooledByteBufAllocator.DEFAULT.buffer();

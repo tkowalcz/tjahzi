@@ -51,7 +51,8 @@ public class TjahziInitializer {
                         logBuffer,
                         staticLabels,
                         outputBuffer
-                )
+                ),
+                monitoringModule
         );
 
         AgentRunner runner = new AgentRunner(

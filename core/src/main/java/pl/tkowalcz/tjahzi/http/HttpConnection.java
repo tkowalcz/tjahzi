@@ -7,10 +7,15 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 
+import io.netty.channel.Channel;
+
 import java.io.Closeable;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class HttpConnection implements Closeable {
+
+    private static final long DEFAULT_CLOSE_TIMEOUT_MILLIS = 10_000;
 
     private final ClientConfiguration clientConfiguration;
     private final MonitoringModule monitoringModule;
@@ -96,6 +101,52 @@ public class HttpConnection implements Closeable {
 
     @Override
     public void close() {
-        group.shutdownGracefully();
+        close(DEFAULT_CLOSE_TIMEOUT_MILLIS);
+    }
+
+    /**
+     * Closes the connection waiting for outstanding requests to be acknowledged by Loki
+     * and for the event loop to flush and terminate, so that the last batch is not lost
+     * when the JVM exits right after this method returns.
+     */
+    public void close(long timeoutMillis) {
+        long deadline = System.currentTimeMillis() + timeoutMillis;
+
+        awaitOutstandingRequests(deadline);
+
+        group.shutdownGracefully(0, timeoutMillis, TimeUnit.MILLISECONDS);
+        group.terminationFuture()
+                .awaitUninterruptibly(Math.max(1, deadline - System.currentTimeMillis()));
+    }
+
+    private void awaitOutstandingRequests(long deadline) {
+        ChannelFuture stableReference = this.lokiConnection;
+        if (stableReference == null || !stableReference.isDone() || !stableReference.isSuccess()) {
+            return;
+        }
+
+        Channel channel = stableReference.channel();
+        if (!channel.isActive()) {
+            return;
+        }
+
+        try {
+            // A noop task behind any queued writes - once it completes all
+            // preceding writeAndFlush calls have registered their requests.
+            channel.eventLoop()
+                    .submit(() -> {
+                    })
+                    .await(Math.max(1, deadline - System.currentTimeMillis()));
+
+            RequestAndResponseHandler handler = channel.pipeline().get(RequestAndResponseHandler.class);
+            while (handler != null
+                    && handler.outstandingRequests() > 0
+                    && channel.isActive()
+                    && System.currentTimeMillis() < deadline) {
+                Thread.sleep(10);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -62,6 +62,43 @@ class RequestAndResponseHandlerTest {
     }
 
     @Test
+    void shouldTrackOutstandingRequestsAcrossLifecycle() {
+        // Given
+        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
+        EmbeddedChannel channel = createChannel(monitoringModule, 10_000, 0);
+        RequestAndResponseHandler handler = channel.pipeline().get(RequestAndResponseHandler.class);
+
+        assertThat(handler.outstandingRequests()).isEqualTo(0);
+
+        // When - request written
+        channel.writeOneOutbound(createRequest());
+        channel.flush();
+        drainOutbound(channel);
+
+        // Then
+        assertThat(handler.outstandingRequests()).isEqualTo(1);
+
+        // When - acknowledged
+        channel.writeOneInbound(createResponse(HttpResponseStatus.NO_CONTENT));
+        channel.flush();
+
+        // Then
+        assertThat(handler.outstandingRequests()).isEqualTo(0);
+
+        // When - another request in flight while the channel dies
+        channel.writeOneOutbound(createRequest());
+        channel.flush();
+        drainOutbound(channel);
+        assertThat(handler.outstandingRequests()).isEqualTo(1);
+
+        channel.close();
+
+        // Then
+        assertThat(handler.outstandingRequests()).isEqualTo(0);
+        channel.finishAndReleaseAll();
+    }
+
+    @Test
     void shouldRetryRequestAfterServerError() {
         // Given
         StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
