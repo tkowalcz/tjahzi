@@ -63,7 +63,8 @@ class LogBufferAgentTest {
                         logBuffer,
                         Map.of(),
                         outputBuffer
-                )
+                ),
+                new StandardMonitoringModule()
         );
 
         for (int i = 0; i < 100; i++) {
@@ -116,7 +117,8 @@ class LogBufferAgentTest {
                         logBuffer,
                         Map.of(),
                         outputBuffer
-                )
+                ),
+                new StandardMonitoringModule()
         );
 
         logger.log(
@@ -157,7 +159,8 @@ class LogBufferAgentTest {
                         logBuffer,
                         Map.of(),
                         outputBuffer
-                )
+                ),
+                new StandardMonitoringModule()
         );
 
         // When
@@ -204,7 +207,8 @@ class LogBufferAgentTest {
                         logBuffer,
                         Map.of(),
                         outputBuffer
-                )
+                ),
+                new StandardMonitoringModule()
         );
 
         // When
@@ -262,7 +266,8 @@ class LogBufferAgentTest {
                         logBuffer,
                         Map.of(),
                         outputBuffer
-                )
+                ),
+                new StandardMonitoringModule()
         );
 
         for (int i = 0; i < LogShipperAgent.MAX_MESSAGES_TO_RETRIEVE * 2 + 1; i++) {
@@ -278,8 +283,62 @@ class LogBufferAgentTest {
         // When
         agent.onClose();
 
-        // Then
-        verify(httpClient, times(4)).log((OutputBuffer) any());
+        // Then - three batches of (100, 100, 1) messages and no trailing empty push
+        verify(httpClient, times(3)).log((OutputBuffer) any());
+        assertThat(logBuffer.size()).isZero();
+    }
+
+    @Test
+    void shouldCountMessagesAbandonedWhenShutdownDeadlineIsExceeded() throws IOException {
+        // Given
+        ManyToOneRingBuffer logBuffer = new ManyToOneRingBuffer(
+                new UnsafeBuffer(
+                        ByteBuffer.allocateDirect(64 * 1024 + RingBufferDescriptor.TRAILER_LENGTH)
+                )
+        );
+
+        StandardMonitoringModule monitoringModule = new StandardMonitoringModule();
+        TjahziLogger logger = new TjahziLogger(logBuffer, monitoringModule);
+
+        NettyHttpClient httpClient = mock(NettyHttpClient.class);
+        SettableClock clock = new SettableClock();
+
+        OutputBuffer outputBuffer = new OutputBuffer(PooledByteBufAllocator.DEFAULT.buffer());
+        LogShipperAgent agent = new LogShipperAgent(
+                new TimeCappedBatchingStrategy(
+                        clock,
+                        outputBuffer,
+                        Integer.MAX_VALUE,
+                        Integer.MAX_VALUE,
+                        0
+                ),
+                logBuffer,
+                outputBuffer,
+                httpClient,
+                new LogBufferMessageHandler(
+                        logBuffer,
+                        Map.of(),
+                        outputBuffer
+                ),
+                monitoringModule
+        );
+
+        for (int i = 0; i < LogShipperAgent.MAX_MESSAGES_TO_RETRIEVE * 2 + 1; i++) {
+            logger.log(
+                    42L,
+                    0,
+                    LabelSerializerCreator.from(Map.of()),
+                    new LabelSerializer(),
+                    ByteBuffer.wrap("Test".getBytes())
+            );
+        }
+
+        // When - shutdown timeout of zero allows only a single drain iteration
+        agent.onClose();
+
+        // Then - 100 messages went out, the remaining 101 were abandoned but counted
+        verify(httpClient, times(1)).log((OutputBuffer) any());
+        assertThat(monitoringModule.getDroppedPuts()).isEqualTo(101);
         assertThat(logBuffer.size()).isZero();
     }
 }
