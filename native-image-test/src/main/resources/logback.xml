@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="Loki" class="pl.tkowalcz.tjahzi.logback.LokiAppender">
+        <host>localhost</host>
+        <port>3100</port>
+
+        <efficientLayout>
+            <pattern>%msg</pattern>
+        </efficientLayout>
+
+        <label>
+            <name>server</name>
+            <value>native</value>
+        </label>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Loki"/>
+    </root>
+</configuration>

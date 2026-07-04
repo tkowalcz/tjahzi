@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appenders>
+        <Loki name="Loki">
+            <host>localhost</host>
+            <port>3100</port>
+
+            <PatternLayout>
+                <Pattern>%m</Pattern>
+            </PatternLayout>
+
+            <Label name="server" value="native-log4j2"/>
+        </Loki>
+    </appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Loki"/>
+        </Root>
+    </Loggers>
+</configuration>
