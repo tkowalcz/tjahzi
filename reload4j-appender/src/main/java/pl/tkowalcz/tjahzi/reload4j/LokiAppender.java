@@ -1,15 +1,19 @@
 package pl.tkowalcz.tjahzi.reload4j;
 
+import org.apache.log4j.Layout;
+import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 import pl.tkowalcz.tjahzi.LabelSerializer;
 import pl.tkowalcz.tjahzi.LabelSerializers;
 import pl.tkowalcz.tjahzi.LoggingSystem;
 import pl.tkowalcz.tjahzi.TjahziLogger;
+import pl.tkowalcz.tjahzi.github.GitHubDocs;
 import pl.tkowalcz.tjahzi.stats.MonitoringModule;
 import pl.tkowalcz.tjahzi.stats.MutableMonitoringModuleWrapper;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +42,11 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
     @Override
     protected void append(LoggingEvent event) {
-        String formattedMessage = layout.format(event);
+        if (!checkEntryConditions()) {
+            return;
+        }
+
+        String formattedMessage = formatLogLine(event);
         ByteBuffer logLine = ByteBuffer.wrap(formattedMessage.getBytes(StandardCharsets.UTF_8));
 
         String logLevel = event.getLevel().toString();
@@ -61,6 +69,41 @@ public class LokiAppender extends LokiAppenderConfigurator {
                 new LabelSerializer(),
                 logLine
         );
+    }
+
+    String formatLogLine(LoggingEvent event) {
+        String formattedMessage = layout.format(event);
+
+        if (layout.ignoresThrowable()) {
+            String[] throwableStrRep = event.getThrowableStrRep();
+
+            if (throwableStrRep != null) {
+                StringBuilder logLineBuilder = new StringBuilder(formattedMessage);
+
+                for (int i = 0; i < throwableStrRep.length; i++) {
+                    logLineBuilder.append(throwableStrRep[i]);
+                    logLineBuilder.append(Layout.LINE_SEP);
+                }
+
+                return logLineBuilder.toString();
+            }
+        }
+
+        return formattedMessage;
+    }
+
+    private boolean checkEntryConditions() {
+        if (closed) {
+            LogLog.warn("Not allowed to write to a closed appender.");
+            return false;
+        }
+
+        if (logger == null || loggingSystem == null) {
+            errorHandler.error("Appender [" + name + "] is not started or failed to initialize - dropping log event.");
+            return false;
+        }
+
+        return true;
     }
 
     private void appendLogLabel(LabelSerializer labelSerializer, String logLevel) {
@@ -106,11 +149,31 @@ public class LokiAppender extends LokiAppenderConfigurator {
         logLevelLabel = lokiAppenderFactory.getLogLevelLabel();
         loggerNameLabel = lokiAppenderFactory.getLoggerNameLabel();
         threadNameLabel = lokiAppenderFactory.getThreadNameLabel();
-        mdcLogLabels = lokiAppenderFactory.getMdcLogLabels();
+        mdcLogLabels = dropInvalidMdcLogLabels(lokiAppenderFactory.getMdcLogLabels());
         monitoringModuleWrapper = lokiAppenderFactory.getMonitoringModuleWrapper();
 
         logger = loggingSystem.createLogger();
         loggingSystem.start();
+    }
+
+    private List<String> dropInvalidMdcLogLabels(List<String> mdcLogLabels) {
+        List<String> result = new ArrayList<>(mdcLogLabels.size());
+
+        for (String mdcLogLabel : mdcLogLabels) {
+            if (Label.hasValidName(mdcLogLabel)) {
+                result.add(mdcLogLabel);
+            } else {
+                LogLog.error(
+                        String.format(
+                                "Ignoring MDC log label '%s' - contains invalid characters. %s\n",
+                                mdcLogLabel,
+                                GitHubDocs.LABEL_NAMING.getLogMessage()
+                        )
+                );
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -125,7 +188,7 @@ public class LokiAppender extends LokiAppenderConfigurator {
 
         if (loggingSystem != null) {
             loggingSystem.close(
-                    (int) TimeUnit.SECONDS.toMillis(10), // Default 10 second timeout
+                    (int) TimeUnit.SECONDS.toMillis(getShutdownTimeoutSeconds()),
                     thread -> errorHandler.error("Loki appender was unable to stop thread on shutdown: " + thread)
             );
         }
