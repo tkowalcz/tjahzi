@@ -73,7 +73,10 @@ existing `PatternLayout` from Logback and uses exact same code for
 formatting events. The key difference is that it
 swaps out some parts of the implementation and introduces reusable
 thread local buffers for constructing log line and
-allocation free string to bytes encoder.
+allocation free string to bytes encoder. Log lines are encoded into a
+fixed 10 KB thread local buffer - lines longer than that are split into
+multiple consecutive log entries so no data is lost (matching the
+behavior of the log4j2 appender).
 
 Tjahzi appender supports all kinds of layouts. To enable
 `EfficientPatternLayout` us following configuration:
@@ -214,7 +217,10 @@ values during initialization of the appender.
 
 MDC is supported via `mdcLogLabel` tag. It will dynamically extract MDC
 value associated with its content and will turn
-it into a label.
+it into a label. The name must be a valid Loki label name (matching
+`[a-zA-Z_][a-zA-Z0-9_]*`) - invalid names are ignored and an error is
+reported on startup. See also note about
+[label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).
 
 <details>
     <summary>Click to expand example</summary>
@@ -358,7 +364,7 @@ or use Tjahzi optimized efficient, low-allocation encoder:
 | LogLevelLabel                  | -                     | If defined then log level label of configured name will be added to each line sent to Loki. It will contain Logback log level e.g. `INFO`, `WARN` etc. See also note about [label naming](https://github.com/tkowalcz/tjahzi/wiki/Label-naming).                                                                                                                                                                                                                                                                             |
 | Metadata                       | -                     | Specify structured metadata attached to each log line sent via this appender instance. Unlike labels, structured metadata does not affect log stream grouping and is stored separately alongside the log entry. This feature is useful for adding contextual information that doesn't need to be indexed for stream identification. Supports both static values and variable substitution.                                                                                                                                   |
 | BufferSizeMegabytes            | 32 MB                 | Size of the `log buffer`. Must be power of two between 1MB and 1GB. See [log buffer sizing](https://github.com/tkowalcz/tjahzi/wiki/Log-buffer-sizing) for more explanations.                                                                                                                                                                                                                                                                                                                                                |
-| MaxRetries                     | 3                     | Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then next batches will probably fail too).                                                                                                                                                                                                                   |
+| MaxRetries                     | 3                     | Maximum number of retries to perform when delivering log message to Loki. Log buffer data is delivered in order, one batch after the other, so too much retries will block delivery of subsequent log batches (on the other hand if we need to retry many times then next batches will probably fail too). Retries are performed with exponential backoff both when the connection fails and when Loki responds with HTTP status 429 or a 5xx; other client errors (4xx) are not retried.                                                                                                                                                                                                                   |
 | ConnectTimeoutMillis           | 5s                    | This configures socket connect timeout when connecting to Loki. After unsuccessful connection attempt it will continue to retry indefinitely employing exponential backoff (initial backoff = 250ms, maximum backoff = 30s, multiplier = 3).                                                                                                                                                                                                                                                                                 |
 | ReadTimeoutMillis              | 60s                   | Sets socket read timeout on Loki connection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | BatchSize                      | 100 KB                | Like in [promtail configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/) `maximum batch size (in bytes) of logs to accumulate before sending the batch to Loki`.                                                                                                                                                                                                                                                                                                                               |
