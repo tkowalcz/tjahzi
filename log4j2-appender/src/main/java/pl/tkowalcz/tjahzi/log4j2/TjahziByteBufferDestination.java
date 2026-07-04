@@ -19,7 +19,7 @@ public class TjahziByteBufferDestination implements ByteBufferDestination {
     }
 
     public void drainRemaining() {
-        if (buffer.hasRemaining()) {
+        if (buffer.position() > 0) {
             drain(buffer);
         }
     }

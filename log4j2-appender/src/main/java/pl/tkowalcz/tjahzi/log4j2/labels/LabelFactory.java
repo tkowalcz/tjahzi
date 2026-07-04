@@ -35,9 +35,11 @@ public class LabelFactory {
     }
 
     public LabelsDescriptor convertLabelsDroppingInvalid() {
-        detectAndLogDuplicateLabels();
+        LabelBase[] validLabels = dropAndLogLabelsWithInvalidNames();
 
-        Map<String, LabelPrinter> allLabels = convertAndLogViolations();
+        detectAndLogDuplicateLabels(validLabels);
+
+        Map<String, LabelPrinter> allLabels = convert(validLabels);
 
         Map<String, LabelPrinter> dynamicLabels = new HashMap<>();
         allLabels
@@ -66,8 +68,27 @@ public class LabelFactory {
         );
     }
 
-    private void detectAndLogDuplicateLabels() {
-        List<String> duplicatedLabels = stream(labels)
+    private LabelBase[] dropAndLogLabelsWithInvalidNames() {
+        return stream(labels)
+                .flatMap(label -> {
+                            if (label.hasValidName()) {
+                                return Stream.of(label);
+                            }
+
+                            LOGGER.error(
+                                    "Ignoring label '{}' - contains invalid characters. {}",
+                                    label.getName(),
+                                    GitHubDocs.LABEL_NAMING.getLogMessage()
+                            );
+
+                            return Stream.of();
+                        }
+                )
+                .toArray(LabelBase[]::new);
+    }
+
+    private void detectAndLogDuplicateLabels(LabelBase[] validLabels) {
+        List<String> duplicatedLabels = stream(validLabels)
                 .collect(Collectors.groupingBy(LabelBase::getName, counting()))
                 .entrySet()
                 .stream()
@@ -84,22 +105,8 @@ public class LabelFactory {
         }
     }
 
-    private Map<String, LabelPrinter> convertAndLogViolations() {
-        return stream(labels)
-                .flatMap(label -> {
-                            if (label.hasValidName()) {
-                                return Stream.of(label);
-                            }
-
-                            LOGGER.error(
-                                    "Ignoring label '{}' - contains invalid characters. {}",
-                                    label.getName(),
-                                    GitHubDocs.LABEL_NAMING.getLogMessage()
-                            );
-
-                            return Stream.of();
-                        }
-                )
+    private Map<String, LabelPrinter> convert(LabelBase[] validLabels) {
+        return stream(validLabels)
                 .collect(toMap(
                         LabelBase::getName,
                         this::toLabelOrLog4jPattern,
