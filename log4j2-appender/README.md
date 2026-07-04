@@ -339,7 +339,9 @@ than that will be split into multiple log entries (see [wiki](https://github.com
 
 Maximum number of retries to perform when delivering a log message to Loki. Log buffer data is delivered in order, one
 batch after the other, so too many retries will block delivery of subsequent log batches (on the other hand if we need
-to retry many times, then next batches will probably fail too).
+to retry many times, then next batches will probably fail too). Retries are performed with exponential backoff both
+when the connection fails and when Loki responds with HTTP status 429 or a 5xx. Other client errors (4xx) are treated
+as permanent failures and are not retried.
 
 #### connectTimeoutMillis (optional, default = 5000)
 
