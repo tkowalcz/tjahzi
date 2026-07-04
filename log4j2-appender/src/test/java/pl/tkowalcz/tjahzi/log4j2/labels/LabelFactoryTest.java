@@ -103,6 +103,28 @@ class LabelFactoryTest {
     }
 
     @Test
+    void shouldSkipLabelsWithNullName() {
+        // Given
+        Label thisShouldStay = Label.createLabel("ip", "10.0.2.34", null);
+        Label nullNameShouldBeDropped = Label.createLabel(null, "hostname", null);
+
+        LabelFactory labelFactory = new LabelFactory(
+                new NullConfiguration(),
+                "log_level",
+                thisShouldStay,
+                nullNameShouldBeDropped
+        );
+
+        // When
+        LabelsDescriptor actual = labelFactory.convertLabelsDroppingInvalid();
+
+        // Then
+        assertThat(actual.getStaticLabels()).containsOnly(
+                asEntry(thisShouldStay)
+        );
+    }
+
+    @Test
     void shouldAcceptNullLogLevel() {
         // Given
         Label label1 = Label.createLabel("ip", "10.0.2.34", null);
