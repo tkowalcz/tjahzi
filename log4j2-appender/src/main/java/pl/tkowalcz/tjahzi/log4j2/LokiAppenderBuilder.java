@@ -117,6 +117,18 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
     @Override
     public LokiAppender build() {
+        if (headers == null) {
+            headers = new Header[0];
+        }
+
+        if (labels == null) {
+            labels = new Label[0];
+        }
+
+        if (metadata == null) {
+            metadata = new StructuredMetadata[0];
+        }
+
         ClientConfiguration configurationBuilder = ClientConfiguration.builder()
                 .withUrl(url)
                 .withLogEndpoint(logEndpoint)
@@ -172,7 +184,7 @@ public class LokiAppenderBuilder<B extends LokiAppenderBuilder<B>> extends Abstr
 
         LabelFactory metadataFactory = new LabelFactory(
                 getConfiguration(),
-                logLevelLabel,
+                null,
                 metadata
         );
 
