@@ -231,7 +231,62 @@ class HeadersTest {
                                 postRequestedFor(urlMatching("/loki/api/v1/push"))
                                         .withHeader("content-type", matching("application/x-protobuf"))
                                         .withHeader("content-length", matching("[4-5][0-9]"))
-                                        .withHeader("host", matching("localhost"))
+                                        .withHeader("host", matching("localhost:[0-9]+"))
+                        ));
+    }
+
+    @Test
+    void shouldIncludeNonDefaultPortInHostHeader() {
+        // Given
+        wireMockServer.stubFor(
+                post(urlEqualTo("/loki/api/v1/push"))
+                        .willReturn(
+                                aResponse().withStatus(200)
+                        ));
+
+        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+                .withConnectionTimeoutMillis(10_000)
+                .withHost("localhost")
+                .withPort(wireMockServer.port())
+                .withMaxRetries(1)
+                .build();
+
+        NettyHttpClient httpClient = HttpClientFactory.defaultFactory()
+                .getHttpClient(
+                        clientConfiguration,
+                        monitoringModule
+                );
+
+        loggingSystem = initializer.createLoggingSystem(
+                httpClient,
+                monitoringModule,
+                Map.of(),
+                0,
+                0,
+                1024 * 1024,
+                250,
+                10_000,
+                false
+        );
+        loggingSystem.start();
+
+        // When
+        TjahziLogger logger = loggingSystem.createLogger();
+        logger.log(
+                System.currentTimeMillis(),
+                0,
+                labelSerializer,
+                new LabelSerializer(),
+                ByteBuffer.wrap("Test".getBytes())
+        );
+
+        // Then
+        await()
+                .atMost(Durations.FIVE_SECONDS)
+                .untilAsserted(() ->
+                        wireMockServer.verify(
+                                postRequestedFor(urlMatching("/loki/api/v1/push"))
+                                        .withHeader("host", equalTo("localhost:" + wireMockServer.port()))
                         ));
     }
 }
