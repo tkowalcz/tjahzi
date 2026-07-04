@@ -1,6 +1,7 @@
 package pl.tkowalcz.tjahzi.http;
 
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -15,11 +16,19 @@ public class HttpConnection implements Closeable {
     private final MonitoringModule monitoringModule;
 
     private final NioEventLoopGroup group;
+    private final ChannelFutureListener writeFailureListener;
     private volatile ChannelFuture lokiConnection;
 
     public HttpConnection(ClientConfiguration clientConfiguration, MonitoringModule monitoringModule) {
         this.clientConfiguration = clientConfiguration;
         this.monitoringModule = monitoringModule;
+
+        this.writeFailureListener = future -> {
+            if (!future.isSuccess()) {
+                monitoringModule.incrementFailedHttpRequests();
+                monitoringModule.addPipelineError(future.cause());
+            }
+        };
 
         ThreadFactory threadFactory = new DefaultThreadFactory("tjahzi-worker", true);
         this.group = new NioEventLoopGroup(1, threadFactory);
@@ -79,12 +88,7 @@ public class HttpConnection implements Closeable {
             stableReference
                     .channel()
                     .writeAndFlush(request)
-                    .addListener((ChannelFuture future) -> {
-                        if (!future.isSuccess()) {
-                            monitoringModule.incrementFailedHttpRequests();
-                            monitoringModule.addPipelineError(future.cause());
-                        }
-                    });
+                    .addListener(writeFailureListener);
         } else {
             retry.retry();
         }
