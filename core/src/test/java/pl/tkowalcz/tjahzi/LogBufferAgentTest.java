@@ -278,8 +278,8 @@ class LogBufferAgentTest {
         // When
         agent.onClose();
 
-        // Then
-        verify(httpClient, times(4)).log((OutputBuffer) any());
+        // Then - three batches of (100, 100, 1) messages and no trailing empty push
+        verify(httpClient, times(3)).log((OutputBuffer) any());
         assertThat(logBuffer.size()).isZero();
     }
 }
