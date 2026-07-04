@@ -4,6 +4,7 @@ import java.util.function.LongSupplier;
 
 public class ExponentialBackoffStrategy implements LongSupplier {
 
+    private final long initialBackoffMillis;
     private final long maximumBackoffMillis;
     private final double multiplier;
 
@@ -14,6 +15,7 @@ public class ExponentialBackoffStrategy implements LongSupplier {
             long maximumBackoffMillis,
             double multiplier
     ) {
+        this.initialBackoffMillis = initialBackoffMillis;
         this.maximumBackoffMillis = maximumBackoffMillis;
         this.multiplier = multiplier;
 
@@ -26,6 +28,10 @@ public class ExponentialBackoffStrategy implements LongSupplier {
 
         nextBackoff = (long) Math.min(nextBackoff * multiplier, maximumBackoffMillis);
         return result;
+    }
+
+    public void reset() {
+        nextBackoff = initialBackoffMillis;
     }
 
     public static ExponentialBackoffStrategy withDefault() {

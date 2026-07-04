@@ -50,7 +50,8 @@ public class BootstrapUtil {
                                 clientConfiguration.getHost(),
                                 clientConfiguration.getPort(),
                                 clientConfiguration.getRequestTimeoutMillis(),
-                                clientConfiguration.getMaxRequestsInFlight()
+                                clientConfiguration.getMaxRequestsInFlight(),
+                                clientConfiguration.getMaxRetries()
                         )
                 )
                 .remoteAddress(

@@ -34,7 +34,8 @@ class PipelinedHttpRequestTimerTest {
                 "localhost",
                 3100,
                 10_000,
-                42
+                42,
+                0
         );
 
         FullHttpRequest request = new DefaultFullHttpRequest(
@@ -85,7 +86,8 @@ class PipelinedHttpRequestTimerTest {
                 "localhost",
                 3100,
                 10_000,
-                42
+                42,
+                0
         );
 
         FullHttpRequest request = new DefaultFullHttpRequest(
@@ -142,7 +144,8 @@ class PipelinedHttpRequestTimerTest {
                 "localhost",
                 3100,
                 10_000,
-                42
+                42,
+                0
         );
 
         FullHttpRequest request = new DefaultFullHttpRequest(
@@ -203,7 +206,8 @@ class PipelinedHttpRequestTimerTest {
                 "localhost",
                 3100,
                 10_000,
-                42
+                42,
+                0
         );
 
         FullHttpRequest request = new DefaultFullHttpRequest(
