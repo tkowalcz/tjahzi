@@ -2,30 +2,29 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>pl.tkowalcz.tjahzi</groupId>
-        <artifactId>tjahzi-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>pl.tkowalcz.tjahzi</groupId>
+    <version>local</version>
     <name>native-image-test</name>
     <artifactId>native-image-test</artifactId>
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.testSource>17</maven.compiler.testSource>
-        <maven.compiler.testTarget>17</maven.compiler.testTarget>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.testRelease>17</maven.compiler.testRelease>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
+        <!-- The tjahzi version is injected with -Dtjahzi.version by the CI job
+             (and local builds) after installing the reactor. This module has no
+             parent on purpose: the release plugin does not rewrite versions in
+             modules of inactive profiles, so inheriting the reactor version
+             breaks after every release. -->
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>logback-appender</artifactId>
-            <version>${project.version}</version>
+            <version>${tjahzi.version}</version>
         </dependency>
 
         <dependency>
@@ -37,7 +36,7 @@
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>log4j2-appender</artifactId>
-            <version>${project.version}</version>
+            <version>${tjahzi.version}</version>
         </dependency>
 
         <dependency>
@@ -49,7 +48,7 @@
         <dependency>
             <groupId>pl.tkowalcz.tjahzi</groupId>
             <artifactId>reload4j-appender</artifactId>
-            <version>${project.version}</version>
+            <version>${tjahzi.version}</version>
         </dependency>
 
         <dependency>
