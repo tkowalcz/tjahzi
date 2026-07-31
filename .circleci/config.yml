@@ -74,7 +74,9 @@ jobs:
           command: mvn install -Dmaven.test.skip=true -ntp
       - run:
           name: Build native smoke test
-          command: mvn -Pnative -pl native-image-test package -DskipTests -ntp
+          command: |
+            VERSION=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)
+            mvn -f native-image-test/pom.xml package -DskipTests -Dtjahzi.version=$VERSION -ntp
       - run:
           name: Run native smoke test
           command: ./native-image-test/target/native-smoke-test
